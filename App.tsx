@@ -7,15 +7,13 @@ import Toast from "react-native-toast-message";
 import RootNavigator from "./src/navigation/RootNavigator";
 import { store } from "./src/redux/root";
 import { useEffect } from "react";
-import { initializeDatabase } from "./src/db/config";
+import { initWorkoutTables } from "./src/db/config";
 
 function App() {
   const isDarkMode = useColorScheme() === "dark";
   useEffect(() => {
-    initializeDatabase().then((res) => {
-      console.log("Ssaaaa");
-    });
-  },[]);
+    initWorkoutTables();
+  }, []);
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />

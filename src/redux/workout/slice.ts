@@ -1,14 +1,14 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createApi } from '@reduxjs/toolkit/query/react';
-import { Asset } from 'react-native-image-picker';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Asset } from "react-native-image-picker";
 
-import axiosBaseQuery from '../baseQuery';
-import { RootState } from '../root';
-import { GymLevel } from '../../modules/prediction/enums';
+import axiosBaseQuery from "../baseQuery";
+import { RootState } from "../root";
+import { GymLevel } from "../../modules/prediction/enums";
 import {
   GenPlanCredentials,
   WorkoutPlan,
-} from '../../modules/prediction/types';
+} from "../../modules/prediction/types";
 
 export interface PredictSliceState {
   predictions: string[];
@@ -29,24 +29,24 @@ const initialState: PredictSliceState = {
 };
 
 export const predictApi = createApi({
-  reducerPath: 'predictApi',
+  reducerPath: "predictApi",
   baseQuery: axiosBaseQuery(),
-  endpoints: builder => ({
+  endpoints: (builder) => ({
     getProfile: builder.query<WorkoutPlan[], void>({
-      query: () => ({ url: 'workout/plans', method: 'get' }),
+      query: () => ({ url: "workout/plans", method: "get" }),
     }),
     sendImages: builder.mutation<string[], FormData>({
       query: (credentials: FormData) => ({
-        url: 'workout/detect',
-        method: 'post',
+        url: "workout/detect",
+        method: "post",
         data: credentials,
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { "Content-Type": "multipart/form-data" },
       }),
     }),
     generatePlan: builder.mutation<WorkoutPlan, GenPlanCredentials>({
       query: (credentials: GenPlanCredentials) => ({
-        url: 'workout/generate-program',
-        method: 'post',
+        url: "workout/generate-program",
+        method: "post",
         data: credentials,
       }),
     }),
@@ -54,13 +54,13 @@ export const predictApi = createApi({
 });
 
 export const predictSlice = createSlice({
-  name: 'prediction',
+  name: "prediction",
   initialState,
   reducers: {
-    reset: state => {
+    reset: (state) => {
       state.predictions = [];
     },
-    closeAnalyzing: state => {
+    closeAnalyzing: (state) => {
       state.isFetching = false;
     },
     addFile: (state, action: PayloadAction<Asset>) => {
@@ -72,15 +72,14 @@ export const predictSlice = createSlice({
     addToSelected: (state, action: PayloadAction<string | string[]>) => {
       state.selectedPredictions = [
         ...state.selectedPredictions,
-        ...(typeof action.payload === 'string'
+        ...(typeof action.payload === "string"
           ? [action.payload]
           : action.payload),
       ];
     },
     removeFromSelectedPredictions: (state, action: PayloadAction<string>) => {
-      console.log(action.payload);
       state.selectedPredictions = state.selectedPredictions.filter(
-        item => item !== action.payload,
+        (item) => item !== action.payload,
       );
     },
     setLevel: (state, action: PayloadAction<GymLevel>) => {
@@ -90,13 +89,19 @@ export const predictSlice = createSlice({
       state.days = action.payload;
     },
   },
-  extraReducers: builder => {
-    builder.addMatcher(predictApi.endpoints.sendImages.matchRejected, state => {
-      state.isFetching = false;
-    });
-    builder.addMatcher(predictApi.endpoints.sendImages.matchPending, state => {
-      state.isFetching = true;
-    });
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      predictApi.endpoints.sendImages.matchRejected,
+      (state) => {
+        state.isFetching = false;
+      },
+    );
+    builder.addMatcher(
+      predictApi.endpoints.sendImages.matchPending,
+      (state) => {
+        state.isFetching = true;
+      },
+    );
     builder.addMatcher(
       predictApi.endpoints.sendImages.matchFulfilled,
       (state, action) => {

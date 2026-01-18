@@ -1,4 +1,4 @@
-import { GymLevel } from './enums';
+import { GymLevel } from "./enums";
 
 export interface PredictionResult {
   isLoading: boolean;
@@ -31,15 +31,25 @@ export interface WorkoutPlan extends WorkoutPlanPreview {
   days: WorkoutDay[];
 }
 
-export interface WorkoutHistoryEntry {
-  id?: number;
-  plan_title: string;
-  date: string;
-  total_duration_seconds: number;
+export interface WorkoutHistoryCredentials {
+  planId: number;
+  userId: number;
+  dayId: number;
+  exercises: { completedSteps: number; moveId: number }[];
+  duration: number;
 }
 
 export interface GenPlanCredentials {
   equipments: string[];
   level: GymLevel;
   numOfDays: number;
+}
+
+export interface GymHistoryItem {
+  id: number;
+  user_id: number;
+  plan_id: number;
+  day_id: number;
+  duration: number;
+  created_at: string; 
 }

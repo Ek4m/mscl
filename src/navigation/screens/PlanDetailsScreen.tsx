@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import AntDesignIcons from "react-native-vector-icons/AntDesign";
 
 import { useAppSelector } from "../../redux/root";
 import { selectPlans } from "../../redux/plans/slice";
@@ -14,6 +15,8 @@ import { selectPlans } from "../../redux/plans/slice";
 import { COLORS } from "../../constants/colors";
 import SubmitButton from "../../UI/components/submitButton";
 import { RootStackParamList } from "../types";
+import Modal from "../../UI/components/modal";
+import PlanUsageHistory from "../../modules/prediction/components/history";
 
 const PlanDetailsScreen: FC<
   NativeStackScreenProps<RootStackParamList, "planDetails">
@@ -23,6 +26,7 @@ const PlanDetailsScreen: FC<
   const [activeIdx, setActiveIdx] = useState(0);
   const plan = plans?.find((elem) => elem.id === id);
   const currentDay = plan?.days[activeIdx];
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
   const onStartSession = () => {
     currentDay &&
@@ -30,62 +34,75 @@ const PlanDetailsScreen: FC<
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>My Gym Plan</Text>
-        <Text style={styles.subtitle}>Ready for {currentDay?.title}?</Text>
-      </View>
-      <View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.tabs}
-        >
-          {plan?.days?.map((day, idx) => (
-            <TouchableOpacity
-              key={idx}
-              onPress={() => setActiveIdx(idx)}
-              style={[styles.tab, activeIdx === idx && styles.activeTab]}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeIdx === idx && styles.activeTabText,
-                ]}
+    <>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.headerTitles}>
+            <Text style={styles.title}>My Gym Plan</Text>
+            <Text style={styles.subtitle}>Ready for {currentDay?.title}?</Text>
+          </View>
+          <TouchableOpacity onPress={() => setIsHistoryModalOpen(true)}>
+            <AntDesignIcons name="history" size={20} color={"#fff"} />
+          </TouchableOpacity>
+        </View>
+        <View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.tabs}
+          >
+            {plan?.days?.map((day, idx) => (
+              <TouchableOpacity
+                key={idx}
+                onPress={() => setActiveIdx(idx)}
+                style={[styles.tab, activeIdx === idx && styles.activeTab]}
               >
-                {day.title.split(" ")[0]}
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.tabText,
+                    activeIdx === idx && styles.activeTabText,
+                  ]}
+                >
+                  {day.title.split(" ")[0]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        <ScrollView
+          style={styles.exerciseList}
+          contentContainerStyle={styles.exerciseContent}
+        >
+          {currentDay?.moves.map((ex, idx) => (
+            <View key={idx} style={styles.card}>
+              <View style={styles.indexBox}>
+                <Text style={styles.indexText}>{idx + 1}</Text>
+              </View>
+              <View style={styles.cardInfo}>
+                <Text style={styles.exName}>{ex.name}</Text>
+                <Text style={styles.exDetails}>
+                  {ex.sets} Sets × {ex.reps} Reps
+                </Text>
+              </View>
+            </View>
           ))}
         </ScrollView>
+        <View style={styles.footer}>
+          <SubmitButton
+            title="Start Session"
+            bgColor={COLORS.lightBlue}
+            onPress={onStartSession}
+          />
+        </View>
       </View>
-
-      <ScrollView
-        style={styles.exerciseList}
-        contentContainerStyle={styles.exerciseContent}
+      <Modal
+        isVisible={isHistoryModalOpen}
+        onRequestClose={() => setIsHistoryModalOpen(false)}
       >
-        {currentDay?.moves.map((ex, idx) => (
-          <View key={idx} style={styles.card}>
-            <View style={styles.indexBox}>
-              <Text style={styles.indexText}>{idx + 1}</Text>
-            </View>
-            <View style={styles.cardInfo}>
-              <Text style={styles.exName}>{ex.name}</Text>
-              <Text style={styles.exDetails}>
-                {ex.sets} Sets × {ex.reps} Reps
-              </Text>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
-      <View style={styles.footer}>
-        <SubmitButton
-          title="Start Session"
-          bgColor={COLORS.lightBlue}
-          onPress={onStartSession}
-        />
-      </View>
-    </View>
+        <PlanUsageHistory plan={plan} />
+      </Modal>
+    </>
   );
 };
 
@@ -96,6 +113,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   header: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  headerTitles: {
     paddingTop: 40,
     paddingBottom: 24,
   },

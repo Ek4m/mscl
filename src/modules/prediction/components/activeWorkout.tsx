@@ -9,35 +9,42 @@ import {
   Platform,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
-import AntDesignIcons from "react-native-vector-icons/AntDesign";
 
-import { WorkoutDay, WorkoutHistoryEntry, ActiveExercise } from "../types";
+import {
+  WorkoutDay,
+  WorkoutHistoryCredentials,
+  ActiveExercise,
+  WorkoutPlan,
+} from "../types";
 import ExerciseCard from "./MoveCard";
-import { dbService } from "../dbServices";
 import SubmitButton from "../../../UI/components/submitButton";
 import { COLORS } from "../../../constants/colors";
+import { useAppSelector } from "../../../redux/root";
+import { selectUserInfo } from "../../../redux/auth/slice";
+import { saveWorkoutHistory } from "../../../db/services";
+import { formatTime } from "../helpers";
+import RestTimer from "./RestTimer";
 
 interface ActiveWorkoutProps {
   workoutDay: WorkoutDay;
-  planTitle: string;
+  plan: WorkoutPlan;
   onFinish: () => void;
   onCancel: () => void;
 }
 
 const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   workoutDay,
-  planTitle,
+  plan,
   onFinish,
   onCancel,
 }) => {
   const [exercises, setExercises] = useState<ActiveExercise[]>(
-    workoutDay.moves.map((ex, idx) => ({
+    workoutDay.moves.map((ex) => ({
       ...ex,
-      id: idx,
       completedSets: new Array(ex.sets).fill(false),
     })),
   );
-
+  const { userInfo } = useAppSelector(selectUserInfo);
   const [workoutSeconds, setWorkoutSeconds] = useState(0);
   const [restSeconds, setRestSeconds] = useState(0);
   const [isResting, setIsResting] = useState(false);
@@ -90,35 +97,28 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
     },
     [],
   );
-
   const handleFinish = async () => {
     const saveSession = async () => {
-      const historyEntry: WorkoutHistoryEntry = {
-        plan_title: planTitle,
-        date: new Date().toISOString(),
-        total_duration_seconds: workoutSeconds,
+      const historyEntry: WorkoutHistoryCredentials = {
+        dayId: workoutDay.id,
+        duration: workoutSeconds,
+        planId: plan.id,
+        userId: userInfo!.id,
+        exercises: exercises.map((elem) => ({
+          completedSteps: elem.completedSets.reduce(
+            (prev, curr) => prev + (curr ? 1 : 0),
+            0,
+          ),
+          moveId: elem.id,
+        })),
       };
-      console.log(historyEntry);
-      const success = await dbService.saveWorkoutHistory(historyEntry);
+      const success = await saveWorkoutHistory(historyEntry);
       if (success) onFinish();
     };
-
-    if (Platform.OS === "web") {
-      //   if (window.confirm("Ready to finish your session?")) saveSession();
-    } else {
-      Alert.alert("Finish Workout", "Ready to log your session?", [
-        { text: "Cancel", style: "cancel" },
-        { text: "Log Session", onPress: saveSession },
-      ]);
-    }
-  };
-
-  const formatTime = (totalSeconds: number) => {
-    const mins = Math.floor(totalSeconds / 60);
-    const secs = totalSeconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
+    Alert.alert("Finish Workout", "Ready to log your session?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Save", onPress: saveSession },
+    ]);
   };
 
   return (
@@ -130,11 +130,11 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
             style={styles.backButton}
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
-            <IonIcons name="chevron-back" size={16} color="#71717a" />
+            <IonIcons name="chevron-back" size={20} color="#71717a" />
             <Text style={styles.backText}>Cancel</Text>
           </TouchableOpacity>
           <Text style={styles.title}>{workoutDay.title}</Text>
-          <Text style={styles.subtitle}>{planTitle}</Text>
+          <Text style={styles.subtitle}>{plan.title}</Text>
         </View>
         <View style={styles.timerContainer}>
           <View style={styles.timerRow}>
@@ -161,36 +161,12 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
 
       <View style={styles.footerContainer}>
         {isResting && (
-          <View style={styles.restCard}>
-            <View style={styles.restInfo}>
-              <View style={styles.restIcon}>
-                <IonIcons name="timer-outline" size={24} color="#ffffff" />
-              </View>
-              <View>
-                <Text style={styles.restLabel}>Rest Timer</Text>
-                <Text style={styles.restTime}>{formatTime(restSeconds)}</Text>
-              </View>
-            </View>
-            <View style={styles.restActions}>
-              <TouchableOpacity
-                style={styles.restAdd}
-                onPress={() => setRestSeconds((s) => s + 30)}
-              >
-                <Text style={styles.restAddText}>+30s</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.restSkip}
-                onPress={() => setIsResting(false)}
-              >
-                <AntDesignIcons
-                  name="fast-forward"
-                  size={14}
-                  color={COLORS.mainBlue}
-                />
-                <Text style={styles.restSkipText}>Skip</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <RestTimer
+            restSeconds={restSeconds}
+            isVisible={isResting}
+            setRestSeconds={setRestSeconds}
+            setIsResting={setIsResting}
+          />
         )}
 
         <View style={styles.actionRow}>
@@ -281,69 +257,6 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 16,
     backgroundColor: "transparent",
-  },
-  restCard: {
-    backgroundColor: COLORS.mainBlue,
-    borderRadius: 20,
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-    shadowColor: COLORS.mainBlue,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.4,
-    shadowRadius: 20,
-  },
-  restInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  restIcon: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    padding: 8,
-    borderRadius: 12,
-  },
-  restLabel: {
-    color: "rgba(255, 255, 255, 0.6)",
-    fontSize: 10,
-    fontWeight: "700",
-    textTransform: "uppercase",
-  },
-  restTime: {
-    color: "#ffffff",
-    fontSize: 24,
-    fontWeight: "900",
-  },
-  restActions: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  restAdd: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-  },
-  restAddText: {
-    color: "#ffffff",
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  restSkip: {
-    backgroundColor: "#ffffff",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  restSkipText: {
-    color: COLORS.mainBlue,
-    fontSize: 12,
-    fontWeight: "700",
   },
   actionRow: {
     backgroundColor: "#18181b",

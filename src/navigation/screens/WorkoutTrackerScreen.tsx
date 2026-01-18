@@ -1,10 +1,13 @@
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
+import { useFocusEffect } from "@react-navigation/native";
 
 import ActiveWorkout from "../../modules/prediction/components/activeWorkout";
 import { RootStackParamList } from "../types";
 import { useAppSelector } from "../../redux/root";
 import { selectPlans } from "../../redux/plans/slice";
+import { successToast } from "../../helpers/toast";
 
 const WorkoutTrackerScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "workoutTracker">
@@ -15,14 +18,28 @@ const WorkoutTrackerScreen: React.FC<
     .find((elem) => params.planId === elem.id)
     ?.days.find((e) => e.id === params.id);
 
+  useFocusEffect(
+    useCallback(() => {
+      activateKeepAwakeAsync();
+      return () => {
+        deactivateKeepAwake();
+      };
+    }, []),
+  );
+
+  const onFinishTracking = () => {
+    successToast("Tracking was saved successfully");
+    navigation.goBack();
+  };
+
   if (activeWorkoutDay && activePlan)
     return (
       <ActiveWorkout
         workoutDay={activeWorkoutDay}
-        planTitle={activePlan.title}
+        plan={activePlan}
         onCancel={() => navigation.goBack()}
-        onFinish={() => {}}
+        onFinish={onFinishTracking}
       />
     );
 };
-export default WorkoutTrackerScreen;
+export default memo(WorkoutTrackerScreen);
