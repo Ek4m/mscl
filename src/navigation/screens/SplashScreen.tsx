@@ -1,23 +1,22 @@
-import React, { FC, useCallback } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { FC, useCallback } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { RootStackParamList } from '../types';
-import { selectUserInfo } from '../../redux/auth/slice';
-import { useAppSelector } from '../../redux/root';
+import { RootStackParamList } from "../types";
+import { selectUserInfo } from "../../redux/auth/slice";
+import { useAppSelector } from "../../redux/root";
 
 const SplashScreen: FC<
-  NativeStackScreenProps<RootStackParamList, 'splash'>
+  NativeStackScreenProps<RootStackParamList, "splash">
 > = ({ navigation }) => {
   const { userInfo, isFetching } = useAppSelector(selectUserInfo);
 
   useFocusEffect(
     useCallback(() => {
       if (!isFetching) {
-        console.log(userInfo)
         setTimeout(() => {
-          navigation.navigate(userInfo ? 'onboarding' : 'auth');
+          navigation.navigate(userInfo ? "home" : "onboarding");
         }, 1000);
       }
     }, [isFetching, userInfo, navigation]),
@@ -36,18 +35,18 @@ const SplashScreen: FC<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#000",
+    alignItems: "center",
+    justifyContent: "center",
   },
   logoBox: {
     width: 100,
     height: 100,
-    backgroundColor: '#22d3ee',
+    backgroundColor: "#22d3ee",
     borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#22d3ee',
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#22d3ee",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
@@ -58,8 +57,8 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 24,
     fontSize: 32,
-    fontWeight: '900',
-    color: '#fff',
+    fontWeight: "900",
+    color: "#fff",
   },
 });
 

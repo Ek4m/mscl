@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { ActiveExercise } from '../types';
+import { COLORS } from '../../../constants/colors';
 
 interface ExerciseCardProps {
   exercise: ActiveExercise;
@@ -114,9 +115,9 @@ const styles = StyleSheet.create({
     borderColor: '#3f3f46',
   },
   setButtonDone: {
-    backgroundColor: '#2563eb',
-    borderColor: '#2563eb',
-    shadowColor: '#2563eb',
+    backgroundColor: COLORS.mainBlue,
+    borderColor: COLORS.mainBlue,
+    shadowColor: COLORS.mainBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

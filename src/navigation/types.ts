@@ -1,7 +1,7 @@
 export type RootStackParamList = {
   auth: undefined;
   register: undefined;
-  test: undefined;
+  workoutTracker: { id: number; planId: number };
   splash: undefined;
   upload: undefined;
   onboarding: undefined;

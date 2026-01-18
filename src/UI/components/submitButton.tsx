@@ -4,12 +4,13 @@ import {
   Text,
   TouchableOpacity,
   TouchableOpacityProps,
-} from 'react-native';
-import React, { FC } from 'react';
+} from "react-native";
+import React, { FC, ReactNode } from "react";
 
 const SubmitButton: FC<
   TouchableOpacityProps & {
     title: string;
+    icon?: ReactNode;
     textColor?: string;
     bgColor?: string;
     loading?: boolean;
@@ -18,6 +19,7 @@ const SubmitButton: FC<
   onPress,
   title,
   bgColor,
+  icon,
   textColor,
   loading,
   disabled,
@@ -31,7 +33,7 @@ const SubmitButton: FC<
         styles.button,
         style,
         {
-          backgroundColor: bgColor || '#fff',
+          backgroundColor: bgColor || "#fff",
           opacity: disabled || loading ? 0.5 : 1,
         },
       ]}
@@ -39,11 +41,14 @@ const SubmitButton: FC<
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={textColor || '#000'} />
+        <ActivityIndicator color={textColor || "#000"} />
       ) : (
-        <Text style={[styles.buttonText, { color: textColor || '#000' }]}>
-          {title}
-        </Text>
+        <>
+          {icon}
+          <Text style={[styles.buttonText, { color: textColor || "#000" }]}>
+            {title}
+          </Text>
+        </>
       )}
     </TouchableOpacity>
   );
@@ -55,11 +60,12 @@ const styles = StyleSheet.create({
   button: {
     height: 64,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection:"row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

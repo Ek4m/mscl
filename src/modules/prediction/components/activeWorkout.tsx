@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,13 +7,15 @@ import {
   StyleSheet,
   Alert,
   Platform,
-} from 'react-native';
-import IonIcons from 'react-native-vector-icons/Ionicons';
-import AntDesignIcons from 'react-native-vector-icons/AntDesign';
+} from "react-native";
+import IonIcons from "react-native-vector-icons/Ionicons";
+import AntDesignIcons from "react-native-vector-icons/AntDesign";
 
-import { WorkoutDay, WorkoutHistoryEntry, ActiveExercise } from '../types';
-import ExerciseCard from './MoveCard';
-import { dbService } from '../dbServices';
+import { WorkoutDay, WorkoutHistoryEntry, ActiveExercise } from "../types";
+import ExerciseCard from "./MoveCard";
+import { dbService } from "../dbServices";
+import SubmitButton from "../../../UI/components/submitButton";
+import { COLORS } from "../../../constants/colors";
 
 interface ActiveWorkoutProps {
   workoutDay: WorkoutDay;
@@ -31,11 +33,10 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   const [exercises, setExercises] = useState<ActiveExercise[]>(
     workoutDay.moves.map((ex, idx) => ({
       ...ex,
-      id:idx,
+      id: idx,
       completedSets: new Array(ex.sets).fill(false),
     })),
   );
-  console.log(exercises)
 
   const [workoutSeconds, setWorkoutSeconds] = useState(0);
   const [restSeconds, setRestSeconds] = useState(0);
@@ -44,7 +45,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setWorkoutSeconds(prev => prev + 1);
+      setWorkoutSeconds((prev) => prev + 1);
     }, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -52,7 +53,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   useEffect(() => {
     if (isResting && restSeconds > 0) {
       restTimerRef.current = setInterval(() => {
-        setRestSeconds(prev => {
+        setRestSeconds((prev) => {
           if (prev <= 1) {
             setIsResting(false);
             return 0;
@@ -71,8 +72,8 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
 
   const handleToggleSet = useCallback(
     (exerciseId: number, setIndex: number) => {
-      setExercises(prev =>
-        prev.map(ex => {
+      setExercises((prev) =>
+        prev.map((ex) => {
           if (ex.id === exerciseId) {
             const newSets = [...ex.completedSets];
             const wasDone = newSets[setIndex];
@@ -97,17 +98,17 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
         date: new Date().toISOString(),
         total_duration_seconds: workoutSeconds,
       };
-      console.log(historyEntry)
+      console.log(historyEntry);
       const success = await dbService.saveWorkoutHistory(historyEntry);
       if (success) onFinish();
     };
 
-    if (Platform.OS === 'web') {
+    if (Platform.OS === "web") {
       //   if (window.confirm("Ready to finish your session?")) saveSession();
     } else {
-      Alert.alert('Finish Workout', 'Ready to log your session?', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Log Session', onPress: saveSession },
+      Alert.alert("Finish Workout", "Ready to log your session?", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Log Session", onPress: saveSession },
       ]);
     }
   };
@@ -115,9 +116,9 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   const formatTime = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60);
     const secs = totalSeconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs
+    return `${mins.toString().padStart(2, "0")}:${secs
       .toString()
-      .padStart(2, '0')}`;
+      .padStart(2, "0")}`;
   };
 
   return (
@@ -137,7 +138,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
         </View>
         <View style={styles.timerContainer}>
           <View style={styles.timerRow}>
-            <IonIcons name="timer-outline" size={18} color="#2563eb" />
+            <IonIcons name="timer-outline" size={18} color={COLORS.mainBlue} />
             <Text style={styles.timerText}>{formatTime(workoutSeconds)}</Text>
           </View>
           <Text style={styles.timerLabel}>Total Time</Text>
@@ -149,7 +150,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {exercises.map(exercise => (
+        {exercises.map((exercise) => (
           <ExerciseCard
             key={exercise.id}
             exercise={exercise}
@@ -173,7 +174,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
             <View style={styles.restActions}>
               <TouchableOpacity
                 style={styles.restAdd}
-                onPress={() => setRestSeconds(s => s + 30)}
+                onPress={() => setRestSeconds((s) => s + 30)}
               >
                 <Text style={styles.restAddText}>+30s</Text>
               </TouchableOpacity>
@@ -181,7 +182,11 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
                 style={styles.restSkip}
                 onPress={() => setIsResting(false)}
               >
-                <AntDesignIcons name="fast-forward" size={14} color="#2563eb" />
+                <AntDesignIcons
+                  name="fast-forward"
+                  size={14}
+                  color={COLORS.mainBlue}
+                />
                 <Text style={styles.restSkipText}>Skip</Text>
               </TouchableOpacity>
             </View>
@@ -189,10 +194,11 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
         )}
 
         <View style={styles.actionRow}>
-          <TouchableOpacity style={styles.finishButton} onPress={handleFinish}>
-            <IonIcons name="square" size={16} color="black" />
-            <Text style={styles.finishText}>Finish Workout</Text>
-          </TouchableOpacity>
+          <SubmitButton
+            onPress={handleFinish}
+            icon={<IonIcons name="square" size={16} color="black" />}
+            title="Finish Workout"
+          />
         </View>
       </View>
     </View>
@@ -202,63 +208,63 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
   },
   header: {
-    paddingTop: Platform.OS === 'android' ? 40 : 20,
+    paddingTop: Platform.OS === "android" ? 40 : 20,
     paddingHorizontal: 24,
     paddingBottom: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#18181b',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    backgroundColor: '#09090b',
+    borderBottomColor: "#18181b",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+    backgroundColor: "#09090b",
   },
   backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
   backText: {
-    color: '#71717a',
+    color: "#71717a",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     marginLeft: 4,
   },
   title: {
     fontSize: 22,
-    fontWeight: '800',
-    color: '#ffffff',
+    fontWeight: "800",
+    color: "#ffffff",
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 10,
-    fontWeight: '700',
-    color: '#71717a',
-    textTransform: 'uppercase',
+    fontWeight: "700",
+    color: "#71717a",
+    textTransform: "uppercase",
     letterSpacing: 1.5,
     marginTop: 4,
   },
   timerContainer: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
   timerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   timerText: {
-    color: '#2563eb',
+    color: COLORS.mainBlue,
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     marginLeft: 6,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
   timerLabel: {
     fontSize: 10,
-    fontWeight: '700',
-    color: '#3f3f46',
-    textTransform: 'uppercase',
+    fontWeight: "700",
+    color: "#3f3f46",
+    textTransform: "uppercase",
     marginTop: 2,
   },
   scrollView: {
@@ -269,97 +275,97 @@ const styles = StyleSheet.create({
     paddingBottom: 180,
   },
   footerContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     padding: 16,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   restCard: {
-    backgroundColor: '#2563eb',
+    backgroundColor: COLORS.mainBlue,
     borderRadius: 20,
     padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 16,
-    shadowColor: '#2563eb',
+    shadowColor: COLORS.mainBlue,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.4,
     shadowRadius: 20,
   },
   restInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
   restIcon: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     padding: 8,
     borderRadius: 12,
   },
   restLabel: {
-    color: 'rgba(255, 255, 255, 0.6)',
+    color: "rgba(255, 255, 255, 0.6)",
     fontSize: 10,
-    fontWeight: '700',
-    textTransform: 'uppercase',
+    fontWeight: "700",
+    textTransform: "uppercase",
   },
   restTime: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 24,
-    fontWeight: '900',
+    fontWeight: "900",
   },
   restActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   restAdd: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 10,
   },
   restAddText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   restSkip: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
   },
   restSkipText: {
-    color: '#2563eb',
+    color: COLORS.mainBlue,
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   actionRow: {
-    backgroundColor: '#18181b',
+    backgroundColor: "#18181b",
     borderRadius: 20,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#27272a',
+    borderColor: "#27272a",
   },
   finishButton: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     paddingVertical: 16,
     borderRadius: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 10,
   },
   finishText: {
-    color: '#000000',
+    color: "#000000",
     fontSize: 14,
-    fontWeight: '900',
-    textTransform: 'uppercase',
+    fontWeight: "900",
+    textTransform: "uppercase",
     letterSpacing: 1,
   },
 });

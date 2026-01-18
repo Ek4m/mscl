@@ -15,7 +15,7 @@ import WorkoutSessionScreen from "./screens/WorkoutSessionScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import HomeScreen from "./screens/HomeScreen";
 import RegisterScreen from "./screens/RegisterScreen";
-import WorkoutTracker from "./screens/TestScreen";
+import WorkoutTrackerScreen from "./screens/WorkoutTrackerScreen";
 
 import { RootStackParamList } from "./types";
 import { useAppSelector } from "../redux/root";
@@ -36,7 +36,7 @@ export default function RootNavigator() {
       <Stack.Screen name="home" component={HomeScreen} />
       <Stack.Screen name="splash" component={SplashScreen} />
       <Stack.Screen name="auth" component={AuthScreen} />
-      <Stack.Screen name="test" component={WorkoutTracker} />
+      <Stack.Screen name="workoutTracker" component={WorkoutTrackerScreen} />
       <Stack.Screen name="register" component={RegisterScreen} />
       <Stack.Screen name="onboarding" component={OnboardingScreen} />
       <Stack.Screen name="planDetails" component={PlanDetailsScreen} />
