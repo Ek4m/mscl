@@ -100,7 +100,7 @@ const PlanDetailsScreen: FC<
         isVisible={isHistoryModalOpen}
         onRequestClose={() => setIsHistoryModalOpen(false)}
       >
-        <PlanUsageHistory plan={plan} />
+        <PlanUsageHistory plan={plan!} />
       </Modal>
     </>
   );
