@@ -5,6 +5,7 @@ export type RootStackParamList = {
   splash: undefined;
   upload: undefined;
   onboarding: undefined;
+  customPlan: undefined;
   analyzing: undefined;
   confirmEquipments: { predictions: string[] };
   planDetails: { id: number };

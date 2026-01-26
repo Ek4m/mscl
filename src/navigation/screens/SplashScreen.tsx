@@ -6,11 +6,13 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import { selectUserInfo } from "../../redux/auth/slice";
 import { useAppSelector } from "../../redux/root";
+import { useGetInitialInfoQuery } from "../../redux/workout/slice";
 
 const SplashScreen: FC<
   NativeStackScreenProps<RootStackParamList, "splash">
 > = ({ navigation }) => {
   const { userInfo, isFetching } = useAppSelector(selectUserInfo);
+  useGetInitialInfoQuery();
 
   useFocusEffect(
     useCallback(() => {

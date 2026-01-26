@@ -62,9 +62,7 @@ const HomeScreenv2: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
             subtitle="Manual Build"
             icon="pen-nib"
             color={COLORS.green}
-            onPress={() => {
-              /* Navigate to Custom Builder */
-            }}
+            onPress={() => navigation.navigate("customPlan")}
           />
         </View>
 

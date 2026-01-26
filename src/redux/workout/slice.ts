@@ -9,6 +9,7 @@ import {
   GenPlanCredentials,
   WorkoutPlan,
 } from "../../modules/prediction/types";
+import { Equipment, Exercise } from "../../modules/workout/types";
 
 export interface PredictSliceState {
   predictions: string[];
@@ -16,6 +17,8 @@ export interface PredictSliceState {
   isFetching: boolean;
   files: Asset[];
   level: GymLevel;
+  equipments: Equipment[];
+  exercises: Exercise[];
   days: number;
 }
 
@@ -25,6 +28,8 @@ const initialState: PredictSliceState = {
   isFetching: true,
   files: [],
   level: GymLevel.INTERMEDIATE,
+  equipments: [],
+  exercises: [],
   days: 3,
 };
 
@@ -34,6 +39,13 @@ export const predictApi = createApi({
   endpoints: (builder) => ({
     getProfile: builder.query<WorkoutPlan[], void>({
       query: () => ({ url: "workout/plans", method: "get" }),
+    }),
+    getInitialInfo: builder.query<
+      { exercises: Exercise[]; equipments: Equipment[] },
+      void
+    >({
+      query: () => ({ url: "workout/data/all", method: "get" }),
+      keepUnusedDataFor: 3600,
     }),
     sendImages: builder.mutation<string[], FormData>({
       query: (credentials: FormData) => ({
@@ -108,11 +120,22 @@ export const predictSlice = createSlice({
         state.predictions = action.payload;
       },
     );
+    builder.addMatcher(
+      predictApi.endpoints.getInitialInfo.matchFulfilled,
+      (state, action) => {
+        state.exercises = action.payload.exercises;
+        state.equipments = action.payload.equipments;
+      },
+    );
   },
 });
 
 export const selectPredictions = (state: RootState) => state.detection;
-export const { useSendImagesMutation, useGeneratePlanMutation } = predictApi;
+export const {
+  useSendImagesMutation,
+  useGeneratePlanMutation,
+  useGetInitialInfoQuery,
+} = predictApi;
 export const {
   reset,
   closeAnalyzing,
