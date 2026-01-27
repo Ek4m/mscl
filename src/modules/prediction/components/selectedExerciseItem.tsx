@@ -11,11 +11,16 @@ import FaIcons from "react-native-vector-icons/FontAwesome5";
 
 import { COLORS } from "../../../constants/colors";
 import { CustomExercise } from "../../workout/types";
+import Chip from "../../../UI/components/chip";
+import { MuscleGroup, MuscleGroupTitles } from "../../workout/vault";
+import { useAppDispatch } from "../../../redux/root";
+import { updateMetrics } from "../../../redux/workout/create-plan";
 
 const SelectedExerciseItem: FC<{
   ex: CustomExercise;
   handleRemoveExercise(): void;
 }> = ({ ex, handleRemoveExercise }) => {
+  const dispatch = useAppDispatch();
   return (
     <View style={styles.cardContainer}>
       <View style={styles.topSection}>
@@ -32,7 +37,9 @@ const SelectedExerciseItem: FC<{
             {ex.name}
           </Text>
           <View style={styles.muscleBadge}>
-            <Text style={styles.exMuscleTag}>{ex.muscle}</Text>
+            {ex.muscle?.map((e: MuscleGroup) => (
+              <Chip type="info" label={MuscleGroupTitles[e]} key={e} />
+            ))}
           </View>
         </View>
       </View>
@@ -46,9 +53,12 @@ const SelectedExerciseItem: FC<{
             <TextInput
               style={styles.setRepInput}
               placeholder="4"
+              value={ex.sets}
+              onChangeText={(v) =>
+                dispatch(updateMetrics({ id: ex.id, sets: v }))
+              }
               placeholderTextColor="#52525b"
               keyboardType="numeric"
-              defaultValue="4"
             />
           </View>
 
@@ -60,8 +70,11 @@ const SelectedExerciseItem: FC<{
               style={styles.setRepInput}
               placeholder="12"
               placeholderTextColor="#52525b"
+              value={ex.reps}
+              onChangeText={(v) =>
+                dispatch(updateMetrics({ id: ex.id, reps: v }))
+              }
               keyboardType="numeric"
-              defaultValue="12"
             />
           </View>
         </View>
@@ -83,7 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1c1c1e",
     borderRadius: 20,
     marginBottom: 12,
-    padding: 12,
+    padding: 10,
     borderWidth: 1,
     borderColor: "#2c2c2e",
     shadowColor: "#000",
@@ -117,11 +130,11 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   muscleBadge: {
-    alignSelf: "flex-start",
     marginTop: 6,
+    flexDirection: "row",
+    gap: 1,
     paddingHorizontal: 8,
     paddingVertical: 2,
-    backgroundColor: "rgba(59, 130, 246, 0.15)",
     borderRadius: 6,
   },
   exMuscleTag: {
@@ -138,7 +151,7 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: "#2c2c2e",
-    marginVertical: 12,
+    marginVertical: 6,
   },
   bottomSection: {
     flexDirection: "row",

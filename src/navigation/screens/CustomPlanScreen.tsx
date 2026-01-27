@@ -1,82 +1,77 @@
-import React, { useState } from "react";
+import React, { FC, memo, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import FaIcons from "react-native-vector-icons/FontAwesome5";
 
 import { COLORS } from "../../constants/colors";
 import ExercisePicker from "../../modules/prediction/components/exercisePicker";
 import { MuscleGroup } from "../../modules/workout/vault";
-import { CustomDayPlan, Exercise } from "../../modules/workout/types";
 import SelectedExerciseItem from "../../modules/prediction/components/selectedExerciseItem";
+import NumOfDaysSelect from "../../modules/prediction/components/numOfDaysSelect";
+import { useAppDispatch, useAppSelector } from "../../redux/root";
+import {
+  removeExercise,
+  selectCreatePlanState,
+  setActiveDay,
+  setDaysCount,
+  setPickerMode,
+} from "../../redux/workout/create-plan";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../types";
 
-const CustomPlanCreator = () => {
-  const [daysCount, setDaysCount] = useState(3);
-  const [activeDay, setActiveDay] = useState(1);
-  const [plan, setPlan] = useState<CustomDayPlan[]>(
-    Array.from({ length: 7 }, (_, i) => ({ dayNumber: i + 1, exercises: [] })),
-  );
+const CustomPlanCreatorScreen: FC<
+  NativeStackScreenProps<RootStackParamList>
+> = ({ navigation }) => {
+  const { activeDay, daysCount, plan } = useAppSelector(selectCreatePlanState);
+  const dispatch = useAppDispatch();
 
   const [isModalVisible, setModalVisible] = useState(false);
-  const [pickerMode, setPickerMode] = useState<"all" | MuscleGroup>("all");
 
-  const handleSelectExercise = (exercise: Exercise) => {
-    const updatedPlan = [...plan];
-    updatedPlan[activeDay - 1].exercises.push({
-      id: exercise.id,
-      name: exercise.title,
-      muscle: exercise.primaryMuscles.join(", "),
-    });
-    setPlan(updatedPlan);
-  };
-  const handleRemoveExercise = (index: number) => {
-    const updatedPlan = [...plan];
-    updatedPlan[activeDay - 1].exercises.splice(index, 1);
-    setPlan(updatedPlan);
+  const onSave = () => {
+    const filledDays = plan
+      .slice(0, daysCount)
+      .filter((e) => Boolean(e.exercises.length));
+    const numberOfFilledDays = filledDays.length;
+    if (numberOfFilledDays < daysCount) {
+      Alert.alert(
+        `Warning!`,
+        `You have selected ${daysCount} days, but only ${numberOfFilledDays} days were filled with exercises. Unfilled day will be ignored. Do you want to proceed?`,
+        [
+          { style: "cancel", text: "cancel" },
+          {
+            text: "proceed",
+            onPress: async () => {
+              navigation.navigate("inspectPlan");
+            },
+          },
+        ],
+      );
+    } else {
+      navigation.navigate("inspectPlan");
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>
           Custom <Text style={{ color: COLORS.mainBlue }}>Builder</Text>
         </Text>
-        <TouchableOpacity style={styles.saveBtn}>
+        <TouchableOpacity onPress={onSave} style={styles.saveBtn}>
           <Text style={styles.saveBtnText}>Save Plan</Text>
         </TouchableOpacity>
       </View>
-
+      <NumOfDaysSelect
+        daysCount={daysCount}
+        setDaysCount={(c) => dispatch(setDaysCount(c))}
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* STEP 1: Frequency Selection */}
-        <View style={styles.section}>
-          <Text style={styles.label}>Frequency (Days per week)</Text>
-          <View style={styles.daysRow}>
-            {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-              <TouchableOpacity
-                key={num}
-                onPress={() => setDaysCount(num)}
-                style={[
-                  styles.dayBadge,
-                  daysCount === num && styles.dayBadgeActive,
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.dayBadgeText,
-                    daysCount === num && styles.textBlack,
-                  ]}
-                >
-                  {num}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
         <View style={styles.section}>
           <ScrollView
             horizontal
@@ -86,7 +81,7 @@ const CustomPlanCreator = () => {
             {Array.from({ length: daysCount }).map((_, i) => (
               <TouchableOpacity
                 key={i}
-                onPress={() => setActiveDay(i + 1)}
+                onPress={() => dispatch(setActiveDay(i + 1))}
                 style={[styles.tab, activeDay === i + 1 && styles.tabActive]}
               >
                 <Text
@@ -119,21 +114,19 @@ const CustomPlanCreator = () => {
               <SelectedExerciseItem
                 key={ex.id}
                 ex={ex}
-                handleRemoveExercise={() => handleRemoveExercise(index)}
+                handleRemoveExercise={() => dispatch(removeExercise(index))}
               />
             ))
           )}
           <View style={styles.addActions}>
             <ExercisePicker
               visible={isModalVisible}
-              initialMuscle={pickerMode}
               onClose={() => setModalVisible(false)}
-              onSelect={handleSelectExercise}
             />
             <TouchableOpacity
               style={styles.addBtn}
               onPress={() => {
-                setPickerMode(MuscleGroup.Chest);
+                dispatch(setPickerMode(MuscleGroup.Chest));
                 setModalVisible(true);
               }} // Picks a muscle to start with
             >
@@ -174,34 +167,10 @@ const styles = StyleSheet.create({
   },
   saveBtnText: { color: "#000", fontWeight: "bold", fontSize: 14 },
   section: { marginBottom: 25 },
-  label: {
-    color: "#71717a",
-    fontSize: 12,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-    marginBottom: 12,
-  },
   listWrapper: {
     marginVertical: 10,
     gap: 10,
   },
-  daysRow: { flexDirection: "row", justifyContent: "space-between" },
-  dayBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#18181b",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#27272a",
-  },
-  dayBadgeActive: {
-    backgroundColor: COLORS.mainBlue,
-    borderColor: COLORS.mainBlue,
-  },
-  dayBadgeText: { color: "#71717a", fontWeight: "bold" },
-  textBlack: { color: "#000" },
   textWhite: { color: COLORS.white },
   dayTabs: { flexDirection: "row" },
   tab: {
@@ -241,6 +210,7 @@ const styles = StyleSheet.create({
     height: 55,
     borderRadius: 16,
     borderWidth: 1,
+    marginBottom: 20,
     borderColor: COLORS.mainBlue,
     borderStyle: "dashed",
     flexDirection: "row",
@@ -251,4 +221,4 @@ const styles = StyleSheet.create({
   addBtnText: { color: COLORS.mainBlue, fontWeight: "bold" },
 });
 
-export default CustomPlanCreator;
+export default memo(CustomPlanCreatorScreen);

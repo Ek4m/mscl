@@ -12,6 +12,7 @@ import { errorToast } from "../../helpers/toast";
 
 import SubmitButton from "../../UI/components/submitButton";
 import Link from "../../modules/auth/components/link";
+import Input from "../../UI/form/input";
 
 const AuthScreen: FC<NativeStackScreenProps<RootStackParamList, "auth">> = ({
   navigation,
@@ -48,10 +49,8 @@ const AuthScreen: FC<NativeStackScreenProps<RootStackParamList, "auth">> = ({
           control={control}
           name="username"
           render={({ field: { onChange, value }, fieldState }) => (
-            <TextInput
-              style={styles.input}
+            <Input
               placeholder="Ex: John123"
-              placeholderTextColor="#444"
               value={value}
               onChangeText={onChange}
               {...fieldState}
@@ -63,10 +62,8 @@ const AuthScreen: FC<NativeStackScreenProps<RootStackParamList, "auth">> = ({
           control={control}
           name="password"
           render={({ field: { onChange, value }, fieldState }) => (
-            <TextInput
-              style={styles.input}
+            <Input
               placeholder="Password"
-              placeholderTextColor="#444"
               value={value}
               onChangeText={onChange}
               secureTextEntry
@@ -109,17 +106,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
     marginLeft: 4,
     marginBottom: 8,
-  },
-  input: {
-    backgroundColor: "#111",
-    borderWidth: 1,
-    borderColor: "#222",
-    height: 64,
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    color: "#fff",
-    fontSize: 16,
-    marginBottom: 20,
   },
 });
 

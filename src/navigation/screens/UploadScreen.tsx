@@ -18,7 +18,7 @@ import {
   removeFile,
   selectPredictions,
   useSendImagesMutation,
-} from "../../redux/workout/slice";
+} from "../../redux/workout/create-ai";
 import { useAppDispatch, useAppSelector } from "../../redux/root";
 import { generateImages } from "../../modules/prediction/helpers";
 

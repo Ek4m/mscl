@@ -22,7 +22,9 @@ export interface Exercise {
 export interface CustomExercise {
   id: number;
   name: string;
-  muscle?: string;
+  muscle?: MuscleGroup[];
+  sets: string;
+  reps: string;
 }
 
 export interface CustomDayPlan {

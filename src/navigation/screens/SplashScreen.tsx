@@ -6,7 +6,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import { selectUserInfo } from "../../redux/auth/slice";
 import { useAppSelector } from "../../redux/root";
-import { useGetInitialInfoQuery } from "../../redux/workout/slice";
+import { useGetInitialInfoQuery } from "../../redux/workout/create-ai";
 
 const SplashScreen: FC<
   NativeStackScreenProps<RootStackParamList, "splash">

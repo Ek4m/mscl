@@ -11,34 +11,34 @@ import {
 import FaIcons from "react-native-vector-icons/FontAwesome5";
 
 import { COLORS } from "../../../constants/colors";
-import { useAppSelector } from "../../../redux/root";
-import { selectPredictions } from "../../../redux/workout/slice";
+import { useAppDispatch, useAppSelector } from "../../../redux/root";
+import { selectPredictions } from "../../../redux/workout/create-ai";
 import { MuscleGroup, MuscleGroupTitles } from "../../workout/vault";
-import { Exercise } from "../../workout/types";
 import ExerciseAddItem from "./exerciseAddElement";
+import {
+  addExercise,
+  selectCreatePlanState,
+} from "../../../redux/workout/create-plan";
 
 interface Props {
   visible: boolean;
   onClose: () => void;
-  onSelect: (ex: Exercise) => void;
-  initialMuscle?: MuscleGroup | "all";
 }
 
-const ExercisePicker: React.FC<Props> = ({
-  visible,
-  onClose,
-  onSelect,
-  initialMuscle,
-}) => {
+const ExercisePicker: React.FC<Props> = ({ visible, onClose }) => {
+  const { activeDay, plan, pickerMode } = useAppSelector(selectCreatePlanState);
   const { exercises } = useAppSelector(selectPredictions);
+  const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const [selectedMuscle, setSelectedMuscle] = useState<MuscleGroup | "all">(
     "all",
   );
 
+  const day = plan[activeDay - 1];
+
   useEffect(() => {
-    if (initialMuscle) setSelectedMuscle(initialMuscle);
-  }, [initialMuscle]);
+    if (pickerMode) setSelectedMuscle(pickerMode);
+  }, [pickerMode]);
 
   const filteredExercises = useMemo(() => {
     return exercises.filter((ex) => {
@@ -47,9 +47,10 @@ const ExercisePicker: React.FC<Props> = ({
         .includes(search.toLowerCase());
       const matchesMuscle =
         selectedMuscle === "all" || ex.primaryMuscles.includes(selectedMuscle);
-      return matchesSearch && matchesMuscle;
+      const alreadySelected = day.exercises.some((e) => e.id === ex.id);
+      return matchesSearch && matchesMuscle && !alreadySelected;
     });
-  }, [search, selectedMuscle]);
+  }, [search, selectedMuscle, day]);
 
   return (
     <Modal
@@ -123,7 +124,7 @@ const ExercisePicker: React.FC<Props> = ({
             <ExerciseAddItem
               item={item}
               onClose={onClose}
-              onSelect={onSelect}
+              onSelect={(ex) => dispatch(addExercise(ex))}
             />
           )}
         />

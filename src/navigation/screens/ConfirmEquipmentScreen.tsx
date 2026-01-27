@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Platform,
   ScrollView,
@@ -6,22 +6,22 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+} from "react-native";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { RootStackParamList } from '../types';
-import { COLORS } from '../../constants/colors';
-import SubmitButton from '../../UI/components/submitButton';
-import { useAppDispatch, useAppSelector } from '../../redux/root';
+import { RootStackParamList } from "../types";
+import { COLORS } from "../../constants/colors";
+import SubmitButton from "../../UI/components/submitButton";
+import { useAppDispatch, useAppSelector } from "../../redux/root";
 import {
   addToSelected,
   removeFromSelectedPredictions,
   selectPredictions,
-} from '../../redux/workout/slice';
+} from "../../redux/workout/create-ai";
 
 const ConfirmEquipmentScreen: React.FC<
-  NativeStackScreenProps<RootStackParamList, 'confirmEquipments'>
+  NativeStackScreenProps<RootStackParamList, "confirmEquipments">
 > = ({
   navigation,
   route: {
@@ -32,7 +32,7 @@ const ConfirmEquipmentScreen: React.FC<
   const dispatch = useAppDispatch();
 
   const onConfirm = () => {
-    navigation.navigate('preferences');
+    navigation.navigate("preferences");
   };
 
   const toggle = (item: string) => {
@@ -56,7 +56,7 @@ const ConfirmEquipmentScreen: React.FC<
           style={styles.scrollContainer}
           contentContainerStyle={styles.scrollContent}
         >
-          {predictions.map(item => {
+          {predictions.map((item) => {
             const isSelected = selectedPredictions.indexOf(item) !== -1;
             return (
               <TouchableOpacity
@@ -94,7 +94,7 @@ const ConfirmEquipmentScreen: React.FC<
           onPress={onConfirm}
         />
         <TouchableOpacity
-          onPress={() => navigation.navigate('upload')}
+          onPress={() => navigation.navigate("upload")}
           style={styles.secondaryButton}
         >
           <Text style={styles.secondaryButtonText}>Add More Photos</Text>
@@ -107,7 +107,7 @@ const ConfirmEquipmentScreen: React.FC<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: "#000",
     paddingHorizontal: 24,
     paddingTop: 48,
     paddingBottom: 24,
@@ -116,13 +116,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   subtitle: {
-    color: '#71717a', // zinc-500
+    color: "#71717a", // zinc-500
     fontSize: 16,
     marginBottom: 32,
   },
@@ -133,30 +133,30 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 10,
     borderRadius: 10,
     borderWidth: 1,
     marginBottom: 12,
   },
   cardSelected: {
-    backgroundColor: 'rgba(6, 182, 212, 0.1)', // cyan-500/10
+    backgroundColor: "rgba(6, 182, 212, 0.1)", // cyan-500/10
     borderColor: COLORS.mainBlue,
   },
   cardUnselected: {
-    backgroundColor: '#18181b', // zinc-900
-    borderColor: '#27272a', // zinc-800
+    backgroundColor: "#18181b", // zinc-900
+    borderColor: "#27272a", // zinc-800
   },
   cardText: {
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   textSelected: {
-    color: '#fff',
+    color: "#fff",
   },
   textUnselected: {
-    color: '#71717a',
+    color: "#71717a",
   },
   footer: {
     marginTop: 32,
@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.mainBlue,
     paddingVertical: 18,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     ...Platform.select({
       ios: {
         shadowColor: COLORS.mainBlue,
@@ -180,19 +180,19 @@ const styles = StyleSheet.create({
     }),
   },
   primaryButtonText: {
-    color: '#000',
+    color: "#000",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   secondaryButton: {
     marginTop: 12,
     paddingVertical: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   secondaryButtonText: {
-    color: '#a1a1aa', // zinc-400
+    color: "#a1a1aa", // zinc-400
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

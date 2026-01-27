@@ -1,30 +1,30 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState, useEffect, FC } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useState, useEffect, FC } from "react";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 
-import { RootStackParamList } from '../types';
-import { COLORS } from '../../constants/colors';
+import { RootStackParamList } from "../types";
+import { COLORS } from "../../constants/colors";
 
-import { useAppDispatch, useAppSelector } from '../../redux/root';
+import { useAppDispatch, useAppSelector } from "../../redux/root";
 import {
   addToSelected,
   closeAnalyzing,
   selectPredictions,
-} from '../../redux/workout/slice';
+} from "../../redux/workout/create-ai";
 
 const AnalyzingScreen: FC<
-  NativeStackScreenProps<RootStackParamList, 'analyzing'>
+  NativeStackScreenProps<RootStackParamList, "analyzing">
 > = ({ navigation }) => {
-  const [message, setMessage] = useState('Scanning equipment...');
+  const [message, setMessage] = useState("Scanning equipment...");
   const dispatch = useAppDispatch();
   const { predictions, isFetching } = useAppSelector(selectPredictions);
 
   useEffect(() => {
     const messages = [
-      'Scanning equipment...',
-      'Identifying variations...',
-      'Optimizing workout logic...',
-      'Almost ready...',
+      "Scanning equipment...",
+      "Identifying variations...",
+      "Optimizing workout logic...",
+      "Almost ready...",
     ];
     let i = 0;
     const interval = setInterval(() => {
@@ -38,7 +38,7 @@ const AnalyzingScreen: FC<
     if (predictions && predictions.length > 0) {
       dispatch(closeAnalyzing());
       dispatch(addToSelected(predictions));
-      navigation.replace('confirmEquipments', { predictions });
+      navigation.replace("confirmEquipments", { predictions });
     }
   }, [isFetching, navigation, predictions, dispatch]);
 
@@ -57,23 +57,23 @@ const AnalyzingScreen: FC<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#000",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 40,
   },
   title: {
     marginTop: 32,
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
   },
   subtitle: {
     marginTop: 12,
     fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     lineHeight: 20,
   },
 });

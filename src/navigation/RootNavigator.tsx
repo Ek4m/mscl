@@ -17,11 +17,15 @@ import HomeScreen from "./screens/HomeScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import WorkoutTrackerScreen from "./screens/WorkoutTrackerScreen";
 import CustomPlanCreatorSceen from "./screens/CustomPlanScreen";
+import PlanReviewScreen from "./screens/InspectPlanScreen";
 
 import { RootStackParamList } from "./types";
+
 import { useAppSelector } from "../redux/root";
 import { selectUserInfo, useGetProfileQuery } from "../redux/auth/slice";
-import { selectPredictions } from "../redux/workout/slice";
+import { selectPredictions } from "../redux/workout/create-ai";
+
+import MainLayout from "../UI/components/layout";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -31,20 +35,28 @@ export default function RootNavigator() {
   useGetProfileQuery();
   return (
     <Stack.Navigator
+      layout={(props) => <MainLayout {...props} />}
       initialRouteName="splash"
       screenOptions={{ headerShown: false }}
     >
-      <Stack.Screen name="home" component={HomeScreen} />
-      <Stack.Screen name="splash" component={SplashScreen} />
       <Stack.Screen name="auth" component={AuthScreen} />
-      <Stack.Screen name="workoutTracker" component={WorkoutTrackerScreen} />
       <Stack.Screen name="register" component={RegisterScreen} />
-      <Stack.Screen name="customPlan" component={CustomPlanCreatorSceen} />
-      <Stack.Screen name="onboarding" component={OnboardingScreen} />
-      <Stack.Screen name="planDetails" component={PlanDetailsScreen} />
-      <Stack.Screen name="workoutSession" component={WorkoutSessionScreen} />
+      <Stack.Screen name="splash" component={SplashScreen} />
       {userInfo ? (
         <>
+          <Stack.Screen name="home" component={HomeScreen} />
+          <Stack.Screen
+            name="workoutTracker"
+            component={WorkoutTrackerScreen}
+          />
+          <Stack.Screen name="customPlan" component={CustomPlanCreatorSceen} />
+          <Stack.Screen name="inspectPlan" component={PlanReviewScreen} />
+          <Stack.Screen name="onboarding" component={OnboardingScreen} />
+          <Stack.Screen name="planDetails" component={PlanDetailsScreen} />
+          <Stack.Screen
+            name="workoutSession"
+            component={WorkoutSessionScreen}
+          />
           <Stack.Screen name="profile" component={ProfileScreen} />
           <Stack.Screen name="upload" component={UploadScreen} />
           {isFetching ? (
