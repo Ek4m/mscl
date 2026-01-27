@@ -42,6 +42,7 @@ export default function RootNavigator() {
       <Stack.Screen name="auth" component={AuthScreen} />
       <Stack.Screen name="register" component={RegisterScreen} />
       <Stack.Screen name="splash" component={SplashScreen} />
+      <Stack.Screen name="onboarding" component={OnboardingScreen} />
       {userInfo ? (
         <>
           <Stack.Screen name="home" component={HomeScreen} />
@@ -51,7 +52,6 @@ export default function RootNavigator() {
           />
           <Stack.Screen name="customPlan" component={CustomPlanCreatorSceen} />
           <Stack.Screen name="inspectPlan" component={PlanReviewScreen} />
-          <Stack.Screen name="onboarding" component={OnboardingScreen} />
           <Stack.Screen name="planDetails" component={PlanDetailsScreen} />
           <Stack.Screen
             name="workoutSession"

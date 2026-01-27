@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -17,20 +17,34 @@ import { useAppDispatch, useAppSelector } from "../../redux/root";
 import {
   selectCreatePlanState,
   setTitle,
+  useSubmitCustomPlanMutation,
 } from "../../redux/workout/create-plan";
 
 import SubmitButton from "../../UI/components/submitButton";
 import Input from "../../UI/form/input";
+import { errorToast, successToast } from "../../helpers/toast";
 
 const PlanReviewScreen: FC<NativeStackScreenProps<RootStackParamList>> = ({
   navigation,
 }) => {
+  const [submit, { isLoading }] = useSubmitCustomPlanMutation();
   const { plan, title } = useAppSelector(selectCreatePlanState);
   const dispatch = useAppDispatch();
 
   const filledPlanDays = useMemo(() => {
     return plan.filter((p) => Boolean(p.exercises.length));
   }, [plan]);
+
+  const onSubmit = async () => {
+    try {
+      const newPlan = await submit({ plan, title,  }).unwrap();
+      console.log("__NEW PLAN____",newPlan)
+      successToast("Plan created successfully!");
+      // navigation.navigate()
+    } catch (error: any) {
+      errorToast(error.data.messages);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -83,26 +97,31 @@ const PlanReviewScreen: FC<NativeStackScreenProps<RootStackParamList>> = ({
         </View>
       </ScrollView>
       <SubmitButton
+        loading={isLoading}
         bgColor={COLORS.mainBlue}
         title="Confirm & Create"
-        onPress={() => {}}
+        onPress={onSubmit}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000", paddingBottom: 10 },
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+    paddingBottom: 10,
+    padding: 16,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 30,
   },
   headerTitle: { color: "#fff", fontSize: 18, fontWeight: "bold" },
-  scrollContent: { paddingHorizontal: 20 },
+  scrollContent: {},
   section: { marginBottom: 30 },
   label: {
     color: COLORS.mainBlue,

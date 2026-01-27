@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import { View, Text, StyleSheet, TextInput, ScrollView } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Controller, useForm } from "react-hook-form";
@@ -39,7 +39,7 @@ const AuthScreen: FC<NativeStackScreenProps<RootStackParamList, "auth">> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Welcome Back</Text>
       <Text style={styles.subtitle}>Enter your credentials to continue</Text>
 
@@ -74,7 +74,7 @@ const AuthScreen: FC<NativeStackScreenProps<RootStackParamList, "auth">> = ({
         <SubmitButton loading={isLoading} title="Continue" onPress={onLogin} />
       </View>
       <Link title="Don't have an account? Sign up" screen="register" />
-    </View>
+    </ScrollView>
   );
 };
 

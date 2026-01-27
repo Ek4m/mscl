@@ -1,11 +1,12 @@
 import React, { FC } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 
 import { RootStackParamList } from "../types";
 import SubmitButton from "../../UI/components/submitButton";
 import Link from "../../modules/auth/components/link";
 import { COLORS } from "../../constants/colors";
+import { IS_SMALL } from "../../constants/vault";
 
 const OnboardingScreen: FC<
   NativeStackScreenProps<RootStackParamList, "onboarding">
@@ -46,17 +47,17 @@ const styles = StyleSheet.create({
     marginTop: 60,
   },
   heading: {
-    fontSize: 48,
+    fontSize: IS_SMALL ? 38 : 48,
     fontWeight: "900",
     color: "#fff",
     lineHeight: 56,
   },
   highlight: {
-    color: "#22d3ee",
+    color: COLORS.lightBlue,
   },
   subheading: {
     marginTop: 24,
-    fontSize: 18,
+    fontSize: IS_SMALL ? 13 : 18,
     color: "#888",
     lineHeight: 26,
   },

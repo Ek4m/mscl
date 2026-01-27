@@ -6,6 +6,7 @@ import {
   TouchableOpacityProps,
 } from "react-native";
 import React, { FC, ReactNode } from "react";
+import { IS_SMALL } from "../../constants/vault";
 
 const SubmitButton: FC<
   TouchableOpacityProps & {
@@ -58,14 +59,14 @@ export default SubmitButton;
 
 const styles = StyleSheet.create({
   button: {
-    height: 64,
+    height: IS_SMALL ? 55 : 64,
     borderRadius: 20,
-    flexDirection:"row",
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: IS_SMALL ? 16 : 18,
     fontWeight: "bold",
   },
 });

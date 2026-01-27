@@ -31,3 +31,8 @@ export interface CustomDayPlan {
   dayNumber: number;
   exercises: CustomExercise[];
 }
+
+export interface CustomPlanCredentials {
+  plan: CustomDayPlan[];
+  title: string;
+}

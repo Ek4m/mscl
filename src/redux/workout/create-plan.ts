@@ -3,7 +3,11 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 
 import axiosBaseQuery from "../baseQuery";
 import { RootState } from "../root";
-import { CustomDayPlan, Exercise } from "../../modules/workout/types";
+import {
+  CustomDayPlan,
+  CustomPlanCredentials,
+  Exercise,
+} from "../../modules/workout/types";
 import { MuscleGroup } from "../../modules/workout/vault";
 
 export interface CreatePlanState {
@@ -28,7 +32,15 @@ const initialState: CreatePlanState = {
 export const createPlanApi = createApi({
   reducerPath: "createPlanApi",
   baseQuery: axiosBaseQuery(),
-  endpoints: (builder) => ({}),
+  endpoints: (builder) => ({
+    submitCustomPlan: builder.mutation<string[], CustomPlanCredentials>({
+      query: (credentials: CustomPlanCredentials) => ({
+        url: "workout/plan/custom-create",
+        method: "post",
+        data: credentials,
+      }),
+    }),
+  }),
 });
 
 export const createPlanSlice = createSlice({
@@ -90,7 +102,7 @@ export const createPlanSlice = createSlice({
 });
 
 export const selectCreatePlanState = (state: RootState) => state.createPlan;
-
+export const { useSubmitCustomPlanMutation } = createPlanApi;
 export const {
   addExercise,
   removeExercise,
