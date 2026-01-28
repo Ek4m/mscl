@@ -18,7 +18,7 @@ const PlanListItem: FC<{ item: WorkoutPlan }> = ({ item }) => {
       <View style={styles.planCardInfo}>
         <Text style={styles.planTitle}>{item.title}</Text>
         <Text style={styles.planDetails}>
-          {item.days.length} Days • {item.days[0].title}
+          {item.days.length} Days • {item.days[0]?.title}
         </Text>
       </View>
       <View style={styles.planStatus}>

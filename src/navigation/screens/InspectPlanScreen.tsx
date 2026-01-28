@@ -37,7 +37,7 @@ const PlanReviewScreen: FC<NativeStackScreenProps<RootStackParamList>> = ({
 
   const onSubmit = async () => {
     try {
-      const newPlan = await submit({ plan, title,  }).unwrap();
+      const newPlan = await submit({ plan, title  }).unwrap();
       console.log("__NEW PLAN____",newPlan)
       successToast("Plan created successfully!");
       // navigation.navigate()
