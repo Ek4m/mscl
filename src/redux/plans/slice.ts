@@ -1,9 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { createApi } from '@reduxjs/toolkit/query/react';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createApi } from "@reduxjs/toolkit/query/react";
 
-import axiosBaseQuery from '../baseQuery';
-import { RootState } from '../root';
-import { WorkoutPlan } from '../../modules/prediction/types';
+import axiosBaseQuery from "../baseQuery";
+import { RootState } from "../root";
+import { WorkoutPlan } from "../../modules/prediction/types";
+import { CustomPlanDetails } from "../../modules/workout/types";
 
 export interface PlansState {
   plans: WorkoutPlan[];
@@ -14,34 +15,32 @@ const initialState: PlansState = {
 };
 
 export const planApi = createApi({
-  reducerPath: 'planApi',
+  reducerPath: "planApi",
   baseQuery: axiosBaseQuery(),
-  endpoints: builder => ({
+  endpoints: (builder) => ({
     getPlans: builder.query<WorkoutPlan[], void>({
-      query: () => ({ url: 'workout/plans', method: 'get' }),
+      query: () => ({ url: "workout/plans", method: "get" }),
+    }),
+    getUserCustomPlanById: builder.query<CustomPlanDetails, any>({
+      query: (id: string | number) => ({
+        url: "workout/user-plan/" + id,
+        method: "get",
+      }),
     }),
   }),
 });
 
 export const planSlice = createSlice({
-  name: 'prediction',
+  name: "prediction",
   initialState,
   reducers: {
-    reset: state => {
+    reset: (state) => {
       state.plans = [];
     },
-  },
-  extraReducers: builder => {
-    builder.addMatcher(
-      planApi.endpoints.getPlans.matchFulfilled,
-      (state, action) => {
-        state.plans = action.payload;
-      },
-    );
   },
 });
 
 export const selectPlans = (state: RootState) => state.plans;
-export const { useGetPlansQuery } = planApi;
+export const { useGetPlansQuery, useGetUserCustomPlanByIdQuery } = planApi;
 export const { reset } = planSlice.actions;
 export default planSlice.reducer;

@@ -1,3 +1,4 @@
+import { CustomPlanDayExercise, CustomPlanDetails } from "../workout/types";
 import { GymLevel } from "./enums";
 
 export interface PredictionResult {
@@ -13,7 +14,7 @@ export interface Exercise {
   notes?: string;
 }
 
-export interface ActiveExercise extends Exercise {
+export interface ActiveExercise extends CustomPlanDayExercise {
   completedSets: boolean[];
 }
 

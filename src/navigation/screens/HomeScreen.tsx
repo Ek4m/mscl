@@ -19,7 +19,7 @@ const HomeScreenv2: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
   navigation,
 }) => {
   const { data, isFetching, refetch } = useGetPlansQuery();
-
+  console.log(JSON.stringify(data))
   return (
     <View style={styles.container}>
       {/* Header */}

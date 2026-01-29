@@ -9,6 +9,7 @@ import {
   Exercise,
 } from "../../modules/workout/types";
 import { MuscleGroup } from "../../modules/workout/vault";
+import { WorkoutPlan } from "../../modules/prediction/types";
 
 export interface CreatePlanState {
   daysCount: number;
@@ -33,7 +34,10 @@ export const createPlanApi = createApi({
   reducerPath: "createPlanApi",
   baseQuery: axiosBaseQuery(),
   endpoints: (builder) => ({
-    submitCustomPlan: builder.mutation<string[], CustomPlanCredentials>({
+    submitCustomPlan: builder.mutation<
+      { customId: number; newPlan: WorkoutPlan },
+      CustomPlanCredentials
+    >({
       query: (credentials: CustomPlanCredentials) => ({
         url: "workout/plan/custom-create",
         method: "post",

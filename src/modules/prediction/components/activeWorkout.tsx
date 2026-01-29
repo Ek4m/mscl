@@ -24,10 +24,11 @@ import { selectUserInfo } from "../../../redux/auth/slice";
 import { saveWorkoutHistory } from "../../../db/services";
 import { formatTime } from "../helpers";
 import RestTimer from "./RestTimer";
+import { CustomPlanDetails } from "../../workout/types";
 
 interface ActiveWorkoutProps {
-  workoutDay: WorkoutDay;
-  plan: WorkoutPlan;
+  workoutDay: CustomPlanDetails["days"][number];
+  plan: CustomPlanDetails;
   onFinish: () => void;
   onCancel: () => void;
 }
@@ -39,9 +40,9 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   onCancel,
 }) => {
   const [exercises, setExercises] = useState<ActiveExercise[]>(
-    workoutDay.moves.map((ex) => ({
+    workoutDay.exercises.map((ex) => ({
       ...ex,
-      completedSets: new Array(ex.sets).fill(false),
+      completedSets: new Array(ex.targetSets).fill(false),
     })),
   );
   const { userInfo } = useAppSelector(selectUserInfo);

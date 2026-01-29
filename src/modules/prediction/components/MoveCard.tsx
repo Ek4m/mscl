@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { ActiveExercise } from '../types';
-import { COLORS } from '../../../constants/colors';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { ActiveExercise } from "../types";
+import { COLORS } from "../../../constants/colors";
 
 interface ExerciseCardProps {
   exercise: ActiveExercise;
@@ -17,12 +17,12 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.name}>{exercise.name}</Text>
+          <Text style={styles.name}>{exercise.exercise.title}</Text>
           <Text style={styles.stats}>
-            {exercise.sets} Sets × {exercise.reps} Reps
+            {exercise.targetSets} Sets × {exercise.targetReps} Reps
           </Text>
         </View>
-        {exercise.notes && (
+        {exercise.exercise.steps.length && (
           <TouchableOpacity
             style={styles.infoButton}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -59,9 +59,9 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
         ))}
       </View>
 
-      {exercise.notes && (
+      {exercise.exercise.description && (
         <View style={styles.footer}>
-          <Text style={styles.noteText}>Note: {exercise.notes}</Text>
+          <Text style={styles.noteText}>Note: {exercise.exercise.description}</Text>
         </View>
       )}
     </View>
@@ -70,49 +70,49 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(24, 24, 27, 0.5)',
+    backgroundColor: "rgba(24, 24, 27, 0.5)",
     borderWidth: 1,
-    borderColor: '#27272a',
+    borderColor: "#27272a",
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 16,
   },
   name: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#ffffff',
+    fontWeight: "700",
+    color: "#ffffff",
     marginBottom: 4,
   },
   stats: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#a1a1aa',
+    fontWeight: "500",
+    color: "#a1a1aa",
   },
   infoButton: {
     padding: 4,
   },
   setGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
   },
   setButton: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
   },
   setButtonPending: {
-    backgroundColor: '#27272a',
-    borderColor: '#3f3f46',
+    backgroundColor: "#27272a",
+    borderColor: "#3f3f46",
   },
   setButtonDone: {
     backgroundColor: COLORS.mainBlue,
@@ -124,24 +124,24 @@ const styles = StyleSheet.create({
   },
   setText: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   setTextPending: {
-    color: '#a1a1aa',
+    color: "#a1a1aa",
   },
   setTextDone: {
-    color: '#ffffff',
+    color: "#ffffff",
   },
   footer: {
     marginTop: 16,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(39, 39, 42, 0.5)',
+    borderTopColor: "rgba(39, 39, 42, 0.5)",
   },
   noteText: {
     fontSize: 12,
-    fontStyle: 'italic',
-    color: '#71717a',
+    fontStyle: "italic",
+    color: "#71717a",
   },
 });
 

@@ -1,7 +1,9 @@
+import { CustomPlanDetails } from "../modules/workout/types";
+
 export type RootStackParamList = {
   auth: undefined;
   register: undefined;
-  workoutTracker: { id: number; planId: number };
+  workoutTracker: { id: number; plan: CustomPlanDetails };
   splash: undefined;
   upload: undefined;
   onboarding: undefined;

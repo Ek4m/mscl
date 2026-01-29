@@ -10,7 +10,10 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AntDesignIcons from "react-native-vector-icons/AntDesign";
 
 import { useAppSelector } from "../../redux/root";
-import { selectPlans } from "../../redux/plans/slice";
+import {
+  selectPlans,
+  useGetUserCustomPlanByIdQuery,
+} from "../../redux/plans/slice";
 
 import { COLORS } from "../../constants/colors";
 import SubmitButton from "../../UI/components/submitButton";
@@ -22,15 +25,14 @@ const PlanDetailsScreen: FC<
   NativeStackScreenProps<RootStackParamList, "planDetails">
 > = ({ route, navigation }) => {
   const id = route.params?.id || 1;
-  const { plans } = useAppSelector(selectPlans);
+  const { data: plan } = useGetUserCustomPlanByIdQuery(id);
+
   const [activeIdx, setActiveIdx] = useState(0);
-  const plan = plans?.find((elem) => elem.id === id);
   const currentDay = plan?.days[activeIdx];
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-
   const onStartSession = () => {
     currentDay &&
-      navigation.navigate("workoutTracker", { id: currentDay.id, planId: id });
+      navigation.navigate("workoutTracker", { id: currentDay.id, plan });
   };
 
   return (
@@ -39,7 +41,9 @@ const PlanDetailsScreen: FC<
         <View style={styles.header}>
           <View style={styles.headerTitles}>
             <Text style={styles.title}>My Gym Plan</Text>
-            <Text style={styles.subtitle}>Ready for {currentDay?.title}?</Text>
+            <Text style={styles.subtitle}>
+              Ready for day 1{currentDay?.dayIndex}?
+            </Text>
           </View>
           <TouchableOpacity onPress={() => setIsHistoryModalOpen(true)}>
             <AntDesignIcons name="history" size={20} color={"#fff"} />
@@ -63,7 +67,7 @@ const PlanDetailsScreen: FC<
                     activeIdx === idx && styles.activeTabText,
                   ]}
                 >
-                  {day.title.split(" ")[0]}
+                  Day {idx + 1}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -74,15 +78,15 @@ const PlanDetailsScreen: FC<
           style={styles.exerciseList}
           contentContainerStyle={styles.exerciseContent}
         >
-          {currentDay?.moves.map((ex, idx) => (
+          {currentDay?.exercises.map((ex, idx) => (
             <View key={idx} style={styles.card}>
               <View style={styles.indexBox}>
                 <Text style={styles.indexText}>{idx + 1}</Text>
               </View>
               <View style={styles.cardInfo}>
-                <Text style={styles.exName}>{ex.name}</Text>
+                <Text style={styles.exName}>{ex.exercise.title}</Text>
                 <Text style={styles.exDetails}>
-                  {ex.sets} Sets × {ex.reps} Reps
+                  {ex.targetSets} Sets × {ex.targetReps} Reps
                 </Text>
               </View>
             </View>

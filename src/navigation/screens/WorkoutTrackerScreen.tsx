@@ -12,11 +12,8 @@ import { successToast } from "../../helpers/toast";
 const WorkoutTrackerScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "workoutTracker">
 > = ({ route: { params }, navigation }) => {
-  const { plans } = useAppSelector(selectPlans);
-  const activePlan = plans.find((e) => e.id === params.planId);
-  const activeWorkoutDay = plans
-    .find((elem) => params.planId === elem.id)
-    ?.days.find((e) => e.id === params.id);
+  const activePlan = params.plan;
+  const activeWorkoutDay = activePlan.days.find((d) => d.id === params.id);
 
   useFocusEffect(
     useCallback(() => {

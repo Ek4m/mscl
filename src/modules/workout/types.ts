@@ -36,3 +36,28 @@ export interface CustomPlanCredentials {
   plan: CustomDayPlan[];
   title: string;
 }
+
+export interface CustomPlanDay {
+  id: number;
+  dayIndex: number;
+  title: string | null;
+  createdAt: string;
+  exercises: CustomPlanDayExercise[];
+}
+
+export interface CustomPlanDayExercise {
+  id: number;
+  orderIndex: number;
+  targetSets: number;
+  targetReps: number;
+  createdAt: string;
+  exercise: Exercise;
+}
+
+export interface CustomPlanDetails {
+  id: number;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  days: CustomPlanDay[];
+}
