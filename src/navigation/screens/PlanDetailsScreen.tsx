@@ -9,7 +9,6 @@ import {
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AntDesignIcons from "react-native-vector-icons/AntDesign";
 
-import { useAppSelector } from "../../redux/root";
 import {
   selectPlans,
   useGetUserCustomPlanByIdQuery,
@@ -40,9 +39,9 @@ const PlanDetailsScreen: FC<
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.headerTitles}>
-            <Text style={styles.title}>My Gym Plan</Text>
+            <Text style={styles.title}>{plan?.title}</Text>
             <Text style={styles.subtitle}>
-              Ready for day 1{currentDay?.dayIndex}?
+              Ready for day {activeIdx + 1}?
             </Text>
           </View>
           <TouchableOpacity onPress={() => setIsHistoryModalOpen(true)}>

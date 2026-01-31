@@ -5,8 +5,6 @@ import { useFocusEffect } from "@react-navigation/native";
 
 import ActiveWorkout from "../../modules/prediction/components/activeWorkout";
 import { RootStackParamList } from "../types";
-import { useAppSelector } from "../../redux/root";
-import { selectPlans } from "../../redux/plans/slice";
 import { successToast } from "../../helpers/toast";
 
 const WorkoutTrackerScreen: React.FC<
