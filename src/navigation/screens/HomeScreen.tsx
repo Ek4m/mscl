@@ -26,7 +26,7 @@ const HomeScreenv2: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.heading}>
-          Workout <Text style={styles.highlight}>Hub</Text>
+        Workout <Text style={styles.highlight}>Hub</Text>
         </Text>
       </View>
 

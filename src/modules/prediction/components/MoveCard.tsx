@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
+
 import { ActiveExercise } from "../types";
 import { COLORS } from "../../../constants/colors";
 
@@ -33,23 +34,23 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
       </View>
 
       <View style={styles.setGrid}>
-        {exercise.completedSets.map((isDone, idx) => (
+        {exercise.completedSets.map((exSession, idx) => (
           <TouchableOpacity
             key={`${exercise.id}-set-${idx}`}
             onPress={() => onToggleSet(exercise.id, idx)}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             style={[
               styles.setButton,
-              isDone ? styles.setButtonDone : styles.setButtonPending,
+              exSession ? styles.setButtonDone : styles.setButtonPending,
             ]}
           >
-            {isDone ? (
+            {exSession ? (
               <AntDesign name="check" size={20} color="#ffffff" />
             ) : (
               <Text
                 style={[
                   styles.setText,
-                  isDone ? styles.setTextDone : styles.setTextPending,
+                  exSession ? styles.setTextDone : styles.setTextPending,
                 ]}
               >
                 {idx + 1}
@@ -61,7 +62,9 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
 
       {exercise.exercise.description && (
         <View style={styles.footer}>
-          <Text style={styles.noteText}>Note: {exercise.exercise.description}</Text>
+          <Text style={styles.noteText}>
+            Note: {exercise.exercise.description}
+          </Text>
         </View>
       )}
     </View>

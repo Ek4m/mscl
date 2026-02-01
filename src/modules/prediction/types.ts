@@ -1,3 +1,4 @@
+import { WorkoutSessionExercise } from "../../db/types";
 import { CustomPlanDayExercise, CustomPlanDetails } from "../workout/types";
 import { GymLevel } from "./enums";
 
@@ -15,7 +16,7 @@ export interface Exercise {
 }
 
 export interface ActiveExercise extends CustomPlanDayExercise {
-  completedSets: boolean[];
+  completedSets: (WorkoutSessionExercise | null)[];
 }
 
 export interface WorkoutDay {
@@ -33,10 +34,7 @@ export interface WorkoutPlan extends WorkoutPlanPreview {
 }
 
 export interface WorkoutHistoryCredentials {
-  planId: number;
-  userId: number;
-  dayId: number;
-  exercises: { completedSteps: number; moveId: number }[];
+  sessionId: number;
   duration: number;
 }
 
@@ -52,5 +50,5 @@ export interface GymHistoryItem {
   plan_id: number;
   day_id: number;
   duration: number;
-  created_at: string; 
+  created_at: string;
 }

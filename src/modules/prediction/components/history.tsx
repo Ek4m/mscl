@@ -5,7 +5,6 @@ import { datePrettify } from "../../../helpers/datePrettify";
 import { formatSecondsToTime } from "../../../helpers/secondsToTime";
 
 import { GymHistoryItem } from "../types";
-import { getUsersWorkoutHistory } from "../../../db/services";
 
 import { useAppSelector } from "../../../redux/root";
 import { selectUserInfo } from "../../../redux/auth/slice";
@@ -16,12 +15,7 @@ import { CustomPlanDetails } from "../../workout/types";
 const PlanUsageHistory: FC<{ plan: CustomPlanDetails }> = ({ plan }) => {
   const { userInfo } = useAppSelector(selectUserInfo);
   const [history, setHistory] = useState<GymHistoryItem[]>([]);
-
-  useEffect(() => {
-    getUsersWorkoutHistory(userInfo!.id, plan!.id).then((res) => {
-      setHistory(res);
-    });
-  }, []);
+  
 
   return (
     <View style={styles.container}>

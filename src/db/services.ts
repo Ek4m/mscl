@@ -1,43 +1,103 @@
-import {
-  GymHistoryItem,
-  WorkoutHistoryCredentials,
-} from "../modules/prediction/types";
 import { db } from "./config";
+import {
+  DROP_WORKOUT_EXERCISE_TABLE,
+  DROP_WORKOUT_SESSION_TABLE,
+  COMPLETE_WORKOUT_SESSION,
+  DELETE_WORKOUT_EXERCISE,
+  INSERT_WORKOUT_EXERCISE,
+  INSERT_WORKOUT_SESSION,
+  SELECT_WORKOUT_EXERCISE_BY_ID,
+  SELECT_WORKOUT_EXERCISES_BY_SESSION_ID,
+  SELECT_WORKOUT_SESSION_FOR_DAY,
+} from "./queries";
+import { WorkoutSessionExercise } from "./types";
 
-export async function saveWorkoutHistory(
-  data: WorkoutHistoryCredentials,
-): Promise<number> {
+export function insertOrCreateWorkoutSession(
+  userId: number,
+  userPlanId: number,
+  planDayId: number,
+) {
+  console.log(
+    "USER ID:",
+    userId,
+    "USER PLAN ID",
+    userPlanId,
+    "PLAN DAY ID",
+    planDayId,
+  );
+  const existing = db.getFirstSync<{
+    id: number;
+  }>(SELECT_WORKOUT_SESSION_FOR_DAY, [userId, userPlanId, planDayId]);
+  console.log("___EXISTING",existing)
+  if (existing?.id) return existing.id;
+  const result = db.runSync(INSERT_WORKOUT_SESSION, [
+    userId,
+    userPlanId,
+    planDayId,
+  ]);
+  return result.lastInsertRowId;
+}
+
+export function clearWorkoutDbDev() {
+  if (!__DEV__) {
+    console.warn("Clearing workout db blocked outside dev mode");
+    return;
+  }
   try {
-    let workoutId: number | null = null;
-
-    await db.withTransactionAsync(async () => {
-      const result = await db.runAsync(
-        `INSERT INTO workout_history (plan_id, user_id, day_id, duration) VALUES (?, ?, ?, ?)`,
-        [data.planId, data.userId, data.dayId, data.duration],
-      );
-      workoutId = result.lastInsertRowId;
-      for (const exercise of data.exercises) {
-        await db.runAsync(
-          `INSERT INTO workout_history_exercises (workout_history_id, move_id, completed_steps) VALUES (?, ?, ?)`,
-          [workoutId, exercise.moveId, exercise.completedSteps],
-        );
-      }
-    });
-    if (workoutId === null) throw new Error("Failed to retrieve workout ID");
-    console.log(`Workout history saved with ID: ${workoutId}`);
-    return workoutId;
-  } catch (error) {
-    console.error("Error saving workout history:", error);
-    throw error;
+    db.execSync(DROP_WORKOUT_SESSION_TABLE);
+    db.execSync(DROP_WORKOUT_EXERCISE_TABLE);
+    console.log("🧹 DEV: Workout DB cleared");
+  } catch (err) {
+    console.error("❌ DEV: Failed to clear workout DB", err);
+    throw err;
   }
 }
 
-export const getUsersWorkoutHistory = async (
-  userId: number,
-  planId: number,
-): Promise<GymHistoryItem[]> => {
-  const response: GymHistoryItem[] = await db.getAllAsync(
-    `SELECT * from workout_history WHERE user_id=${userId} AND plan_id=${planId}`,
+export function getWorkoutExercises(
+  workoutSessionId: number,
+): WorkoutSessionExercise[] {
+  return db.getAllSync<WorkoutSessionExercise>(
+    SELECT_WORKOUT_EXERCISES_BY_SESSION_ID,
+    [workoutSessionId],
   );
-  return response;
-};
+}
+
+export function getWorkoutExerciseByid(
+  exerciseId: number,
+): WorkoutSessionExercise | null {
+  return db.getFirstSync<WorkoutSessionExercise>(
+    SELECT_WORKOUT_EXERCISE_BY_ID,
+    exerciseId,
+  );
+}
+
+export function createWorkoutExercise(
+  workoutSessionId: number,
+  planDayExerciseId: number,
+  exerciseId: number,
+  orderIndex: number,
+) {
+  const result = db.runSync(INSERT_WORKOUT_EXERCISE, [
+    workoutSessionId,
+    planDayExerciseId,
+    exerciseId,
+    orderIndex,
+  ]);
+  return getWorkoutExerciseByid(result.lastInsertRowId);
+}
+
+export function removeWorkoutExercise(exerciseId: number) {
+  const result = db.runSync(DELETE_WORKOUT_EXERCISE, [exerciseId]);
+  return result.changes;
+}
+
+export function finishWorkoutSession(
+  workoutSessionId: number,
+  duration: number,
+): number {
+  const result = db.runSync(COMPLETE_WORKOUT_SESSION, [
+    duration,
+    workoutSessionId,
+  ]);
+  return result.changes;
+}

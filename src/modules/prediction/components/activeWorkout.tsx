@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  memo,
+  Dispatch,
+} from "react";
 import {
   View,
   Text,
@@ -10,25 +17,28 @@ import {
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 
-import {
-  WorkoutDay,
-  WorkoutHistoryCredentials,
-  ActiveExercise,
-  WorkoutPlan,
-} from "../types";
+import { WorkoutHistoryCredentials, ActiveExercise } from "../types";
 import ExerciseCard from "./MoveCard";
 import SubmitButton from "../../../UI/components/submitButton";
 import { COLORS } from "../../../constants/colors";
 import { useAppSelector } from "../../../redux/root";
 import { selectUserInfo } from "../../../redux/auth/slice";
-import { saveWorkoutHistory } from "../../../db/services";
 import { formatTime } from "../helpers";
 import RestTimer from "./RestTimer";
 import { CustomPlanDetails } from "../../workout/types";
+import { WorkoutSessionExercise } from "../../../db/types";
+import {
+  createWorkoutExercise,
+  finishWorkoutSession,
+  removeWorkoutExercise,
+} from "../../../db/services";
 
 interface ActiveWorkoutProps {
   workoutDay: CustomPlanDetails["days"][number];
   plan: CustomPlanDetails;
+  exercises: ActiveExercise[];
+  sessionId: number;
+  setExercises: Dispatch<React.SetStateAction<ActiveExercise[]>>;
   onFinish: () => void;
   onCancel: () => void;
 }
@@ -36,15 +46,12 @@ interface ActiveWorkoutProps {
 const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   workoutDay,
   plan,
+  sessionId,
   onFinish,
+  exercises,
+  setExercises,
   onCancel,
 }) => {
-  const [exercises, setExercises] = useState<ActiveExercise[]>(
-    workoutDay.exercises.map((ex) => ({
-      ...ex,
-      completedSets: new Array(ex.targetSets).fill(false),
-    })),
-  );
   const { userInfo } = useAppSelector(selectUserInfo);
   const [workoutSeconds, setWorkoutSeconds] = useState(0);
   const [restSeconds, setRestSeconds] = useState(0);
@@ -79,16 +86,26 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   }, [isResting, restSeconds]);
 
   const handleToggleSet = useCallback(
-    (exerciseId: number, setIndex: number) => {
+    (exerciseId: number, index: number) => {
       setExercises((prev) =>
         prev.map((ex) => {
           if (ex.id === exerciseId) {
             const newSets = [...ex.completedSets];
-            const wasDone = newSets[setIndex];
-            newSets[setIndex] = !wasDone;
-            if (!wasDone) {
+            const doneExercise = newSets[index];
+            const exercise = exercises.find((ex) => ex.id === exerciseId);
+            if (!doneExercise) {
+              const created = createWorkoutExercise(
+                sessionId,
+                exerciseId,
+                exercise!.exercise.id,
+                index,
+              );
+              newSets[index] = created;
               setRestSeconds(60);
               setIsResting(true);
+            } else {
+              removeWorkoutExercise(doneExercise.id);
+              newSets[index] = null;
             }
             return { ...ex, completedSets: newSets };
           }
@@ -96,25 +113,12 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
         }),
       );
     },
-    [],
+    [sessionId, setExercises],
   );
   const handleFinish = async () => {
     const saveSession = async () => {
-      const historyEntry: WorkoutHistoryCredentials = {
-        dayId: workoutDay.id,
-        duration: workoutSeconds,
-        planId: plan.id,
-        userId: userInfo!.id,
-        exercises: exercises.map((elem) => ({
-          completedSteps: elem.completedSets.reduce(
-            (prev, curr) => prev + (curr ? 1 : 0),
-            0,
-          ),
-          moveId: elem.id,
-        })),
-      };
-      const success = await saveWorkoutHistory(historyEntry);
-      if (success) onFinish();
+      finishWorkoutSession(sessionId, workoutSeconds);
+      onFinish();
     };
     Alert.alert("Finish Workout", "Ready to log your session?", [
       { text: "Cancel", style: "cancel" },
@@ -132,9 +136,11 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <IonIcons name="chevron-back" size={20} color="#71717a" />
-            <Text style={styles.backText}>Cancel</Text>
+            <Text style={styles.backText}>
+              {__DEV__ ? "REMOVE DB" : "Cancel"}
+            </Text>
           </TouchableOpacity>
-          <Text style={styles.title}>{workoutDay.title}</Text>
+          <Text style={styles.title}>{plan.title}</Text>
           <Text style={styles.subtitle}>{plan.title}</Text>
         </View>
         <View style={styles.timerContainer}>
@@ -267,7 +273,7 @@ const styles = StyleSheet.create({
     borderColor: "#27272a",
   },
   finishButton: {
-    backgroundColor: "#ffffff",
+    backgroundColor: COLORS.white,
     paddingVertical: 16,
     borderRadius: 16,
     flexDirection: "row",
@@ -284,4 +290,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActiveWorkout;
+export default memo(ActiveWorkout);
