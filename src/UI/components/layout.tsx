@@ -14,6 +14,8 @@ import {
 
 import { RootStackParamList } from "../../navigation/types";
 import { COLORS } from "../../constants/colors";
+import { useAppSelector } from "../../redux/root";
+import { selectUserInfo } from "../../redux/auth/slice";
 
 interface MainLayoutProps {
   navigation: NavigationHelpers<RootStackParamList>;
@@ -23,55 +25,60 @@ interface MainLayoutProps {
 
 const MainLayout: FC<MainLayoutProps> = ({ navigation, children, state }) => {
   const activeRouteName = state.routes[state.index].name;
+  const { userInfo } = useAppSelector(selectUserInfo);
   return (
     <View style={styles.container}>
       <View style={styles.main}>{children}</View>
 
-      <View style={styles.tabBarWrapper}>
-        <View style={styles.tabBar}>
-          <TouchableOpacity
-            style={styles.tabItem}
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate("home")}
-          >
-            <IonIcons
-              name={activeRouteName === "home" ? "home" : "home-outline"}
-              size={24}
-              color={activeRouteName === "home" ? COLORS.mainBlue : "#71717a"}
-            />
-            <Text
-              style={[
-                styles.tabLabel,
-                activeRouteName === "home" && styles.activeLabel,
-              ]}
+      {userInfo && (
+        <View style={styles.tabBarWrapper}>
+          <View style={styles.tabBar}>
+            <TouchableOpacity
+              style={styles.tabItem}
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate("home")}
             >
-              Home
-            </Text>
-          </TouchableOpacity>
+              <IonIcons
+                name={activeRouteName === "home" ? "home" : "home-outline"}
+                size={24}
+                color={activeRouteName === "home" ? COLORS.mainBlue : "#71717a"}
+              />
+              <Text
+                style={[
+                  styles.tabLabel,
+                  activeRouteName === "home" && styles.activeLabel,
+                ]}
+              >
+                Home
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.tabItem}
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate("profile")}
-          >
-            <IonIcons
-              name={activeRouteName === "profile" ? "person" : "person-outline"}
-              size={24}
-              color={
-                activeRouteName === "profile" ? COLORS.mainBlue : "#71717a"
-              }
-            />
-            <Text
-              style={[
-                styles.tabLabel,
-                activeRouteName === "profile" && styles.activeLabel,
-              ]}
+            <TouchableOpacity
+              style={styles.tabItem}
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate("profile")}
             >
-              Profile
-            </Text>
-          </TouchableOpacity>
+              <IonIcons
+                name={
+                  activeRouteName === "profile" ? "person" : "person-outline"
+                }
+                size={24}
+                color={
+                  activeRouteName === "profile" ? COLORS.mainBlue : "#71717a"
+                }
+              />
+              <Text
+                style={[
+                  styles.tabLabel,
+                  activeRouteName === "profile" && styles.activeLabel,
+                ]}
+              >
+                Profile
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      )}
     </View>
   );
 };

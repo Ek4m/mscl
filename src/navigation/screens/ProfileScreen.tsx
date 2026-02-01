@@ -1,31 +1,58 @@
-import React from 'react';
+import React from "react";
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+} from "react-native";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { COLORS } from '../../constants/colors';
-import { RootStackParamList } from '../types';
-import { useAppDispatch, useAppSelector } from '../../redux/root';
-import { logout, selectUserInfo } from '../../redux/auth/slice';
-import { ACCESS_TOKEN } from '../../constants/vault';
+import { COLORS } from "../../constants/colors";
+import { RootStackParamList } from "../types";
+import { useAppDispatch, useAppSelector } from "../../redux/root";
+import {
+  logout,
+  selectUserInfo,
+  useFreezeAccountMutation,
+} from "../../redux/auth/slice";
+import { ACCESS_TOKEN } from "../../constants/vault";
 
 const ProfileScreen: React.FC<
-  NativeStackScreenProps<RootStackParamList, 'profile'>
+  NativeStackScreenProps<RootStackParamList, "profile">
 > = ({ navigation }) => {
   const { userInfo } = useAppSelector(selectUserInfo);
   const dispatch = useAppDispatch();
+  const [freezeAccount, { isLoading }] = useFreezeAccountMutation();
 
   const onLogout = async () => {
     await AsyncStorage.removeItem(ACCESS_TOKEN);
     dispatch(logout());
-    navigation.navigate('auth');
+    navigation.navigate("auth");
+  };
+
+  const onFreeze = () => {
+    const innerFreeze = async () => {
+      await freezeAccount().unwrap();
+      onLogout();
+    };
+    Alert.alert(
+      "Warning!",
+      "Are you sure to delete your account? After that you will have to contact us for account activation.",
+      [
+        {
+          style: "cancel",
+          text:"cancel",
+        },
+        {
+          text: "Delete",
+          onPress: innerFreeze,
+        },
+      ],
+    );
   };
 
   return (
@@ -38,7 +65,7 @@ const ProfileScreen: React.FC<
           <FontAwesome name="user" size={28} color="#fff" />
         </View>
 
-        <Text style={styles.emailText}>{userInfo?.email || 'Guest User'}</Text>
+        <Text style={styles.emailText}>{userInfo?.email || "Guest User"}</Text>
 
         <View style={styles.badgeRow}>
           <View style={styles.statusDot} />
@@ -76,7 +103,7 @@ const ProfileScreen: React.FC<
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.deleteButton}>
+      <TouchableOpacity onPress={onFreeze} style={styles.deleteButton}>
         <Text style={styles.deleteButtonText}>Delete Account</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -88,7 +115,7 @@ export default ProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
   contentContainer: {
     paddingHorizontal: 24,
@@ -96,28 +123,28 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 40,
   },
   avatarContainer: {
     width: 96,
     height: 96,
-    backgroundColor: '#18181b',
+    backgroundColor: "#18181b",
     borderRadius: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#27272a',
+    borderColor: "#27272a",
   },
   emailText: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   badgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 8,
   },
   statusDot: {
@@ -129,33 +156,33 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 10,
-    fontWeight: 'bold',
-    color: '#71717a',
-    textTransform: 'uppercase',
+    fontWeight: "bold",
+    color: "#71717a",
+    textTransform: "uppercase",
     letterSpacing: 1.5,
   },
   card: {
-    backgroundColor: '#18181b',
+    backgroundColor: "#18181b",
     borderWidth: 1,
-    borderColor: '#27272a',
+    borderColor: "#27272a",
     borderRadius: 32,
     padding: 24,
     marginBottom: 16,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 24,
   },
   rowLabel: {
     fontSize: 16,
-    color: '#a1a1aa',
-    fontWeight: '500',
+    color: "#a1a1aa",
+    fontWeight: "500",
   },
   manageText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: COLORS.lightBlue,
   },
   switchBg: {
@@ -164,42 +191,42 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.mainBlue,
     borderRadius: 12,
     padding: 4,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
   switchCircle: {
     width: 16,
     height: 16,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 8,
   },
   unitText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   logoutButton: {
-    backgroundColor: '#18181b',
+    backgroundColor: "#18181b",
     borderWidth: 1,
-    borderColor: '#27272a',
+    borderColor: "#27272a",
     borderRadius: 24,
     height: 64,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 16,
   },
   logoutButtonText: {
-    color: '#a1a1aa',
-    fontWeight: 'bold',
+    color: "#a1a1aa",
+    fontWeight: "bold",
     fontSize: 18,
   },
   deleteButton: {
     paddingVertical: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   deleteButtonText: {
-    color: 'rgba(127, 29, 29, 0.5)',
-    fontWeight: 'bold',
+    color: "rgba(127, 29, 29, 0.5)",
+    fontWeight: "bold",
     fontSize: 14,
   },
 });

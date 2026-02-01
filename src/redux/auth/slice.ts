@@ -1,14 +1,14 @@
-import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { createApi } from '@reduxjs/toolkit/query/react';
+import { createSlice, isAnyOf } from "@reduxjs/toolkit";
+import { createApi } from "@reduxjs/toolkit/query/react";
 
-import axiosBaseQuery from '../baseQuery';
+import axiosBaseQuery from "../baseQuery";
 import {
   AuthResult,
   AuthUser,
   LoginCredentials,
   RegisterCredentials,
-} from '../../modules/auth/types';
-import { RootState } from '../root';
+} from "../../modules/auth/types";
+import { RootState } from "../root";
 
 export interface AuthSliceState {
   userInfo?: AuthUser;
@@ -21,38 +21,44 @@ const initialState: AuthSliceState = {
 };
 
 export const authApi = createApi({
-  reducerPath: 'authApi',
+  reducerPath: "authApi",
   baseQuery: axiosBaseQuery(),
-  endpoints: builder => ({
-    getProfile: builder.query<{user: AuthUser}, void>({
-      query: () => ({ url: 'auth/profile', method: 'get' }),
+  endpoints: (builder) => ({
+    getProfile: builder.query<{ user: AuthUser }, void>({
+      query: () => ({ url: "auth/profile", method: "get" }),
     }),
     login: builder.mutation<AuthResult, LoginCredentials>({
       query: (credentials: LoginCredentials) => ({
-        url: 'auth/login',
-        method: 'post',
+        url: "auth/login",
+        method: "post",
         data: credentials,
       }),
     }),
     register: builder.mutation<AuthResult, RegisterCredentials>({
       query: (credentials: RegisterCredentials) => ({
-        url: 'auth/register',
-        method: 'post',
+        url: "auth/register",
+        method: "post",
         data: credentials,
+      }),
+    }),
+    freezeAccount: builder.mutation<boolean, void>({
+      query: () => ({
+        url: "auth/freeze",
+        method: "delete",
       }),
     }),
   }),
 });
 
 export const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
-    logout: state => {
+    logout: (state) => {
       state.userInfo = undefined;
     },
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder.addMatcher(
       isAnyOf(
         authApi.endpoints.login.matchFulfilled,
@@ -62,7 +68,7 @@ export const authSlice = createSlice({
         state.userInfo = action.payload.user;
       },
     );
-    builder.addMatcher(authApi.endpoints.getProfile.matchPending, state => {
+    builder.addMatcher(authApi.endpoints.getProfile.matchPending, (state) => {
       state.isFetching = true;
     });
     builder.addMatcher(
@@ -72,14 +78,18 @@ export const authSlice = createSlice({
         state.isFetching = false;
       },
     );
-    builder.addMatcher(authApi.endpoints.getProfile.matchRejected, state => {
+    builder.addMatcher(authApi.endpoints.getProfile.matchRejected, (state) => {
       state.isFetching = false;
     });
   },
 });
 
 export const selectUserInfo = (state: RootState) => state.auth;
-export const { useGetProfileQuery, useLoginMutation, useRegisterMutation } =
-  authApi;
+export const {
+  useGetProfileQuery,
+  useLoginMutation,
+  useRegisterMutation,
+  useFreezeAccountMutation,
+} = authApi;
 export const { logout } = authSlice.actions;
 export default authSlice.reducer;
