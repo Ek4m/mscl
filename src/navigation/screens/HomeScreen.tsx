@@ -11,10 +11,13 @@ import {
 import { RootStackParamList } from "../types";
 import { COLORS } from "../../constants/colors";
 import { useGetPlansQuery } from "../../redux/plans/slice";
-import { WorkoutPlan } from "../../modules/prediction/types";
 import ActionCard from "../../modules/prediction/components/actionCard";
 import PlanListItem from "../../modules/prediction/components/planListItem";
 import { CustomPlanDetails } from "../../modules/workout/types";
+
+const AILogo = require("../../../assets/ai.png");
+const CustomLogo = require("../../../assets/custom.png");
+const PremadeLogo = require("../../../assets/premade.png");
 
 const HomeScreenv2: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
   navigation,
@@ -23,10 +26,9 @@ const HomeScreenv2: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.heading}>
-        Workout <Text style={styles.highlight}>Hub</Text>
+          Workout <Text style={styles.highlight}>Hub</Text>
         </Text>
       </View>
 
@@ -45,14 +47,14 @@ const HomeScreenv2: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
           <ActionCard
             title="AI Architect"
             subtitle="Build gym plan with AI"
-            icon="magic"
+            icon={AILogo}
             color={COLORS.mainBlue}
             onPress={() => navigation.navigate("upload")}
           />
           <ActionCard
             title="Premade"
             subtitle="Pro-made gym plans"
-            icon="layer-group"
+            icon={PremadeLogo}
             color={COLORS.purple}
             onPress={() => {
               /* Navigate to new Library Screen */
@@ -61,7 +63,7 @@ const HomeScreenv2: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
           <ActionCard
             title="Custom"
             subtitle="Manual Build"
-            icon="pen-nib"
+            icon={CustomLogo}
             color={COLORS.green}
             onPress={() => navigation.navigate("customPlan")}
           />

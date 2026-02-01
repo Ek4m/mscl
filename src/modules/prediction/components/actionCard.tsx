@@ -1,10 +1,9 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { FC } from "react";
-import FaIcons from "react-native-vector-icons/FontAwesome5";
 
 const ActionCard: FC<{
   title: string;
-  icon: string;
+  icon: any;
   subtitle: string;
   onPress: () => void;
   color: string;
@@ -15,7 +14,7 @@ const ActionCard: FC<{
     activeOpacity={0.8}
   >
     <View style={[styles.iconContainer, { backgroundColor: `${color}20` }]}>
-      <FaIcons name={icon} size={20} color={color} />
+      <Image style={styles.image} source={icon} />
     </View>
     <View>
       <Text style={styles.actionTitle}>{title}</Text>
@@ -37,12 +36,17 @@ const styles = StyleSheet.create({
     borderColor: "#222",
     gap: 16,
   },
+  image: {
+    width: 75,
+    height: 75,
+  },
   iconContainer: {
-    width: 48,
-    height: 48,
+    width: 50,
+    height: 50,
     borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
+    overflow:"hidden"
   },
   actionTitle: {
     color: "#fff",
