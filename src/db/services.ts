@@ -9,26 +9,18 @@ import {
   SELECT_WORKOUT_EXERCISE_BY_ID,
   SELECT_WORKOUT_EXERCISES_BY_SESSION_ID,
   SELECT_WORKOUT_SESSION_FOR_DAY,
+  GET_WORKOUT_SESSIONS_BY_USER,
 } from "./queries";
-import { WorkoutSessionExercise } from "./types";
+import { WorkoutSession, WorkoutSessionExercise } from "./types";
 
 export function insertOrCreateWorkoutSession(
   userId: number,
   userPlanId: number,
   planDayId: number,
 ) {
-  console.log(
-    "USER ID:",
-    userId,
-    "USER PLAN ID",
-    userPlanId,
-    "PLAN DAY ID",
-    planDayId,
-  );
   const existing = db.getFirstSync<{
     id: number;
   }>(SELECT_WORKOUT_SESSION_FOR_DAY, [userId, userPlanId, planDayId]);
-  console.log("___EXISTING",existing)
   if (existing?.id) return existing.id;
   const result = db.runSync(INSERT_WORKOUT_SESSION, [
     userId,
@@ -100,4 +92,11 @@ export function finishWorkoutSession(
     workoutSessionId,
   ]);
   return result.changes;
+}
+
+export function getWorkoutSessionsByUser(
+  userId: number,
+  planId: number,
+): WorkoutSession[] {
+  return db.getAllSync(GET_WORKOUT_SESSIONS_BY_USER, [userId, planId]);
 }

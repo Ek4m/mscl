@@ -43,12 +43,3 @@ export interface GenPlanCredentials {
   level: GymLevel;
   numOfDays: number;
 }
-
-export interface GymHistoryItem {
-  id: number;
-  user_id: number;
-  plan_id: number;
-  day_id: number;
-  duration: number;
-  created_at: string;
-}

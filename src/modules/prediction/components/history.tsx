@@ -4,18 +4,21 @@ import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
 import { datePrettify } from "../../../helpers/datePrettify";
 import { formatSecondsToTime } from "../../../helpers/secondsToTime";
 
-import { GymHistoryItem } from "../types";
-
 import { useAppSelector } from "../../../redux/root";
 import { selectUserInfo } from "../../../redux/auth/slice";
 
 import { COLORS } from "../../../constants/colors";
 import { CustomPlanDetails } from "../../workout/types";
+import { getWorkoutSessionsByUser } from "../../../db/services";
+import { WorkoutSession } from "../../../db/types";
 
 const PlanUsageHistory: FC<{ plan: CustomPlanDetails }> = ({ plan }) => {
   const { userInfo } = useAppSelector(selectUserInfo);
-  const [history, setHistory] = useState<GymHistoryItem[]>([]);
-  
+  const [history, setHistory] = useState<WorkoutSession[]>([]);
+
+  useEffect(() => {
+    if (userInfo) setHistory(getWorkoutSessionsByUser(userInfo.id, plan.id));
+  }, [userInfo]);
 
   return (
     <View style={styles.container}>
@@ -28,7 +31,9 @@ const PlanUsageHistory: FC<{ plan: CustomPlanDetails }> = ({ plan }) => {
         contentContainerStyle={styles.listContent}
       >
         {history.map((item, idx) => {
-          const workoutDay = plan.days.find((elem) => elem.id === item.day_id);
+          const workoutDayIndex = plan.days.findIndex(
+            (elem) => elem.id === item.plan_day_id,
+          );
           return (
             <View key={item.id} style={styles.card}>
               <View style={styles.indexBox}>
@@ -36,12 +41,12 @@ const PlanUsageHistory: FC<{ plan: CustomPlanDetails }> = ({ plan }) => {
               </View>
 
               <View style={styles.cardInfo}>
-                <Text style={styles.cardTitle}>{workoutDay?.title}</Text>
+                <Text style={styles.cardTitle}>Day {workoutDayIndex + 1}</Text>
                 <Text style={styles.cardDetails}>
-                  ⏱ {formatSecondsToTime(item.duration)}
+                  ⏱ {formatSecondsToTime(item.seconds)}
                 </Text>
                 <Text style={styles.cardDetails}>
-                  {datePrettify(item.created_at)}
+                  {datePrettify(item.finished_at)}
                 </Text>
               </View>
             </View>
@@ -66,11 +71,11 @@ export default PlanUsageHistory;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "80%",
+    width: "95%",
     maxHeight: Dimensions.get("screen").height / 2,
     backgroundColor: "#292828",
     paddingHorizontal: 24,
-    borderRadius: 20,
+    borderRadius: 10,
   },
   header: {
     paddingTop: 20,
@@ -120,7 +125,7 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   cardDetails: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#666",
     marginTop: 4,
     textTransform: "uppercase",

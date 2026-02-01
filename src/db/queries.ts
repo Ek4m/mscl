@@ -83,6 +83,13 @@ export const DELETE_WORKOUT_EXERCISE = `
     WHERE id = ?
     `;
 
+export const GET_WORKOUT_SESSIONS_BY_USER = `
+      SELECT * FROM workout_sessions WHERE
+        user_id = ? AND 
+        completed = 1 AND 
+        user_plan_id = ?
+    `;
+
 export const DROP_WORKOUT_SESSION_TABLE =
   "DROP TABLE IF EXISTS workout_sessions;";
 
