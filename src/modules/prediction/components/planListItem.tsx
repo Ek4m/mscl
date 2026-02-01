@@ -3,11 +3,12 @@ import React, { FC } from "react";
 import FaIcons from "react-native-vector-icons/FontAwesome5";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 
-import { WorkoutPlan } from "../types";
 import { RootStackParamList } from "../../../navigation/types";
 import { COLORS } from "../../../constants/colors";
+import { CustomPlanDetails } from "../../workout/types";
+import { datePrettify } from "../../../helpers/datePrettify";
 
-const PlanListItem: FC<{ item: WorkoutPlan }> = ({ item }) => {
+const PlanListItem: FC<{ item: CustomPlanDetails }> = ({ item }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   return (
     <TouchableOpacity
@@ -18,7 +19,7 @@ const PlanListItem: FC<{ item: WorkoutPlan }> = ({ item }) => {
       <View style={styles.planCardInfo}>
         <Text style={styles.planTitle}>{item.title}</Text>
         <Text style={styles.planDetails}>
-          {item.days?.length} Days • {item.days[0]?.title}
+          {item.days?.length} Days (created: {datePrettify(item.createdAt)})
         </Text>
       </View>
       <View style={styles.planStatus}>
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
   planTitle: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#fff",
+    color: COLORS.white,
   },
   planDetails: {
     fontSize: 13,

@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import axiosBaseQuery from "../baseQuery";
@@ -18,7 +18,7 @@ export const planApi = createApi({
   reducerPath: "planApi",
   baseQuery: axiosBaseQuery(),
   endpoints: (builder) => ({
-    getPlans: builder.query<WorkoutPlan[], void>({
+    getPlans: builder.query<CustomPlanDetails[], void>({
       query: () => ({ url: "workout/plans", method: "get" }),
     }),
     getUserCustomPlanById: builder.query<CustomPlanDetails, any>({

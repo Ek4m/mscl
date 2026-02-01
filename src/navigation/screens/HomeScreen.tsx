@@ -14,6 +14,7 @@ import { useGetPlansQuery } from "../../redux/plans/slice";
 import { WorkoutPlan } from "../../modules/prediction/types";
 import ActionCard from "../../modules/prediction/components/actionCard";
 import PlanListItem from "../../modules/prediction/components/planListItem";
+import { CustomPlanDetails } from "../../modules/workout/types";
 
 const HomeScreenv2: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
   navigation,
@@ -71,7 +72,7 @@ const HomeScreenv2: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
           <Text style={styles.countBadge}>{data?.length || 0}</Text>
         </View>
 
-        {data?.map((item: WorkoutPlan) => (
+        {data?.map((item: CustomPlanDetails) => (
           <PlanListItem item={item} key={item.id} />
         ))}
       </ScrollView>
