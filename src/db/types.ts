@@ -4,6 +4,7 @@ export type WorkoutSessionExercise = {
   plan_day_exercise_id: number;
   exercise_id: number;
   order_index: number;
+  created_at: string;
 };
 
 export interface WorkoutSession {

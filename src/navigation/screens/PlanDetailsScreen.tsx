@@ -1,38 +1,62 @@
-import React, { FC, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AntDesignIcons from "react-native-vector-icons/AntDesign";
 
-import {
-  selectPlans,
-  useGetUserCustomPlanByIdQuery,
-} from "../../redux/plans/slice";
+import { useGetUserCustomPlanByIdQuery } from "../../redux/plans/slice";
 
 import { COLORS } from "../../constants/colors";
 import SubmitButton from "../../UI/components/submitButton";
 import { RootStackParamList } from "../types";
 import Modal from "../../UI/components/modal";
 import PlanUsageHistory from "../../modules/prediction/components/history";
+import { getWorkoutSessionsByUser } from "../../db/services";
+import { useAppSelector } from "../../redux/root";
+import { selectUserInfo } from "../../redux/auth/slice";
 
 const PlanDetailsScreen: FC<
   NativeStackScreenProps<RootStackParamList, "planDetails">
 > = ({ route, navigation }) => {
   const id = route.params?.id || 1;
-  const { data: plan } = useGetUserCustomPlanByIdQuery(id);
-
+  const { data: plan, isFetching, refetch } = useGetUserCustomPlanByIdQuery(id);
+  const { userInfo } = useAppSelector(selectUserInfo);
   const [activeIdx, setActiveIdx] = useState(0);
   const currentDay = plan?.days[activeIdx];
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [indexForNextDay, setIndexForNextDay] = useState(0);
+
   const onStartSession = () => {
     currentDay &&
       navigation.navigate("workoutTracker", { id: currentDay.id, plan });
   };
+
+  const sessions = useMemo(
+    () => getWorkoutSessionsByUser(userInfo?.id!, id),
+    [id, userInfo],
+  );
+
+  const calculateIndex = useCallback(() => {
+    if (!plan || !sessions || !sessions.length) return 0;
+    const latestSession = sessions[0];
+    const index = plan.days.findIndex(
+      (d) => d.id === latestSession.plan_day_id,
+    );
+    if (index === plan.days.length - 1) return 0;
+    return index + 1 || 0;
+  }, [sessions, plan]);
+
+  useEffect(() => {
+    const nextIndex = calculateIndex();
+    setIndexForNextDay(nextIndex);
+    setActiveIdx(nextIndex);
+  }, [calculateIndex]);
 
   return (
     <>
@@ -41,7 +65,7 @@ const PlanDetailsScreen: FC<
           <View style={styles.headerTitles}>
             <Text style={styles.title}>{plan?.title}</Text>
             <Text style={styles.subtitle}>
-              Ready for day {activeIdx + 1}?
+              Ready for day {indexForNextDay + 1}?
             </Text>
           </View>
           <TouchableOpacity onPress={() => setIsHistoryModalOpen(true)}>
@@ -50,6 +74,9 @@ const PlanDetailsScreen: FC<
         </View>
         <View>
           <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+            }
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.tabs}
@@ -92,11 +119,13 @@ const PlanDetailsScreen: FC<
           ))}
         </ScrollView>
         <View style={styles.footer}>
-          <SubmitButton
-            title="Start Session"
-            bgColor={COLORS.lightBlue}
-            onPress={onStartSession}
-          />
+          {activeIdx === indexForNextDay ? (
+            <SubmitButton
+              title={`${indexForNextDay === 0 ? "Start" : "Continue"} Session`}
+              bgColor={COLORS.lightBlue}
+              onPress={onStartSession}
+            />
+          ) : null}
         </View>
       </View>
       <Modal

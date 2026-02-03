@@ -15,7 +15,7 @@ function App() {
     initDb();
   }, []);
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider style={{backgroundColor:"black"}}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
       <Provider store={store}>
         <NavigationContainer>

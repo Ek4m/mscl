@@ -7,7 +7,8 @@ export const CREATE_WORKOUT_SESSIONS_TABLE = `
         plan_day_id INTEGER NOT NULL,
         started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         finished_at TEXT,
-        completed INTEGER DEFAULT 0
+        completed INTEGER DEFAULT 0,
+        created_at TEXT NULL DEFAULT CURRENT_TIMESTAMP
       );
     `;
 
@@ -17,7 +18,9 @@ export const CREATE_WORKOUT_EXERCISES_TABLE = `
         workout_session_id INTEGER NOT NULL,
         plan_day_exercise_id INTEGER NOT NULL,
         exercise_id INTEGER NOT NULL,
-        order_index INTEGER NOT NULL
+        order_index INTEGER NOT NULL,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
     `;
 
@@ -53,9 +56,9 @@ export const INSERT_WORKOUT_SESSION = `
     `;
 
 export const SELECT_WORKOUT_EXERCISES_BY_SESSION_ID = `
-    SELECT id, workout_session_id, plan_day_exercise_id, exercise_id, order_index
-    FROM workout_exercises
+    SELECT * FROM workout_exercises
     WHERE workout_session_id = ?
+    ORDER BY id DESC
     `;
 
 export const SELECT_WORKOUT_EXERCISES = `
@@ -73,9 +76,10 @@ export const INSERT_WORKOUT_EXERCISE = `
       workout_session_id,
       plan_day_exercise_id,
       exercise_id,
-      order_index
+      order_index,
+      created_at
     )
-    VALUES (?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
     `;
 
 export const DELETE_WORKOUT_EXERCISE = `
@@ -88,6 +92,7 @@ export const GET_WORKOUT_SESSIONS_BY_USER = `
         user_id = ? AND 
         completed = 1 AND 
         user_plan_id = ?
+        ORDER BY id DESC
     `;
 
 export const DROP_WORKOUT_SESSION_TABLE =

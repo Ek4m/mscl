@@ -6,6 +6,8 @@ export type RootStackParamList = {
   workoutTracker: { id: number; plan: CustomPlanDetails };
   splash: undefined;
   upload: undefined;
+  test: undefined;
+  initialInfo: undefined;
   onboarding: undefined;
   customPlan: undefined;
   inspectPlan: undefined;

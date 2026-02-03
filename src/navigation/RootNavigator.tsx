@@ -26,6 +26,8 @@ import { selectUserInfo, useGetProfileQuery } from "../redux/auth/slice";
 import { selectPredictions } from "../redux/workout/create-ai";
 
 import MainLayout from "../UI/components/layout";
+import TestScreen from "./screens/TestScreen";
+import InitialInfoScreen from "./screens/InitialInfoScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -35,13 +37,14 @@ export default function RootNavigator() {
   useGetProfileQuery();
   return (
     <Stack.Navigator
-      layout={(props) => <MainLayout {...props} />}
       initialRouteName="splash"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="auth" component={AuthScreen} />
       <Stack.Screen name="register" component={RegisterScreen} />
+      <Stack.Screen name="test" component={TestScreen} />
       <Stack.Screen name="splash" component={SplashScreen} />
+      <Stack.Screen name="initialInfo" component={InitialInfoScreen} />
       <Stack.Screen name="onboarding" component={OnboardingScreen} />
       {userInfo ? (
         <>

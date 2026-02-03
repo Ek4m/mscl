@@ -100,3 +100,4 @@ export function getWorkoutSessionsByUser(
 ): WorkoutSession[] {
   return db.getAllSync(GET_WORKOUT_SESSIONS_BY_USER, [userId, planId]);
 }
+
