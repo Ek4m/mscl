@@ -13,6 +13,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { RootStackParamList } from "../types";
 import { useAppSelector } from "../../redux/root";
 import { selectUserInfo } from "../../redux/auth/slice";
+import { COLORS } from "../../constants/colors";
 
 const { width } = Dimensions.get("window");
 
@@ -72,7 +73,7 @@ const SplashScreen: FC<
           style={[styles.logoContainer, { transform: [{ scale: scaleAnim }] }]}
         >
           <View style={styles.iconCircle}>
-            <Icon name="dumbbell" color="#fff" size={54} />
+            <Icon name="dumbbell" color={COLORS.white} size={54} />
           </View>
         </Animated.View>
         <Animated.View
@@ -88,7 +89,7 @@ const SplashScreen: FC<
           <Text style={styles.tagline}>ELITE PERFORMANCE TRAINING</Text>
 
           <View style={styles.loaderWrapper}>
-            <ActivityIndicator size="large" color="#ea580c" />
+            <ActivityIndicator size="large" color={COLORS.mainBlue} />
             <Text style={styles.loadingText}>OPTIMIZING PERFORMANCE...</Text>
           </View>
         </Animated.View>
@@ -129,10 +130,10 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     borderRadius: 55,
-    backgroundColor: "#ea580c",
+    backgroundColor: COLORS.mainBlue,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#ea580c",
+    shadowColor: COLORS.mainBlue,
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.6,
     shadowRadius: 25,
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   highlight: {
-    color: "#ea580c",
+    color: COLORS.lightBlue,
   },
   tagline: {
     fontSize: 12,
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: "100%",
-    backgroundColor: "#ea580c",
+    backgroundColor: COLORS.mainBlue,
   },
   versionText: {
     color: "#27272a",

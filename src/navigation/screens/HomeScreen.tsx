@@ -19,6 +19,11 @@ import { useGetPlansQuery } from "../../redux/plans/slice";
 import PlanListItem from "../../modules/prediction/components/planListItem";
 import { RootStackParamList } from "../types";
 import { clearWorkoutDbDev } from "../../db/services";
+import { Image } from "react-native";
+
+const AiLogo = require("../../../assets/ai.png");
+const CustomPlanLogo = require("../../../assets/custom.png");
+const PremadePlanLogo = require("../../../assets/premade.png");
 
 const HomeScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "home">
@@ -28,28 +33,28 @@ const HomeScreen: React.FC<
 
   const features = [
     {
-      id: "ai",
-      title: "AI Architect",
-      subtitle: "Build with Gemini AI",
-      icon: "auto-fix",
-      screen: "upload",
-      color: "#3b82f6", // mainBlue
-    },
-    {
       id: "premade",
       title: "Elite Library",
       subtitle: "Pro-made gym plans",
-      icon: "library-shelves",
+      icon: PremadePlanLogo,
       screen: "upload",
-      color: "#a855f7", // purple
+      color: "#f77855", // orange
+    },
+    {
+      id: "ai",
+      title: "AI planner",
+      subtitle: "Build with Gemini AI",
+      icon: AiLogo,
+      screen: "upload",
+      color: COLORS.lightBlue, // mainBlue
     },
     {
       id: "custom",
       title: "Manual Build",
       subtitle: "Customized precision",
-      icon: "plus-box",
+      icon: CustomPlanLogo,
       screen: "customPlan",
-      color: "#10b981", // green
+      color: "#49f643", // green
     },
   ];
 
@@ -80,7 +85,6 @@ const HomeScreen: React.FC<
                     styles.featureCard,
                     { borderColor: feature.color + "40" },
                   ]}
-                  activeOpacity={0.8}
                   onPress={() => navigation.navigate(feature.screen)}
                 >
                   <View
@@ -89,7 +93,7 @@ const HomeScreen: React.FC<
                       { backgroundColor: feature.color + "20" },
                     ]}
                   >
-                    <Icon name={feature.icon} color={feature.color} size={28} />
+                    <Image source={feature.icon} style={styles.featureIcon} />
                   </View>
                   <View style={styles.featureText}>
                     <Text style={styles.featureTitle}>{feature.title}</Text>
@@ -97,14 +101,14 @@ const HomeScreen: React.FC<
                       {feature.subtitle}
                     </Text>
                   </View>
-                  <Icon name="chevron-right" color="#444" size={24} />
+                  <Icon name="chevron-right" color={COLORS.white} size={24} />
                 </TouchableOpacity>
               ))}
             </View>
           </View>
-          {__DEV__ ? (
+          {/* {__DEV__ ? (
             <Button onPress={clearWorkoutDbDev} title="Clear db" />
-          ) : null}
+          ) : null} */}
           {/* Programs List */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -244,21 +248,23 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   featureCard: {
-    backgroundColor: "#18181b",
+    backgroundColor: "#18181bbe",
     borderRadius: 16,
-    padding: 16,
+    padding: 10,
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#27272a",
+    borderWidth: 3,
   },
   featureIconContainer: {
-    width: 52,
-    height: 52,
     borderRadius: 12,
+    overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 16,
+  },
+  featureIcon: {
+    width: 52,
+    height: 52,
   },
   featureText: {
     flex: 1,

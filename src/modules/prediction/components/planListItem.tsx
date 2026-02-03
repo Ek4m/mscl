@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS } from "../../../constants/colors";
@@ -52,16 +53,17 @@ const PlanListItem: FC<{ program: CustomPlanDetails }> = ({ program }) => {
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     )[0];
   }, [exercises]);
-  console.log("-__",lastExercise)
+  console.log("-__", lastExercise);
 
   return (
     <TouchableOpacity style={styles.programCard}>
       <View style={styles.programHeader}>
         <View style={styles.programIconBox}>
-          <Icon
-            name="clipboard-text-outline"
-            color={COLORS.mainBlue}
-            size={22}
+          <Image
+            style={styles.muscleImage}
+            source={{
+              uri: "https://cdn-icons-png.flaticon.com/512/2376/2376399.png",
+            }}
           />
         </View>
         <View style={{ flex: 1 }}>
@@ -74,7 +76,7 @@ const PlanListItem: FC<{ program: CustomPlanDetails }> = ({ program }) => {
           style={styles.startButton}
           onPress={() => navigation.navigate("planDetails", { id: program.id })}
         >
-          <Icon name="play" color="#000" size={20} />
+          <Icon name="play" color={COLORS.white} size={20} />
         </TouchableOpacity>
       </View>
 
@@ -93,7 +95,7 @@ const PlanListItem: FC<{ program: CustomPlanDetails }> = ({ program }) => {
           ) : (
             latestSessions.map((s) => (
               <View key={s.id} style={styles.sessionChip}>
-                <Icon name="check-circle" color={COLORS.mainBlue} size={14} />
+                <Icon name="check-circle" color={COLORS.lightBlue} size={14} />
                 <Text style={styles.sessionDate}>
                   {datePrettify(s.finished_at)}
                 </Text>
@@ -160,6 +162,10 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
+  },
+  muscleImage: {
+    width: 40,
+    height: 40,
   },
   sessionSection: {
     marginBottom: 16,
