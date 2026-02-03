@@ -20,6 +20,8 @@ import PlanUsageHistory from "../../modules/prediction/components/history";
 import { getWorkoutSessionsByUser } from "../../db/services";
 import { useAppSelector } from "../../redux/root";
 import { selectUserInfo } from "../../redux/auth/slice";
+import Icon from "react-native-vector-icons/AntDesign";
+import FAIcon from "react-native-vector-icons/FontAwesome5";
 
 const PlanDetailsScreen: FC<
   NativeStackScreenProps<RootStackParamList, "planDetails">
@@ -85,16 +87,24 @@ const PlanDetailsScreen: FC<
               <TouchableOpacity
                 key={idx}
                 onPress={() => setActiveIdx(idx)}
-                style={[styles.tab, activeIdx === idx && styles.activeTab]}
+                style={[
+                  styles.tab,
+                  activeIdx === idx && styles.activeTab,
+                  idx < indexForNextDay && styles.doneTab,
+                ]}
               >
-                <Text
-                  style={[
-                    styles.tabText,
-                    activeIdx === idx && styles.activeTabText,
-                  ]}
-                >
-                  Day {idx + 1}
-                </Text>
+                {idx < indexForNextDay ? (
+                  <FAIcon name="check" size={13} />
+                ) : (
+                  <Text
+                    style={[
+                      styles.tabText,
+                      activeIdx === idx && styles.activeTabText,
+                    ]}
+                  >
+                    {`Day ${idx + 1}`}
+                  </Text>
+                )}
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -122,7 +132,7 @@ const PlanDetailsScreen: FC<
           {activeIdx === indexForNextDay ? (
             <SubmitButton
               title={`${indexForNextDay === 0 ? "Start" : "Continue"} Session`}
-              bgColor={COLORS.lightBlue}
+              bgColor={COLORS.mainBlue}
               onPress={onStartSession}
             />
           ) : null}
@@ -157,7 +167,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "900",
-    color: "#fff",
+    color: COLORS.white,
   },
   subtitle: {
     fontSize: 16,
@@ -183,10 +193,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 30,
     backgroundColor: "#111",
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 12,
   },
   activeTab: {
-    backgroundColor: COLORS.lightBlue,
+    backgroundColor: "#fff",
   },
   tabText: {
     fontSize: 14,
@@ -231,7 +243,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     flexShrink: 1,
-    color: "#fff",
+    color: COLORS.white,
   },
   exDetails: {
     fontSize: 12,
@@ -252,7 +264,7 @@ const styles = StyleSheet.create({
   restTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
+    color: COLORS.white,
     marginTop: 16,
   },
   restSubtitle: {
@@ -268,6 +280,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+  },
+  doneTab: {
+    backgroundColor: COLORS.lightBlue,
   },
 });
 

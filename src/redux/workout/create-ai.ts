@@ -44,8 +44,7 @@ export const predictApi = createApi({
       { exercises: Exercise[]; equipments: Equipment[] },
       void
     >({
-      query: () => ({ url: "workout/data/all", method: "get" }),
-      keepUnusedDataFor: 3600,
+      query: () => ({ url: "common/exercises-and-equipments", method: "get" }),
     }),
     sendImages: builder.mutation<string[], FormData>({
       query: (credentials: FormData) => ({

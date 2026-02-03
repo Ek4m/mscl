@@ -23,7 +23,10 @@ import { RootStackParamList } from "./types";
 
 import { useAppSelector } from "../redux/root";
 import { selectUserInfo, useGetProfileQuery } from "../redux/auth/slice";
-import { selectPredictions } from "../redux/workout/create-ai";
+import {
+  selectPredictions,
+  useGetInitialInfoQuery,
+} from "../redux/workout/create-ai";
 
 import MainLayout from "../UI/components/layout";
 import TestScreen from "./screens/TestScreen";
@@ -33,8 +36,10 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   const { userInfo } = useAppSelector(selectUserInfo);
+  useGetInitialInfoQuery();
   const { isFetching } = useAppSelector(selectPredictions);
-  useGetProfileQuery();
+  const { data,error } = useGetProfileQuery();
+  console.log("----------------------------------",error);
   return (
     <Stack.Navigator
       initialRouteName="splash"
