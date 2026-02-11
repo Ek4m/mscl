@@ -8,14 +8,14 @@ import { MuscleGroupTitles } from "../../workout/vault";
 
 const ExerciseAddItem: FC<{
   item: Exercise;
-  onSelect(item: Exercise): void;
+  onSelect(item: Exercise, variationId?: number): void;
   onClose(): void;
 }> = ({ item, onSelect, onClose }) => {
   return (
     <TouchableOpacity
       style={styles.exItem}
       onPress={() => {
-        onSelect(item);
+        onSelect(item, item.variationId);
         onClose();
       }}
     >

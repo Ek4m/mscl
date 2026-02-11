@@ -47,7 +47,7 @@ const ExercisePicker: React.FC<Props> = ({ visible, onClose }) => {
         .includes(search.toLowerCase());
       const matchesMuscle =
         selectedMuscle === "all" || ex.primaryMuscles.includes(selectedMuscle);
-      const alreadySelected = day.exercises.some((e) => e.id === ex.id);
+      const alreadySelected = day.exercises.some((e) => e.name === ex.title);
       return matchesSearch && matchesMuscle && !alreadySelected;
     });
   }, [search, selectedMuscle, day]);
@@ -119,12 +119,19 @@ const ExercisePicker: React.FC<Props> = ({ visible, onClose }) => {
         </View>
         <FlatList
           data={filteredExercises}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.title}
           renderItem={({ item }) => (
             <ExerciseAddItem
               item={item}
               onClose={onClose}
-              onSelect={(ex) => dispatch(addExercise(ex))}
+              onSelect={(ex, variationId) =>
+                dispatch(
+                  addExercise({
+                    exercise: ex,
+                    variationId,
+                  }),
+                )
+              }
             />
           )}
         />

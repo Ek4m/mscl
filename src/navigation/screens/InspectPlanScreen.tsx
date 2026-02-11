@@ -39,7 +39,8 @@ const PlanReviewScreen: FC<NativeStackScreenProps<RootStackParamList>> = ({
     try {
       const result = await submit({ plan, title }).unwrap();
       successToast("Plan created successfully!");
-      navigation.navigate("planDetails", { id: result.newPlan.id });
+      console.log(JSON.stringify(result));
+      navigation.navigate("planDetails", { id: result.id });
     } catch (error: any) {
       errorToast(error.data.messages);
     }
@@ -81,7 +82,7 @@ const PlanReviewScreen: FC<NativeStackScreenProps<RootStackParamList>> = ({
               </View>
 
               {day.exercises?.map((ex: CustomExercise, exIdx: number) => (
-                <View key={ex.id || exIdx} style={styles.exerciseRow}>
+                <View key={ex.name} style={styles.exerciseRow}>
                   <Text style={styles.bullet}>•</Text>
                   <View style={styles.exerciseNameContainer}>
                     <Text style={styles.exerciseName}>{ex.name}</Text>

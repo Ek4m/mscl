@@ -9,9 +9,9 @@ export interface PredictionResult {
 
 export interface Exercise {
   id: number;
-  name: string;
-  sets: number;
-  reps: string;
+  title: string;
+  targetSets: number;
+  targetReps: number;
   notes?: string;
 }
 
@@ -22,7 +22,7 @@ export interface ActiveExercise extends CustomPlanDayExercise {
 export interface WorkoutDay {
   id: number;
   title: string;
-  moves: Exercise[];
+  exercises: Exercise[];
 }
 export interface WorkoutPlanPreview {
   id: number;

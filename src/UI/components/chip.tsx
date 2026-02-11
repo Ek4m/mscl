@@ -8,15 +8,22 @@ export type ChipType = "success" | "error" | "warning" | "info" | "neutral";
 interface ChipProps {
   label: string;
   type?: ChipType;
+  size?: "small" | "large" | "medium";
 }
 
-const Chip: React.FC<ChipProps> = ({ label, type = "neutral" }) => {
+const Chip: React.FC<ChipProps> = ({
+  label,
+  type = "neutral",
+  size = "small",
+}) => {
   return (
     <View
       style={[styles.container, typeStyles[type].container]}
       pointerEvents="none"
     >
-      <Text style={[styles.text, typeStyles[type].text]}>{label}</Text>
+      <Text style={[styles.text, styles[size], typeStyles[type].text]}>
+        {label}
+      </Text>
     </View>
   );
 };
@@ -29,8 +36,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   text: {
-    fontSize: 10,
     fontWeight: "600",
+  },
+  small: {
+    fontSize: 10,
+  },
+  medium: {
+    fontSize: 15,
+  },
+  large: {
+    fontSize: 20,
   },
 });
 export default Chip;

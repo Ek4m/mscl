@@ -34,10 +34,7 @@ export const createPlanApi = createApi({
   reducerPath: "createPlanApi",
   baseQuery: axiosBaseQuery(),
   endpoints: (builder) => ({
-    submitCustomPlan: builder.mutation<
-      { customId: number; newPlan: WorkoutPlan },
-      CustomPlanCredentials
-    >({
+    submitCustomPlan: builder.mutation<WorkoutPlan, CustomPlanCredentials>({
       query: (credentials: CustomPlanCredentials) => ({
         url: "workout/plan/custom-create",
         method: "post",
@@ -51,21 +48,23 @@ export const createPlanSlice = createSlice({
   name: "createPlan",
   initialState,
   reducers: {
-    addExercise: (state, action: PayloadAction<Exercise>) => {
-      const exercise = action.payload;
+    addExercise: (
+      state,
+      action: PayloadAction<{
+        exercise: Exercise;
+        variationId?: number;
+      }>,
+    ) => {
+      const exercise = action.payload.exercise;
+      const variationId = action.payload.variationId;
       const updatedPlan = [...state.plan];
-      if (
-        updatedPlan[state.activeDay - 1].exercises.some(
-          (e) => e.id === exercise.id,
-        )
-      )
-        return;
       updatedPlan[state.activeDay - 1].exercises.push({
         id: exercise.id,
         name: exercise.title,
         muscle: exercise.primaryMuscles,
         reps: "12",
         sets: "4",
+        variationId,
       });
       state.plan = updatedPlan;
     },

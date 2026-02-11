@@ -13,9 +13,11 @@ export interface Exercise {
   id: number;
   primaryMuscles: MuscleGroup[];
   secondaryMuscles: MuscleGroup[];
+  variations: { title: string; id: number; description: string }[];
   slug: string;
   steps: string[];
   title: string;
+  variationId?: number;
   updatedAt: string;
 }
 
@@ -24,6 +26,7 @@ export interface CustomExercise {
   name: string;
   muscle?: MuscleGroup[];
   sets: string;
+  variationId?: number;
   reps: string;
 }
 
@@ -50,6 +53,7 @@ export interface CustomPlanDayExercise {
   orderIndex: number;
   targetSets: number;
   targetReps: number;
+  variation?: { id: number; title: string };
   createdAt: string;
   exercise: Exercise;
 }

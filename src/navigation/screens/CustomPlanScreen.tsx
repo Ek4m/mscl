@@ -112,7 +112,7 @@ const CustomPlanCreatorScreen: FC<
           ) : (
             plan[activeDay - 1].exercises.map((ex, index) => (
               <SelectedExerciseItem
-                key={ex.id}
+                key={ex.name}
                 ex={ex}
                 handleRemoveExercise={() => dispatch(removeExercise(index))}
               />

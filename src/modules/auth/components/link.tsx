@@ -1,16 +1,18 @@
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import React, { FC } from "react";
-import { RootStackParamList } from "../../../navigation/types";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-const Link: FC<{ title: string; screen: "auth" | "register" }> = ({
+import { RootStackParamList } from "../../../navigation/types";
+
+const Link: FC<{ title: string; screen: keyof RootStackParamList }> = ({
   screen,
   title,
 }) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const handlePress = () => {
+    //@ts-ignore
     navigation.navigate(screen);
   };
   return (

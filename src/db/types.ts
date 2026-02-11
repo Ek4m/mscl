@@ -1,8 +1,10 @@
 export type WorkoutSessionExercise = {
   id: number;
+  title: string;
   workout_session_id: number;
   plan_day_exercise_id: number;
   exercise_id: number;
+  variation_id: number | null;
   order_index: number;
   created_at: string;
 };

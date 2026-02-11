@@ -26,7 +26,7 @@ const WorkoutTrackerScreen: React.FC<
 
   useEffect(() => {
     if (userInfo && activeWorkoutDay) {
-      console.log(activeWorkoutDay.id)
+      console.log(activeWorkoutDay.id);
       const sessionId = insertOrCreateWorkoutSession(
         userInfo.id,
         activePlan.id,
@@ -39,11 +39,16 @@ const WorkoutTrackerScreen: React.FC<
       }));
       const copyExercises = [...newExercises];
       const savedExercises = getWorkoutExercises(sessionId);
+      console.log(JSON.stringify(savedExercises))
       if (savedExercises && savedExercises.length) {
         savedExercises.forEach((ex) => {
-          const exerciseIndex = copyExercises.findIndex(
-            (e) => e.id === ex.plan_day_exercise_id,
-          );
+          const exerciseIndex = copyExercises.findIndex((e) => {
+            return (
+              e.id === ex.plan_day_exercise_id &&
+              e.exercise.id === ex.exercise_id &&
+              e.variation?.id === ex.variation_id
+            );
+          });
           if (exerciseIndex >= 0) {
             copyExercises[exerciseIndex].completedSets[ex.order_index] = ex;
           }
@@ -68,7 +73,7 @@ const WorkoutTrackerScreen: React.FC<
     successToast("Tracking was saved successfully");
     navigation.goBack();
   };
-
+  console.log("SALAAAAm", JSON.stringify(exercises));
   if (activeWorkoutDay && activePlan)
     return (
       <ActiveWorkout

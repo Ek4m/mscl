@@ -18,6 +18,9 @@ import {
 } from "../../redux/workout/create-ai";
 import { useAppSelector } from "../../redux/root";
 import { COLORS } from "../../constants/colors";
+import Chip from "../../UI/components/chip";
+import SubmitButton from "../../UI/components/submitButton";
+import Link from "../../modules/auth/components/link";
 
 const PreviewPlanScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "previewPlan">
@@ -39,11 +42,18 @@ const PreviewPlanScreen: React.FC<
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Your Custom Plan</Text>
+        <Text style={styles.title}>{data?.title}</Text>
+        <Chip
+          size="large"
+          label={(data?.level || "").toUpperCase()}
+          type={"info"}
+        />
         <Text style={styles.subtitle}>Based on your gym equipment</Text>
       </View>
       {isLoading && <ActivityIndicator color={COLORS.lightBlue} />}
       {data && isSuccess && <PlanList plan={data} />}
+      <SubmitButton bgColor={COLORS.lightBlue} title="Salam" />
+      <Link screen="home" title="Use this plan later" />
     </View>
   );
 };
@@ -53,15 +63,16 @@ export default PreviewPlanScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 15,
     backgroundColor: "#09090b",
     paddingTop: Platform.OS === "ios" ? 60 : StatusBar?.currentHeight || 0,
+    paddingBottom: 30,
   },
   header: {
-    marginBottom: 24,
-    paddingHorizontal: 24,
+    marginBottom: 10,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: "900",
     color: "#fff",
     marginBottom: 4,

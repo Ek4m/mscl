@@ -106,9 +106,9 @@ const HomeScreen: React.FC<
               ))}
             </View>
           </View>
-          {/* {__DEV__ ? (
+          {__DEV__ ? (
             <Button onPress={clearWorkoutDbDev} title="Clear db" />
-          ) : null} */}
+          ) : null}
           {/* Programs List */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>

@@ -6,23 +6,20 @@ import { WorkoutPlan } from "../types";
 
 const PlanList: FC<{ plan: WorkoutPlan }> = ({ plan }) => {
   return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContent}
-      showsVerticalScrollIndicator={false}
-    >
+    <ScrollView showsVerticalScrollIndicator={false}>
       {plan.days.map((day) => (
         <View style={styles.card} key={day.id}>
           <Text style={styles.dayLabel}>{day.title}</Text>
           <View style={styles.exerciseList}>
-            {day.moves.map((ex, idx) => (
+            {day.exercises.map((ex, idx) => (
               <View key={idx} style={styles.exerciseRow}>
                 <View style={styles.numberBadge}>
                   <Text style={styles.numberText}>{idx + 1}</Text>
                 </View>
                 <View>
-                  <Text style={styles.exerciseName}>{ex.name}</Text>
+                  <Text style={styles.exerciseName}>{ex.title}</Text>
                   <Text style={styles.exerciseDetails}>
-                    {ex.sets} sets × {ex.reps}
+                    {ex.targetSets} sets × {ex.targetReps}
                   </Text>
                 </View>
               </View>
@@ -37,9 +34,6 @@ const PlanList: FC<{ plan: WorkoutPlan }> = ({ plan }) => {
 export default PlanList;
 
 const styles = StyleSheet.create({
-  scrollContent: {
-    paddingHorizontal: 24,
-  },
   card: {
     backgroundColor: "#18181b",
     borderWidth: 1,

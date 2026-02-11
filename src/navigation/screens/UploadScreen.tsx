@@ -7,11 +7,9 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Platform,
   Alert,
 } from "react-native";
-import { CameraOptions, launchCamera } from "react-native-image-picker";
-import ImagePicker from "expo-image-picker";
+import * as ImagePicker from "expo-image-picker";
 import { RootStackParamList } from "../types";
 import {
   addFile,
@@ -36,8 +34,6 @@ const UploadScreen: FC<
       const { granted } = await ImagePicker.requestCameraPermissionsAsync();
       return granted;
     }
-
-    // 4. Return false if permission was denied and cannot be asked again
     return false;
   };
 
@@ -48,32 +44,29 @@ const UploadScreen: FC<
       navigation.navigate("analyzing");
     }, 100);
   };
-  const pickImage = async () => {
+  const pickImage = async (): Promise<void> => {
+    // 1. Check Permissions
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) {
       Alert.alert("Permission denied", "Camera permission is required.");
       return;
     }
 
-    const options: CameraOptions = {
-      mediaType: "photo",
-      saveToPhotos: true,
-    };
-    launchCamera(options, (response) => {
-      if (response.didCancel) return;
-      if (response.errorCode) {
-        Alert.alert("Error", response.errorMessage || "Unknown error");
-        return;
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images, 
+        allowsEditing: false, 
+        quality: 1,
+      });
+      if (!result.canceled) {
+        const asset = result.assets[0];
+
+        dispatch(addFile(asset));
       }
-      const assets = response.assets;
-      if (
-        typeof assets !== "undefined" &&
-        Array.isArray(assets) &&
-        assets.length
-      ) {
-        dispatch(addFile(assets[0]));
-      }
-    });
+    } catch (error) {
+      Alert.alert("Error", "An error occurred while launching the camera.");
+      console.error(error);
+    }
   };
 
   return (

@@ -18,6 +18,7 @@ export const CREATE_WORKOUT_EXERCISES_TABLE = `
         workout_session_id INTEGER NOT NULL,
         plan_day_exercise_id INTEGER NOT NULL,
         exercise_id INTEGER NOT NULL,
+        variation_id INTEGER,
         order_index INTEGER NOT NULL,
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -76,10 +77,11 @@ export const INSERT_WORKOUT_EXERCISE = `
       workout_session_id,
       plan_day_exercise_id,
       exercise_id,
+      variation_id,
       order_index,
       created_at
     )
-    VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+    VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     `;
 
 export const DELETE_WORKOUT_EXERCISE = `

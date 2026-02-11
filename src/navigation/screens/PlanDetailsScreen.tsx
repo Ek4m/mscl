@@ -9,8 +9,11 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AntDesignIcons from "react-native-vector-icons/AntDesign";
+import FAIcon from "react-native-vector-icons/FontAwesome5";
 
 import { useGetUserCustomPlanByIdQuery } from "../../redux/plans/slice";
+import { useAppSelector } from "../../redux/root";
+import { selectUserInfo } from "../../redux/auth/slice";
 
 import { COLORS } from "../../constants/colors";
 import SubmitButton from "../../UI/components/submitButton";
@@ -18,10 +21,6 @@ import { RootStackParamList } from "../types";
 import Modal from "../../UI/components/modal";
 import PlanUsageHistory from "../../modules/prediction/components/history";
 import { getWorkoutSessionsByUser } from "../../db/services";
-import { useAppSelector } from "../../redux/root";
-import { selectUserInfo } from "../../redux/auth/slice";
-import Icon from "react-native-vector-icons/AntDesign";
-import FAIcon from "react-native-vector-icons/FontAwesome5";
 
 const PlanDetailsScreen: FC<
   NativeStackScreenProps<RootStackParamList, "planDetails">
@@ -114,19 +113,25 @@ const PlanDetailsScreen: FC<
           style={styles.exerciseList}
           contentContainerStyle={styles.exerciseContent}
         >
-          {currentDay?.exercises.map((ex, idx) => (
-            <View key={idx} style={styles.card}>
-              <View style={styles.indexBox}>
-                <Text style={styles.indexText}>{idx + 1}</Text>
+          {currentDay?.exercises.map((ex, idx) => {
+            const title =
+              ex.variation && ex.variation.title
+                ? ex.variation.title
+                : ex.exercise.title;
+            return (
+              <View key={idx} style={styles.card}>
+                <View style={styles.indexBox}>
+                  <Text style={styles.indexText}>{idx + 1}</Text>
+                </View>
+                <View style={styles.cardInfo}>
+                  <Text style={styles.exName}>{title}</Text>
+                  <Text style={styles.exDetails}>
+                    {ex.targetSets} Sets × {ex.targetReps} Reps
+                  </Text>
+                </View>
               </View>
-              <View style={styles.cardInfo}>
-                <Text style={styles.exName}>{ex.exercise.title}</Text>
-                <Text style={styles.exDetails}>
-                  {ex.targetSets} Sets × {ex.targetReps} Reps
-                </Text>
-              </View>
-            </View>
-          ))}
+            );
+          })}
         </ScrollView>
         <View style={styles.footer}>
           {activeIdx === indexForNextDay ? (

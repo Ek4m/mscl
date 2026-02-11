@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Asset } from "react-native-image-picker";
+import { ImagePickerAsset } from "expo-image-picker";
 
 import axiosBaseQuery from "../baseQuery";
 import { RootState } from "../root";
@@ -15,7 +15,7 @@ export interface PredictSliceState {
   predictions: string[];
   selectedPredictions: string[];
   isFetching: boolean;
-  files: Asset[];
+  files: ImagePickerAsset[];
   level: GymLevel;
   equipments: Equipment[];
   exercises: Exercise[];
@@ -74,7 +74,7 @@ export const predictSlice = createSlice({
     closeAnalyzing: (state) => {
       state.isFetching = false;
     },
-    addFile: (state, action: PayloadAction<Asset>) => {
+    addFile: (state, action: PayloadAction<ImagePickerAsset>) => {
       state.files.push(action.payload);
     },
     removeFile: (state, action: PayloadAction<number>) => {

@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 
-import { WorkoutHistoryCredentials, ActiveExercise } from "../types";
+import { ActiveExercise } from "../types";
 import ExerciseCard from "./MoveCard";
 import SubmitButton from "../../../UI/components/submitButton";
 import { COLORS } from "../../../constants/colors";
@@ -26,7 +26,6 @@ import { selectUserInfo } from "../../../redux/auth/slice";
 import { formatTime } from "../helpers";
 import RestTimer from "./RestTimer";
 import { CustomPlanDetails } from "../../workout/types";
-import { WorkoutSessionExercise } from "../../../db/types";
 import {
   createWorkoutExercise,
   finishWorkoutSession,
@@ -44,7 +43,6 @@ interface ActiveWorkoutProps {
 }
 
 const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
-  workoutDay,
   plan,
   sessionId,
   onFinish,
@@ -52,7 +50,6 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   setExercises,
   onCancel,
 }) => {
-  const { userInfo } = useAppSelector(selectUserInfo);
   const [workoutSeconds, setWorkoutSeconds] = useState(0);
   const [restSeconds, setRestSeconds] = useState(0);
   const [isResting, setIsResting] = useState(false);
@@ -86,19 +83,31 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   }, [isResting, restSeconds]);
 
   const handleToggleSet = useCallback(
-    (exerciseId: number, index: number) => {
+    (exerciseId: number, index: number, variationId: number | null) => {
+      console.log("__EX AND VARIATION", exerciseId, variationId);
       setExercises((prev) =>
         prev.map((ex) => {
-          if (ex.id === exerciseId) {
+          if (
+            ex.exercise.id === exerciseId &&
+            ex.variation?.id === variationId
+          ) {
             const newSets = [...ex.completedSets];
+            console.log("newSets: ", exerciseId, variationId, newSets);
             const doneExercise = newSets[index];
-            const exercise = exercises.find((ex) => ex.id === exerciseId);
+            const exercise = exercises.find((ex) => {
+              return (
+                ex.exercise.id === exerciseId &&
+                ex.variation?.id === variationId
+              );
+            });
+            console.log("EXERCISE: ", doneExercise);
             if (!doneExercise) {
               const created = createWorkoutExercise(
                 sessionId,
+                exercise!.id,
                 exerciseId,
-                exercise!.exercise.id,
                 index,
+                ex.variation?.id ?? null,
               );
               newSets[index] = created;
               setRestSeconds(60);

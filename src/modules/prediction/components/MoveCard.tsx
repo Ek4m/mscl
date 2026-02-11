@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 
@@ -7,37 +7,58 @@ import { COLORS } from "../../../constants/colors";
 
 interface ExerciseCardProps {
   exercise: ActiveExercise;
-  onToggleSet: (exerciseId: number, setIndex: number) => void;
+  onToggleSet: (
+    exerciseId: number,
+    setIndex: number,
+    variationId: number | null,
+  ) => void;
 }
 
 const ExerciseCard: React.FC<ExerciseCardProps> = ({
   exercise,
   onToggleSet,
 }) => {
+  const [infoVisible, setInfoVisible] = useState(false);
+  const title =
+    exercise.variation && exercise.variation.title
+      ? exercise.variation.title
+      : exercise.exercise.title;
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.name}>{exercise.exercise.title}</Text>
+          <Text style={styles.name}>{title}</Text>
           <Text style={styles.stats}>
             {exercise.targetSets} Sets × {exercise.targetReps} Reps
           </Text>
         </View>
-        {exercise.exercise.steps.length && (
+        {exercise.exercise.steps?.length && (
           <TouchableOpacity
+            onPress={() => setInfoVisible(!infoVisible)}
             style={styles.infoButton}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <AntDesign name="info-circle" size={18} color="#71717a" />
           </TouchableOpacity>
         )}
       </View>
 
+      {infoVisible && (
+        <View style={styles.steps}>
+          {exercise.exercise.steps?.map((step, index) => (
+            <Text key={step} style={styles.step}>
+              {index + 1}. {step.trim()}
+            </Text>
+          ))}
+        </View>
+      )}
+
       <View style={styles.setGrid}>
         {exercise.completedSets.map((exSession, idx) => (
           <TouchableOpacity
             key={`${exercise.id}-set-${idx}`}
-            onPress={() => onToggleSet(exercise.id, idx)}
+            onPress={() =>
+              onToggleSet(exercise.exercise?.id, idx, exercise.variation?.id ?? null)
+            }
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             style={[
               styles.setButton,
@@ -84,7 +105,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 16,
   },
   name: {
     fontSize: 18,
@@ -103,6 +123,7 @@ const styles = StyleSheet.create({
   setGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
+    marginTop: 10,
     gap: 12,
   },
   setButton: {
@@ -124,6 +145,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
+  },
+  steps: {},
+  step: {
+    fontSize: 10,
+    color: "#a1a1aa",
   },
   setText: {
     fontSize: 16,
