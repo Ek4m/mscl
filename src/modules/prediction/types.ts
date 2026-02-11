@@ -1,5 +1,9 @@
 import { WorkoutSessionExercise } from "../../db/types";
-import { CustomPlanDayExercise, CustomPlanDetails } from "../workout/types";
+import {
+  CustomPlanDayExercise,
+  CustomPlanDetails,
+  Exercise,
+} from "../workout/types";
 import { GymLevel } from "./enums";
 
 export interface PredictionResult {
@@ -7,22 +11,23 @@ export interface PredictionResult {
   predictions: string[];
 }
 
-export interface Exercise {
-  id: number;
-  title: string;
-  targetSets: number;
-  targetReps: number;
-  notes?: string;
-}
-
 export interface ActiveExercise extends CustomPlanDayExercise {
   completedSets: (WorkoutSessionExercise | null)[];
+}
+
+export interface WorkoutExercise {
+  exercise?: Exercise;
+  variation?: { title: string; id: number };
+  id: number;
+  targetSets: number;
+  targetReps: number;
 }
 
 export interface WorkoutDay {
   id: number;
   title: string;
-  exercises: Exercise[];
+  dayIndex: number;
+  exercises: WorkoutExercise[];
 }
 export interface WorkoutPlanPreview {
   id: number;

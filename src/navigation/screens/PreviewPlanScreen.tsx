@@ -24,13 +24,13 @@ import Link from "../../modules/auth/components/link";
 
 const PreviewPlanScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "previewPlan">
-> = () => {
+> = ({ navigation }) => {
   const [generateProgram, { isLoading, isSuccess, data }] =
     useGeneratePlanMutation();
   const { days, level, selectedPredictions } =
     useAppSelector(selectPredictions);
 
-  useFocusEffect(
+    useFocusEffect(
     useCallback(() => {
       generateProgram({
         equipments: selectedPredictions,
@@ -43,16 +43,18 @@ const PreviewPlanScreen: React.FC<
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{data?.title}</Text>
-        <Chip
-          size="large"
-          label={(data?.level || "").toUpperCase()}
-          type={"info"}
-        />
+        <Chip size="large" label={level.toUpperCase()} type={"info"} />
         <Text style={styles.subtitle}>Based on your gym equipment</Text>
       </View>
       {isLoading && <ActivityIndicator color={COLORS.lightBlue} />}
       {data && isSuccess && <PlanList plan={data} />}
-      <SubmitButton bgColor={COLORS.lightBlue} title="Salam" />
+      <SubmitButton
+        onPress={() =>
+          navigation.navigate("planDetails", { id: data?.id || 0 })
+        }
+        bgColor={COLORS.lightBlue}
+        title="Start workout!"
+      />
       <Link screen="home" title="Use this plan later" />
     </View>
   );

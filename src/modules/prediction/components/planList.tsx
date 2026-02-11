@@ -9,7 +9,7 @@ const PlanList: FC<{ plan: WorkoutPlan }> = ({ plan }) => {
     <ScrollView showsVerticalScrollIndicator={false}>
       {plan.days.map((day) => (
         <View style={styles.card} key={day.id}>
-          <Text style={styles.dayLabel}>{day.title}</Text>
+          <Text style={styles.dayLabel}>Day {day.dayIndex}</Text>
           <View style={styles.exerciseList}>
             {day.exercises.map((ex, idx) => (
               <View key={idx} style={styles.exerciseRow}>
@@ -17,7 +17,9 @@ const PlanList: FC<{ plan: WorkoutPlan }> = ({ plan }) => {
                   <Text style={styles.numberText}>{idx + 1}</Text>
                 </View>
                 <View>
-                  <Text style={styles.exerciseName}>{ex.title}</Text>
+                  <Text style={styles.exerciseName}>
+                    {ex.variation?.title || ex.exercise?.title}
+                  </Text>
                   <Text style={styles.exerciseDetails}>
                     {ex.targetSets} sets × {ex.targetReps}
                   </Text>
