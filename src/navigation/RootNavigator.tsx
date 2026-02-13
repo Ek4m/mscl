@@ -3,13 +3,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import AuthScreen from "./screens/AuthScreen";
 import SplashScreen from "./screens/SplashScreen";
-import AnalyzingScreen from "./screens/AnalyzingScreen";
-import UploadScreen from "./screens/UploadScreen";
 import OnboardingScreen from "./screens/OnboardingScreen";
-import ConfirmEquipmentScreen from "./screens/ConfirmEquipmentScreen";
 import PlanDetailsScreen from "./screens/PlanDetailsScreen";
-import PreferencesScreen from "./screens/PreferencesScreen";
-import PreviewPlanScreen from "./screens/PreviewPlanScreen";
 import PaywallScreen from "./screens/PaywallScreen";
 import WorkoutSessionScreen from "./screens/WorkoutSessionScreen";
 import ProfileScreen from "./screens/ProfileScreen";
@@ -18,28 +13,26 @@ import RegisterScreen from "./screens/RegisterScreen";
 import WorkoutTrackerScreen from "./screens/WorkoutTrackerScreen";
 import CustomPlanCreatorSceen from "./screens/CustomPlanScreen";
 import PlanReviewScreen from "./screens/InspectPlanScreen";
+import TestScreen from "./screens/TestScreen";
+import InitialInfoScreen from "./screens/InitialInfoScreen";
 
+import CreateAiStack from "./screens/create-ai/Stack";
 import { RootStackParamList } from "./types";
 
 import { useAppSelector } from "../redux/root";
 import { selectUserInfo, useGetProfileQuery } from "../redux/auth/slice";
 import {
-  selectPredictions,
+  selectAiPlan,
   useGetInitialInfoQuery,
 } from "../redux/workout/create-ai";
-
-import MainLayout from "../UI/components/layout";
-import TestScreen from "./screens/TestScreen";
-import InitialInfoScreen from "./screens/InitialInfoScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   const { userInfo } = useAppSelector(selectUserInfo);
+  const { started } = useAppSelector(selectAiPlan);
   useGetInitialInfoQuery();
-  const { isFetching } = useAppSelector(selectPredictions);
-  const { data,error } = useGetProfileQuery();
-  console.log("----------------------------------",error);
+  const { data, error } = useGetProfileQuery();
   return (
     <Stack.Navigator
       initialRouteName="splash"
@@ -60,23 +53,16 @@ export default function RootNavigator() {
           />
           <Stack.Screen name="customPlan" component={CustomPlanCreatorSceen} />
           <Stack.Screen name="inspectPlan" component={PlanReviewScreen} />
+          {started && (
+            <Stack.Screen name="createAiPlan" component={CreateAiStack} />
+          )}
           <Stack.Screen name="planDetails" component={PlanDetailsScreen} />
           <Stack.Screen
             name="workoutSession"
             component={WorkoutSessionScreen}
           />
           <Stack.Screen name="profile" component={ProfileScreen} />
-          <Stack.Screen name="upload" component={UploadScreen} />
-          {isFetching ? (
-            <Stack.Screen name="analyzing" component={AnalyzingScreen} />
-          ) : null}
-          <Stack.Screen name="preferences" component={PreferencesScreen} />
-          <Stack.Screen name="previewPlan" component={PreviewPlanScreen} />
           <Stack.Screen name="payment" component={PaywallScreen} />
-          <Stack.Screen
-            name="confirmEquipments"
-            component={ConfirmEquipmentScreen}
-          />
         </>
       ) : null}
     </Stack.Navigator>

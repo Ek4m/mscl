@@ -8,29 +8,37 @@ import {
   View,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useFocusEffect } from "@react-navigation/native";
+import { CompositeScreenProps, useFocusEffect } from "@react-navigation/native";
 
-import { RootStackParamList } from "../types";
-import PlanList from "../../modules/prediction/components/planList";
+import { RootStackParamList } from "../../types";
+import PlanList from "../../../modules/prediction/components/planList";
 import {
-  selectPredictions,
+  reset,
+  selectAiPlan,
   useGeneratePlanMutation,
-} from "../../redux/workout/create-ai";
-import { useAppSelector } from "../../redux/root";
-import { COLORS } from "../../constants/colors";
-import Chip from "../../UI/components/chip";
-import SubmitButton from "../../UI/components/submitButton";
-import Link from "../../modules/auth/components/link";
+} from "../../../redux/workout/create-ai";
+import { useAppDispatch, useAppSelector } from "../../../redux/root";
+import { COLORS } from "../../../constants/colors";
+import Chip from "../../../UI/components/chip";
+import SubmitButton from "../../../UI/components/submitButton";
+import Link from "../../../modules/auth/components/link";
+import { CreateAiPlanParamList } from "./types";
 
-const PreviewPlanScreen: React.FC<
-  NativeStackScreenProps<RootStackParamList, "previewPlan">
-> = ({ navigation }) => {
+type PreviewPlanProps = CompositeScreenProps<
+  NativeStackScreenProps<CreateAiPlanParamList, "previewPlan">,
+  NativeStackScreenProps<RootStackParamList>
+>;
+
+const PreviewPlanScreen: React.FC<PreviewPlanProps> = ({ navigation }) => {
   const [generateProgram, { isLoading, isSuccess, data }] =
     useGeneratePlanMutation();
-  const { days, level, selectedPredictions } =
-    useAppSelector(selectPredictions);
+  const { days, level, selectedPredictions } = useAppSelector(selectAiPlan);
 
-    useFocusEffect(
+  const onStartWorkout = () => {
+    navigation.navigate("planDetails", { id: data?.id || 0 });
+  };
+
+  useFocusEffect(
     useCallback(() => {
       generateProgram({
         equipments: selectedPredictions,
@@ -49,9 +57,7 @@ const PreviewPlanScreen: React.FC<
       {isLoading && <ActivityIndicator color={COLORS.lightBlue} />}
       {data && isSuccess && <PlanList plan={data} />}
       <SubmitButton
-        onPress={() =>
-          navigation.navigate("planDetails", { id: data?.id || 0 })
-        }
+        onPress={onStartWorkout}
         bgColor={COLORS.lightBlue}
         title="Start workout!"
       />

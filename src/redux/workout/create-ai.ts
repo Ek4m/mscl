@@ -16,6 +16,7 @@ export interface PredictSliceState {
   selectedPredictions: string[];
   isFetching: boolean;
   files: ImagePickerAsset[];
+  started: boolean;
   level: GymLevel;
   equipments: Equipment[];
   exercises: Exercise[];
@@ -27,6 +28,7 @@ const initialState: PredictSliceState = {
   selectedPredictions: [],
   isFetching: true,
   files: [],
+  started: false,
   level: GymLevel.INTERMEDIATE,
   equipments: [],
   exercises: [],
@@ -70,12 +72,21 @@ export const predictSlice = createSlice({
   reducers: {
     reset: (state) => {
       state.predictions = [];
+      state.selectedPredictions = [];
+      state.isFetching = true;
+      state.files = [];
+      state.started = false;
+      state.level = GymLevel.INTERMEDIATE;
+      state.days = 3;
     },
     closeAnalyzing: (state) => {
       state.isFetching = false;
     },
     addFile: (state, action: PayloadAction<ImagePickerAsset>) => {
       state.files.push(action.payload);
+    },
+    startAIPlanning: (state) => {
+      state.started = true;
     },
     removeFile: (state, action: PayloadAction<number>) => {
       state.files = state.files.filter((_, index) => index !== action.payload);
@@ -129,7 +140,7 @@ export const predictSlice = createSlice({
   },
 });
 
-export const selectPredictions = (state: RootState) => state.detection;
+export const selectAiPlan = (state: RootState) => state.detection;
 export const {
   useSendImagesMutation,
   useGeneratePlanMutation,
@@ -144,5 +155,6 @@ export const {
   addToSelected,
   setLevel,
   setDays,
+  startAIPlanning,
 } = predictSlice.actions;
 export default predictSlice.reducer;

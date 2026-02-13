@@ -2,22 +2,22 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, useEffect, FC } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 
-import { RootStackParamList } from "../types";
-import { COLORS } from "../../constants/colors";
+import { CreateAiPlanParamList } from "./types";
 
-import { useAppDispatch, useAppSelector } from "../../redux/root";
 import {
   addToSelected,
   closeAnalyzing,
-  selectPredictions,
-} from "../../redux/workout/create-ai";
+  selectAiPlan,
+} from "../../../redux/workout/create-ai";
+import { COLORS } from "../../../constants/colors";
+import { useAppDispatch, useAppSelector } from "../../../redux/root";
 
 const AnalyzingScreen: FC<
-  NativeStackScreenProps<RootStackParamList, "analyzing">
+  NativeStackScreenProps<CreateAiPlanParamList, "analyzing">
 > = ({ navigation }) => {
   const [message, setMessage] = useState("Scanning equipment...");
   const dispatch = useAppDispatch();
-  const { predictions, isFetching } = useAppSelector(selectPredictions);
+  const { predictions, isFetching } = useAppSelector(selectAiPlan);
 
   useEffect(() => {
     const messages = [

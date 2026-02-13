@@ -10,20 +10,20 @@ import {
   Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { RootStackParamList } from "../types";
+import { CreateAiPlanParamList } from "./types";
+import { useAppDispatch, useAppSelector } from "../../../redux/root";
 import {
   addFile,
   removeFile,
-  selectPredictions,
+  selectAiPlan,
   useSendImagesMutation,
-} from "../../redux/workout/create-ai";
-import { useAppDispatch, useAppSelector } from "../../redux/root";
-import { generateImages } from "../../modules/prediction/helpers";
+} from "../../../redux/workout/create-ai";
+import { generateImages } from "../../../modules/prediction/helpers";
 
 const UploadScreen: FC<
-  NativeStackScreenProps<RootStackParamList, "upload">
+  NativeStackScreenProps<CreateAiPlanParamList, "upload">
 > = ({ navigation }) => {
-  const { files } = useAppSelector(selectPredictions);
+  const { files } = useAppSelector(selectAiPlan);
   const [sendImages] = useSendImagesMutation();
   const dispatch = useAppDispatch();
 
@@ -54,8 +54,8 @@ const UploadScreen: FC<
 
     try {
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images, 
-        allowsEditing: false, 
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
         quality: 1,
       });
       if (!result.canceled) {

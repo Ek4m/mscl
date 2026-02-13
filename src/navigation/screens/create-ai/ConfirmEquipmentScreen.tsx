@@ -9,26 +9,25 @@ import {
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-
-import { RootStackParamList } from "../types";
-import { COLORS } from "../../constants/colors";
-import SubmitButton from "../../UI/components/submitButton";
-import { useAppDispatch, useAppSelector } from "../../redux/root";
+import { CreateAiPlanParamList } from "./types";
 import {
   addToSelected,
   removeFromSelectedPredictions,
-  selectPredictions,
-} from "../../redux/workout/create-ai";
+  selectAiPlan,
+} from "../../../redux/workout/create-ai";
+import { useAppDispatch, useAppSelector } from "../../../redux/root";
+import { COLORS } from "../../../constants/colors";
+import SubmitButton from "../../../UI/components/submitButton";
 
 const ConfirmEquipmentScreen: React.FC<
-  NativeStackScreenProps<RootStackParamList, "confirmEquipments">
+  NativeStackScreenProps<CreateAiPlanParamList, "confirmEquipments">
 > = ({
   navigation,
   route: {
     params: { predictions },
   },
 }) => {
-  const { selectedPredictions } = useAppSelector(selectPredictions);
+  const { selectedPredictions } = useAppSelector(selectAiPlan);
   const dispatch = useAppDispatch();
 
   const onConfirm = () => {

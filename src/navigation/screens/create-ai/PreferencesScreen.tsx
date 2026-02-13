@@ -2,22 +2,22 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { useAppDispatch, useAppSelector } from "../../redux/root";
+import { useAppDispatch, useAppSelector } from "../../../redux/root";
 import {
-  selectPredictions,
+  selectAiPlan,
   setDays,
   setLevel,
-} from "../../redux/workout/create-ai";
-import { RootStackParamList } from "../types";
-import { GymLevel } from "../../modules/prediction/enums";
-import { COLORS } from "../../constants/colors";
-import NumOfDaysSelect from "../../modules/prediction/components/numOfDaysSelect";
-import SubmitButton from "../../UI/components/submitButton";
+} from "../../../redux/workout/create-ai";
+import { GymLevel } from "../../../modules/prediction/enums";
+import { COLORS } from "../../../constants/colors";
+import NumOfDaysSelect from "../../../modules/prediction/components/numOfDaysSelect";
+import SubmitButton from "../../../UI/components/submitButton";
+import { CreateAiPlanParamList } from "./types";
 
 const PreferencesScreen: React.FC<
-  NativeStackScreenProps<RootStackParamList, "preferences">
+  NativeStackScreenProps<CreateAiPlanParamList, "preferences">
 > = ({ navigation }) => {
-  const { level, days } = useAppSelector(selectPredictions);
+  const { level, days } = useAppSelector(selectAiPlan);
   const dispatch = useAppDispatch();
 
   const onFinish = () => {

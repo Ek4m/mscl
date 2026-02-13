@@ -13,13 +13,14 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { COLORS } from "../../constants/colors";
-import { useAppSelector } from "../../redux/root";
+import { useAppDispatch, useAppSelector } from "../../redux/root";
 import { selectUserInfo } from "../../redux/auth/slice";
 import { useGetPlansQuery } from "../../redux/plans/slice";
 import PlanListItem from "../../modules/prediction/components/planListItem";
 import { RootStackParamList } from "../types";
 import { clearWorkoutDbDev } from "../../db/services";
 import { Image } from "react-native";
+import { startAIPlanning } from "../../redux/workout/create-ai";
 
 const AiLogo = require("../../../assets/ai.png");
 const CustomPlanLogo = require("../../../assets/custom.png");
@@ -29,32 +30,45 @@ const HomeScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "home">
 > = ({ navigation }) => {
   const { data, isFetching, refetch } = useGetPlansQuery();
+  const dispatch = useAppDispatch();
   const { userInfo } = useAppSelector(selectUserInfo);
 
   const features = [
+    {
+      id: "custom",
+      title: "Manual Build",
+      subtitle: "Customized precision",
+      icon: CustomPlanLogo,
+      onPress: () => {
+        navigation.navigate("customPlan");
+      },
+      screen: "customPlan",
+      color: "#63ff20", // green
+    },
     {
       id: "premade",
       title: "Elite Library",
       subtitle: "Pro-made gym plans",
       icon: PremadePlanLogo,
       screen: "upload",
-      color: "#f77855", // orange
+      onPress: () => {
+        navigation.navigate("createAiPlan", { screen: "upload" });
+      },
+      color: "#ff3217", // orange
     },
     {
       id: "ai",
       title: "AI planner",
       subtitle: "Build with Gemini AI",
       icon: AiLogo,
+      onPress: () => {
+        dispatch(startAIPlanning());
+        setTimeout(() => {
+          navigation.navigate("createAiPlan", { screen: "upload" });
+        });
+      },
       screen: "upload",
-      color: COLORS.lightBlue, // mainBlue
-    },
-    {
-      id: "custom",
-      title: "Manual Build",
-      subtitle: "Customized precision",
-      icon: CustomPlanLogo,
-      screen: "customPlan",
-      color: "#49f643", // green
+      color: COLORS.mainBlue, // mainBlue
     },
   ];
 
@@ -85,7 +99,7 @@ const HomeScreen: React.FC<
                     styles.featureCard,
                     { borderColor: feature.color + "40" },
                   ]}
-                  onPress={() => navigation.navigate(feature.screen)}
+                  onPress={feature.onPress}
                 >
                   <View
                     style={[
@@ -101,14 +115,14 @@ const HomeScreen: React.FC<
                       {feature.subtitle}
                     </Text>
                   </View>
-                  <Icon name="chevron-right" color={COLORS.white} size={24} />
+                  <Icon name="chevron-right" color={"grey"} size={24} />
                 </TouchableOpacity>
               ))}
             </View>
           </View>
-          {__DEV__ ? (
+          {/* {__DEV__ ? (
             <Button onPress={clearWorkoutDbDev} title="Clear db" />
-          ) : null}
+          ) : null} */}
           {/* Programs List */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -248,8 +262,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   featureCard: {
-    backgroundColor: "#18181bbe",
-    borderRadius: 16,
+    backgroundColor: "#1d1d1dbe",
+    borderRadius: 10,
     padding: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -279,6 +293,7 @@ const styles = StyleSheet.create({
   featureSubtitle: {
     color: "#71717a",
     fontSize: 13,
+    fontStyle: "italic",
   },
 });
 

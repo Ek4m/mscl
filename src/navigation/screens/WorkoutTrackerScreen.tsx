@@ -7,7 +7,6 @@ import ActiveWorkout from "../../modules/prediction/components/activeWorkout";
 import { RootStackParamList } from "../types";
 import { successToast } from "../../helpers/toast";
 import {
-  clearWorkoutDbDev,
   getWorkoutExercises,
   insertOrCreateWorkoutSession,
 } from "../../db/services";
@@ -39,7 +38,7 @@ const WorkoutTrackerScreen: React.FC<
       }));
       const copyExercises = [...newExercises];
       const savedExercises = getWorkoutExercises(sessionId);
-      console.log(JSON.stringify(savedExercises))
+
       if (savedExercises && savedExercises.length) {
         savedExercises.forEach((ex) => {
           const exerciseIndex = copyExercises.findIndex((e) => {
@@ -73,7 +72,6 @@ const WorkoutTrackerScreen: React.FC<
     successToast("Tracking was saved successfully");
     navigation.goBack();
   };
-  console.log("SALAAAAm", JSON.stringify(exercises));
   if (activeWorkoutDay && activePlan)
     return (
       <ActiveWorkout
@@ -82,13 +80,7 @@ const WorkoutTrackerScreen: React.FC<
         setExercises={setExercises}
         workoutDay={activeWorkoutDay}
         plan={activePlan}
-        onCancel={() => {
-          if (__DEV__) {
-            clearWorkoutDbDev();
-          } else {
-            navigation.goBack();
-          }
-        }}
+        onCancel={() => navigation.goBack()}
         onFinish={onFinishTracking}
       />
     );

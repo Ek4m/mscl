@@ -12,7 +12,7 @@ import FaIcons from "react-native-vector-icons/FontAwesome5";
 
 import { COLORS } from "../../../constants/colors";
 import { useAppDispatch, useAppSelector } from "../../../redux/root";
-import { selectPredictions } from "../../../redux/workout/create-ai";
+import { selectAiPlan } from "../../../redux/workout/create-ai";
 import { MuscleGroup, MuscleGroupTitles } from "../../workout/vault";
 import ExerciseAddItem from "./exerciseAddElement";
 import {
@@ -27,7 +27,7 @@ interface Props {
 
 const ExercisePicker: React.FC<Props> = ({ visible, onClose }) => {
   const { activeDay, plan, pickerMode } = useAppSelector(selectCreatePlanState);
-  const { exercises } = useAppSelector(selectPredictions);
+  const { exercises } = useAppSelector(selectAiPlan);
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const [selectedMuscle, setSelectedMuscle] = useState<MuscleGroup | "all">(

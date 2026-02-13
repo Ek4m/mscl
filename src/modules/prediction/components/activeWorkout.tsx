@@ -84,7 +84,6 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
 
   const handleToggleSet = useCallback(
     (exerciseId: number, index: number, variationId: number | null) => {
-      console.log("__EX AND VARIATION", exerciseId, variationId);
       setExercises((prev) =>
         prev.map((ex) => {
           if (
@@ -145,9 +144,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <IonIcons name="chevron-back" size={20} color="#71717a" />
-            <Text style={styles.backText}>
-              {__DEV__ ? "REMOVE DB" : "Cancel"}
-            </Text>
+            <Text style={styles.backText}>Cancel</Text>
           </TouchableOpacity>
           <Text style={styles.title}>{plan.title}</Text>
           <Text style={styles.subtitle}>{plan.title}</Text>
