@@ -3,11 +3,12 @@ import React, { FC } from "react";
 
 import { COLORS } from "../../../constants/colors";
 import { WorkoutPlan } from "../types";
+import { CustomPlanDetails } from "../../workout/types";
 
-const PlanList: FC<{ plan: WorkoutPlan }> = ({ plan }) => {
+const PlanList: FC<{ plan: CustomPlanDetails }> = ({ plan }) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      {plan.days.map((day) => (
+      {plan.weeks[0].days.map((day) => (
         <View style={styles.card} key={day.id}>
           <Text style={styles.dayLabel}>Day {day.dayIndex}</Text>
           <View style={styles.exerciseList}>

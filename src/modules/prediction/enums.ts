@@ -3,3 +3,8 @@ export enum GymLevel {
   INTERMEDIATE = "intermediate",
   PRO = "pro",
 }
+
+export enum Gender {
+  MALE = "male",
+  FEMALE = "female",
+}

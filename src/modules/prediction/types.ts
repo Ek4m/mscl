@@ -4,7 +4,7 @@ import {
   CustomPlanDetails,
   Exercise,
 } from "../workout/types";
-import { GymLevel } from "./enums";
+import { Gender, GymLevel } from "./enums";
 
 export interface PredictionResult {
   isLoading: boolean;
@@ -46,7 +46,8 @@ export interface WorkoutHistoryCredentials {
 }
 
 export interface GenPlanCredentials {
-  equipments: string[];
+  gender: Gender;
+  weeks: number;
   level: GymLevel;
   numOfDays: number;
 }

@@ -33,7 +33,7 @@ export interface CustomExercise {
 }
 
 export interface CustomDayPlan {
-  dayNumber: number;
+  dayIndex: number;
   id: number;
   exercises: WorkoutExercise[];
 }

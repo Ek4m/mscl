@@ -20,7 +20,7 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
         <Text style={[styles.dayMeta, doneSession ? styles.paramDone : null]}>
           {day?.exercises.length || 0} TOTAL EXERCISES{" "}
           {doneSession
-            ? `- DONE (${datePrettify(doneSession.finished_at, { showTime: true })})`
+            ? `- DONE (${datePrettify(doneSession?.finished_at, { showTime: true })})`
             : ""}
         </Text>
       </View>

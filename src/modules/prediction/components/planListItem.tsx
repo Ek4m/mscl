@@ -52,7 +52,7 @@ const PlanListItem: FC<{ program: CustomPlanDetails }> = ({ program }) => {
             <Text style={styles.unit}>LAST TRACKED</Text>
           </Text>
           <Text style={styles.unit}>
-            {datePrettify(sessions[0].finished_at)}
+            {sessions.length ? datePrettify(sessions[0].finished_at) : "-"}
           </Text>
         </View>
         <View style={styles.vLine} />

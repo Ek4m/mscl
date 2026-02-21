@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from "react";
+import React, { FC, useMemo } from "react";
 import {
   View,
   Text,
@@ -39,7 +39,6 @@ const PlanReviewScreen: FC<NativeStackScreenProps<RootStackParamList>> = ({
     try {
       const result = await submit({ plan, title }).unwrap();
       successToast("Plan created successfully!");
-      console.log(JSON.stringify(result));
       navigation.navigate("planDetails", { id: result.id });
     } catch (error: any) {
       errorToast(error.data.messages);
@@ -74,7 +73,7 @@ const PlanReviewScreen: FC<NativeStackScreenProps<RootStackParamList>> = ({
             <View key={index} style={styles.dayCard}>
               <View style={styles.dayHeader}>
                 <Text style={styles.dayText}>
-                  Day {day.dayNumber || index + 1}
+                  Day {day.dayIndex || index + 1}
                 </Text>
                 <Text style={styles.exerciseCount}>
                   {day.exercises.length} Exercises

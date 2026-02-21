@@ -3,5 +3,6 @@ export type CreateAiPlanParamList = {
   preferences: undefined;
   previewPlan: undefined;
   analyzing: undefined;
+  selectGender: undefined;
   confirmEquipments: { predictions: string[] };
 };

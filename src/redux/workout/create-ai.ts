@@ -4,12 +4,12 @@ import { ImagePickerAsset } from "expo-image-picker";
 
 import axiosBaseQuery from "../baseQuery";
 import { RootState } from "../root";
-import { GymLevel } from "../../modules/prediction/enums";
+import { Gender, GymLevel } from "../../modules/prediction/enums";
 import {
   GenPlanCredentials,
   WorkoutPlan,
 } from "../../modules/prediction/types";
-import { Equipment, Exercise } from "../../modules/workout/types";
+import { CustomPlanDetails, Equipment, Exercise } from "../../modules/workout/types";
 
 export interface PredictSliceState {
   predictions: string[];
@@ -20,6 +20,8 @@ export interface PredictSliceState {
   level: GymLevel;
   equipments: Equipment[];
   exercises: Exercise[];
+  gender: Gender;
+  weeks: number;
   days: number;
 }
 
@@ -28,10 +30,12 @@ const initialState: PredictSliceState = {
   selectedPredictions: [],
   isFetching: true,
   files: [],
+  gender: Gender.MALE,
   started: false,
   level: GymLevel.INTERMEDIATE,
   equipments: [],
   exercises: [],
+  weeks: 4,
   days: 3,
 };
 
@@ -56,7 +60,7 @@ export const predictApi = createApi({
         headers: { "Content-Type": "multipart/form-data" },
       }),
     }),
-    generatePlan: builder.mutation<WorkoutPlan, GenPlanCredentials>({
+    generatePlan: builder.mutation<CustomPlanDetails, GenPlanCredentials>({
       query: (credentials: GenPlanCredentials) => ({
         url: "workout/generate-program",
         method: "post",
@@ -71,13 +75,7 @@ export const predictSlice = createSlice({
   initialState,
   reducers: {
     reset: (state) => {
-      state.predictions = [];
-      state.selectedPredictions = [];
-      state.isFetching = true;
-      state.files = [];
-      state.started = false;
-      state.level = GymLevel.INTERMEDIATE;
-      state.days = 3;
+      state = initialState;
     },
     closeAnalyzing: (state) => {
       state.isFetching = false;
@@ -109,6 +107,12 @@ export const predictSlice = createSlice({
     },
     setDays: (state, action: PayloadAction<number>) => {
       state.days = action.payload;
+    },
+    setWeeks: (state, action: PayloadAction<number>) => {
+      state.weeks = action.payload;
+    },
+    setGender: (state, action: PayloadAction<Gender>) => {
+      state.gender = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -154,7 +158,9 @@ export const {
   removeFromSelectedPredictions,
   addToSelected,
   setLevel,
+  setGender,
   setDays,
+  setWeeks,
   startAIPlanning,
 } = predictSlice.actions;
 export default predictSlice.reducer;

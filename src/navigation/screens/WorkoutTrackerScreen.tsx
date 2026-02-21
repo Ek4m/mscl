@@ -41,7 +41,6 @@ const WorkoutTrackerScreen: React.FC<
       );
       const copyExercises: ActiveExercise[] = [...newExercises];
       const savedExercises = getWorkoutExercises(sessionId);
-      console.log(savedExercises);
 
       if (savedExercises && savedExercises.length) {
         savedExercises.forEach((ex) => {

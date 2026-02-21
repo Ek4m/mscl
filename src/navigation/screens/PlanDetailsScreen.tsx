@@ -15,7 +15,6 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import FAIcon from "react-native-vector-icons/FontAwesome5";
 import OctiIcon from "react-native-vector-icons/Octicons";
-import AntDesignIcons from "react-native-vector-icons/AntDesign";
 
 import { useGetUserCustomPlanByIdQuery } from "../../redux/plans/slice";
 import { useAppSelector } from "../../redux/root";
@@ -23,8 +22,6 @@ import { selectUserInfo } from "../../redux/auth/slice";
 import { COLORS } from "../../constants/colors";
 import { RootStackParamList } from "../types";
 import { getWorkoutSessionsByUser } from "../../db/services";
-import Modal from "../../UI/components/modal";
-import PlanUsageHistory from "../../modules/prediction/components/history";
 import SubmitButton from "../../UI/components/submitButton";
 import PlanDetailsExerciseList from "../../modules/prediction/components/planDetailsExerciseList";
 
@@ -40,7 +37,6 @@ const PlanDetailsScreen: FC<
   const [activeWeekIdx, setActiveWeekIdx] = useState(0);
   const [activeDayIdx, setActiveDayIdx] = useState(0);
   const [userProgress, setUserProgress] = useState({ week: 0, day: 0 });
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
   const currentWeek = plan?.weeks[activeWeekIdx];
   const currentDay = currentWeek?.days[activeDayIdx];
@@ -98,7 +94,9 @@ const PlanDetailsScreen: FC<
 
       <ImageBackground
         source={{
-          uri: plan?.template?.thumbnail,
+          uri:
+            plan?.template?.thumbnail ||
+            "https://img.freepik.com/premium-photo/dumbbells-kettlebell-gym-floor_1205263-196404.jpg",
         }}
         style={styles.hero}
       >
@@ -110,12 +108,6 @@ const PlanDetailsScreen: FC<
                 style={styles.backCircle}
               >
                 <FeatherIcon name="arrow-left" size={20} color="white" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setIsHistoryModalOpen(true)}
-                style={styles.backCircle}
-              >
-                <AntDesignIcons name="history" size={20} color="white" />
               </TouchableOpacity>
             </View>
 
@@ -229,13 +221,6 @@ const PlanDetailsScreen: FC<
             />
           </View>
         )}
-
-      <Modal
-        isVisible={isHistoryModalOpen}
-        onRequestClose={() => setIsHistoryModalOpen(false)}
-      >
-        <PlanUsageHistory plan={plan!} />
-      </Modal>
     </View>
   );
 };

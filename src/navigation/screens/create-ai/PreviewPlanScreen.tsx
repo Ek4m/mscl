@@ -30,9 +30,9 @@ type PreviewPlanProps = CompositeScreenProps<
 >;
 
 const PreviewPlanScreen: React.FC<PreviewPlanProps> = ({ navigation }) => {
-  const [generateProgram, { isLoading, isSuccess, data }] =
+  const [generateProgram, { isLoading, isSuccess, data, error }] =
     useGeneratePlanMutation();
-  const { days, level, selectedPredictions } = useAppSelector(selectAiPlan);
+  const { days, level, gender, weeks } = useAppSelector(selectAiPlan);
 
   const onStartWorkout = () => {
     navigation.navigate("planDetails", { id: data?.id || 0 });
@@ -41,27 +41,25 @@ const PreviewPlanScreen: React.FC<PreviewPlanProps> = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       generateProgram({
-        equipments: selectedPredictions,
         level,
         numOfDays: days,
-      });
-    }, [selectedPredictions, level, days, generateProgram]),
+        gender,
+        weeks,
+      })
+        .unwrap()
+        .then((res) => {
+          navigation.replace("planDetails", { id: res.id });
+        });
+    }, [level, days, generateProgram, weeks, gender]),
   );
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{data?.title}</Text>
-        <Chip size="large" label={level.toUpperCase()} type={"info"} />
         <Text style={styles.subtitle}>Based on your gym equipment</Text>
       </View>
-      {isLoading && <ActivityIndicator color={COLORS.lightBlue} />}
-      {data && isSuccess && <PlanList plan={data} />}
-      <SubmitButton
-        onPress={onStartWorkout}
-        bgColor={COLORS.lightBlue}
-        title="Start workout!"
-      />
-      <Link screen="home" title="Use this plan later" />
+      {isLoading && (
+        <ActivityIndicator size={"large"} color={COLORS.lightBlue} />
+      )}
     </View>
   );
 };

@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableOpacityProps,
+  View,
 } from "react-native";
 import React, { FC, ReactNode } from "react";
 import { IS_SMALL } from "../../constants/vault";
@@ -45,7 +46,7 @@ const SubmitButton: FC<
         <ActivityIndicator color={textColor || "#000"} />
       ) : (
         <>
-          {icon}
+          {icon && <View style={{ marginRight: 5 }}>{icon}</View>}
           <Text style={[styles.buttonText, { color: textColor || "#000" }]}>
             {title}
           </Text>

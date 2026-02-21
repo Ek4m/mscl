@@ -38,7 +38,9 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
       color: COLORS.mainBlue,
       onPress: () => {
         dispatch(startAIPlanning());
-        navigation.navigate("createAiPlan", { screen: "upload" });
+        setTimeout(() => {
+          navigation.navigate("createAiPlan", { screen: "selectGender" });
+        });
       },
     },
     {

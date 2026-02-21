@@ -4,19 +4,15 @@ import { useFocusEffect } from "@react-navigation/native";
 
 import { CreateAiPlanParamList } from "./types";
 
-import { useAppDispatch, useAppSelector } from "../../../redux/root";
-import { reset, selectAiPlan } from "../../../redux/workout/create-ai";
+import { useAppDispatch } from "../../../redux/root";
+import { reset } from "../../../redux/workout/create-ai";
 
-import ConfirmEquipmentScreen from "./ConfirmEquipmentScreen";
 import PreviewPlanScreen from "./PreviewPlanScreen";
-import PreferencesScreen from "./PreferencesScreen";
-import AnalyzingScreen from "./AnalyzingScreen";
-import UploadScreen from "./UploadScreen";
+import AiGeneratorScreen from "./AiGeneratorScreen";
 
 const Stack = createNativeStackNavigator<CreateAiPlanParamList>();
 
 const CreateAiStack = () => {
-  const { isFetching } = useAppSelector(selectAiPlan);
   const dispatch = useAppDispatch();
 
   useFocusEffect(
@@ -28,18 +24,10 @@ const CreateAiStack = () => {
   );
   return (
     <Stack.Navigator
-      initialRouteName="upload"
+      initialRouteName="selectGender"
       screenOptions={{ headerShown: false }}
     >
-      <Stack.Screen name="upload" component={UploadScreen} />
-      {isFetching ? (
-        <Stack.Screen name="analyzing" component={AnalyzingScreen} />
-      ) : null}
-      <Stack.Screen name="preferences" component={PreferencesScreen} />
-      <Stack.Screen
-        name="confirmEquipments"
-        component={ConfirmEquipmentScreen}
-      />
+      <Stack.Screen name="selectGender" component={AiGeneratorScreen} />
       <Stack.Screen name="previewPlan" component={PreviewPlanScreen} />
     </Stack.Navigator>
   );

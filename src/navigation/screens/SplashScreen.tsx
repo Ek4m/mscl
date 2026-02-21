@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { RootStackParamList } from "../types";
 import { useAppSelector } from "../../redux/root";
 import { selectUserInfo } from "../../redux/auth/slice";
 import { COLORS } from "../../constants/colors";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
@@ -53,11 +54,13 @@ const SplashScreen: FC<
     ]).start();
   }, []);
 
-  useEffect(() => {
-    if (!isFetching) {
-      navigation.navigate(userInfo ? "home" : "initialInfo");
-    }
-  }, [userInfo, isFetching]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!isFetching) {
+        navigation.navigate(userInfo ? "home" : "initialInfo");
+      }
+    }, [userInfo, isFetching]),
+  );
 
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],
