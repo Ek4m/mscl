@@ -1,6 +1,5 @@
-// Chip.tsx
 import React from "react";
-import { View, Text, StyleSheet, ViewStyle, TextStyle } from "react-native";
+import { View, Text, StyleSheet, ViewStyle } from "react-native";
 import { COLORS } from "../../constants/colors";
 
 export type ChipType = "success" | "error" | "warning" | "info" | "neutral";
@@ -8,6 +7,7 @@ export type ChipType = "success" | "error" | "warning" | "info" | "neutral";
 interface ChipProps {
   label: string;
   type?: ChipType;
+  align?: "left" | "center" | "right";
   size?: "small" | "large" | "medium";
 }
 
@@ -15,10 +15,22 @@ const Chip: React.FC<ChipProps> = ({
   label,
   type = "neutral",
   size = "small",
+  align = "center",
 }) => {
   return (
     <View
-      style={[styles.container, typeStyles[type].container]}
+      style={[
+        styles.container,
+        typeStyles[type].container,
+        {
+          alignSelf:
+            align === "left"
+              ? "flex-start"
+              : align === "right"
+                ? "flex-end"
+                : "center",
+        },
+      ]}
       pointerEvents="none"
     >
       <Text style={[styles.text, styles[size]]}>{label}</Text>
@@ -29,7 +41,6 @@ const Chip: React.FC<ChipProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 2,
-    alignSelf: "flex-start",
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 5,

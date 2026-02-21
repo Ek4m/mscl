@@ -1,297 +1,246 @@
-import React, { useState } from "react";
+import React, { FC } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Platform,
   RefreshControl,
-  Button,
+  Image,
 } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import FeatherIcon from "react-native-vector-icons/Feather";
 
 import { COLORS } from "../../constants/colors";
+import PlanListItem from "../../modules/prediction/components/planListItem";
+import { clearWorkoutDbDev } from "../../db/services";
+
+import { useGetPlansQuery } from "../../redux/plans/slice";
+import { startAIPlanning } from "../../redux/workout/create-ai";
 import { useAppDispatch, useAppSelector } from "../../redux/root";
 import { selectUserInfo } from "../../redux/auth/slice";
-import { useGetPlansQuery } from "../../redux/plans/slice";
-import PlanListItem from "../../modules/prediction/components/planListItem";
+
 import { RootStackParamList } from "../types";
-import { clearWorkoutDbDev } from "../../db/services";
-import { Image } from "react-native";
-import { startAIPlanning } from "../../redux/workout/create-ai";
 
-const AiLogo = require("../../../assets/ai.png");
-const CustomPlanLogo = require("../../../assets/custom.png");
-const PremadePlanLogo = require("../../../assets/premade.png");
-
-const HomeScreen: React.FC<
-  NativeStackScreenProps<RootStackParamList, "home">
-> = ({ navigation }) => {
+const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
+  navigation,
+}) => {
   const { data, isFetching, refetch } = useGetPlansQuery();
   const dispatch = useAppDispatch();
   const { userInfo } = useAppSelector(selectUserInfo);
 
   const features = [
     {
-      id: "custom",
-      title: "Manual Build",
-      subtitle: "Customized precision",
-      icon: CustomPlanLogo,
+      id: "ai",
+      title: "AI Planner",
+      subtitle: "Powered by Gemini",
+      icon: require("../../../assets/ai.png"),
+      color: COLORS.mainBlue,
       onPress: () => {
-        navigation.navigate("customPlan");
+        dispatch(startAIPlanning());
+        navigation.navigate("createAiPlan", { screen: "upload" });
       },
-      color: "#63ff20", // green
+    },
+    {
+      id: "custom",
+      title: "Plan Builder",
+      subtitle: "Design custom volume",
+      icon: require("../../../assets/custom.png"),
+      color: "#63ff20",
+      onPress: () => navigation.navigate("customPlan"),
     },
     {
       id: "premade",
-      title: "Elite Library",
-      subtitle: "Pro-made gym plans",
-      icon: PremadePlanLogo,
-      onPress: () => {
-        navigation.navigate("premadePlans");
-      },
-      color: "#ff3217", // orange
-    },
-    {
-      id: "ai",
-      title: "AI planner",
-      subtitle: "Build with Gemini AI",
-      icon: AiLogo,
-      onPress: () => {
-        dispatch(startAIPlanning());
-        setTimeout(() => {
-          navigation.navigate("createAiPlan", { screen: "upload" });
-        });
-      },
-      color: COLORS.mainBlue, // mainBlue
+      title: "Ready Programs",
+      subtitle: "Browse professional plans",
+      icon: require("../../../assets/premade.png"),
+      color: "#ff4520",
+      onPress: () => navigation.navigate("premadePlans"),
     },
   ];
 
   return (
     <View style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* Header */}
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isFetching}
+            onRefresh={refetch}
+            tintColor={COLORS.mainBlue}
+          />
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Elite Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>Welcome back,</Text>
-            <Text style={styles.username}>{userInfo?.username}</Text>
+            <View style={styles.heroBadge}>
+              <View style={styles.line} />
+              <Text style={styles.badgeText}>ELITE STATUS: ACTIVE</Text>
+            </View>
+            <Text style={styles.username}>
+              {userInfo?.username?.toUpperCase() || "OPERATOR"}
+            </Text>
           </View>
+          <TouchableOpacity style={styles.profileCircle}>
+            <FeatherIcon name="user" size={20} color={COLORS.mainBlue} />
+          </TouchableOpacity>
         </View>
-        <ScrollView
-          refreshControl={
-            <RefreshControl refreshing={isFetching} onRefresh={refetch} />
-          }
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-        >
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>CREATE NEW</Text>
-            <View style={styles.featureGrid}>
-              {features.map((feature) => (
-                <TouchableOpacity
-                  key={feature.id}
-                  style={[
-                    styles.featureCard,
-                    { borderColor: feature.color + "40" },
-                  ]}
-                  onPress={feature.onPress}
-                >
-                  <View
-                    style={[
-                      styles.featureIconContainer,
-                      { backgroundColor: feature.color + "20" },
-                    ]}
-                  >
-                    <Image source={feature.icon} style={styles.featureIcon} />
-                  </View>
-                  <View style={styles.featureText}>
-                    <Text style={styles.featureTitle}>{feature.title}</Text>
-                    <Text style={styles.featureSubtitle}>
-                      {feature.subtitle}
-                    </Text>
-                  </View>
-                  <Icon name="chevron-right" color={"grey"} size={24} />
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-          {__DEV__ ? (
-            <Button onPress={clearWorkoutDbDev} title="Clear db" />
-          ) : null}
-          {/* Programs List */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>YOUR PROGRAMS</Text>
-              <Text style={styles.badge}>{data?.length}</Text>
-            </View>
 
-            {data?.map((program) => (
-              <PlanListItem program={program} key={program.id} />
+        <View style={styles.content}>
+          {/* Feature Row - Matching the "Elite Ecosystem" cards */}
+          <Text style={styles.sectionTitle}>
+            FORGE <Text style={{ color: COLORS.mainBlue }}>NEW PATH</Text>
+          </Text>
+          <View style={styles.featureGrid}>
+            {features.map((f) => (
+              <TouchableOpacity
+                key={f.id}
+                style={[styles.featureCard, { borderColor: f.color + "40" }]}
+                onPress={f.onPress}
+              >
+                <View
+                  style={[styles.iconBox, { backgroundColor: f.color + "15" }]}
+                >
+                  <Image source={f.icon} style={styles.featureIcon} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.featureTitle}>{f.title}</Text>
+                  <Text style={styles.featureSub}>{f.subtitle}</Text>
+                </View>
+                <FeatherIcon name="arrow-right" size={16} color={f.color} />
+              </TouchableOpacity>
             ))}
           </View>
 
-          <View style={{ height: 40 }} />
-        </ScrollView>
-      </View>
+          {/* Programs Section */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>
+              YOUR <Text style={{ color: COLORS.mainBlue }}>PROGRAMS</Text>
+            </Text>
+            <View style={styles.countBadge}>
+              <Text style={styles.countText}>{data?.length || 0}</Text>
+            </View>
+          </View>
+
+          {data?.map((program) => (
+            <PlanListItem program={program} key={program.id} />
+          ))}
+
+          {__DEV__ && (
+            <TouchableOpacity style={styles.devBtn} onPress={clearWorkoutDbDev}>
+              <Text style={styles.devText}>CLEAR DB CACHE</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+        <View style={{ height: 100 }} />
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    paddingTop: 40,
-    backgroundColor: "#000",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
+  safeArea: { flex: 1, backgroundColor: "#0a0a0a" },
   header: {
+    paddingHorizontal: 24,
+    paddingTop: 60,
+    paddingBottom: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 24,
-    paddingTop: Platform.OS === "web" ? 24 : 12,
-    paddingBottom: 24,
   },
-  greeting: {
-    color: "#71717a",
-    fontSize: 14,
-    fontWeight: "500",
+  heroBadge: { flexDirection: "row", alignItems: "center", marginBottom: 4 },
+  line: {
+    width: 20,
+    height: 2,
+    backgroundColor: COLORS.mainBlue,
+    marginRight: 8,
+  },
+  badgeText: {
+    color: COLORS.mainBlue,
+    fontWeight: "900",
+    fontSize: 10,
+    letterSpacing: 1.5,
   },
   username: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "800",
-    fontFamily: "Oswald",
-    textTransform: "uppercase",
-    letterSpacing: -0.5,
+    color: COLORS.white,
+    fontSize: 32,
+    fontWeight: "900",
+    fontStyle: "italic",
+    letterSpacing: -1,
   },
-  iconButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "#18181b",
-    alignItems: "center",
-    justifyContent: "center",
+  profileCircle: {
+    width: 45,
+    height: 45,
+    borderRadius: 23,
     borderWidth: 1,
-    borderColor: "#27272a",
+    borderColor: "#222",
+    backgroundColor: "#111",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  notificationDot: {
-    position: "absolute",
-    top: 10,
-    right: 12,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLORS.mainBlue,
-    borderWidth: 2,
-    borderColor: "#18181b",
+  content: { paddingHorizontal: 24 },
+  sectionTitle: {
+    color: COLORS.white,
+    fontSize: 14,
+    fontWeight: "900",
+    letterSpacing: 2,
+    marginBottom: 16,
+    marginTop: 20,
   },
-  scrollContent: {
-    paddingHorizontal: 24,
-  },
-  statsBanner: {
+  featureGrid: { gap: 12 },
+  featureCard: {
+    backgroundColor: "#111",
+    borderRadius: 12,
+    padding: 16,
     flexDirection: "row",
-    backgroundColor: "#18181b",
-    borderRadius: 20,
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    marginBottom: 32,
-    borderWidth: 1,
-    borderColor: "#27272a",
-  },
-  statItem: {
-    flex: 1,
     alignItems: "center",
+    borderWidth: 1,
+  },
+  iconBox: {
+    width: 50,
+    height: 50,
+    borderRadius: 10,
     justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
   },
-  statDivider: {
-    width: 1,
-    height: "60%",
-    backgroundColor: "#27272a",
-    alignSelf: "center",
+  featureIcon: {
+    width: 45,
+    height: 45,
+    resizeMode: "contain",
+    borderRadius: 10,
   },
-  statValue: {
-    color: "#fff",
-    fontSize: 18,
+  featureTitle: {
+    color: COLORS.white,
+    fontSize: 16,
     fontWeight: "800",
-    fontFamily: "Oswald",
-    marginTop: 4,
+    fontStyle: "italic",
   },
-  statLabel: {
-    color: "#71717a",
-    fontSize: 10,
-    fontWeight: "700",
-    textTransform: "uppercase",
-  },
-  section: {
-    marginBottom: 32,
-  },
+  featureSub: { color: "#666", fontSize: 11, fontWeight: "600" },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    marginBottom: 16,
+    justifyContent: "space-between",
+    marginTop: 30,
+    marginBottom: 15,
   },
-  sectionTitle: {
-    color: "#71717a",
-    fontSize: 12,
-    fontWeight: "900",
-    letterSpacing: 1.5,
-    marginBottom: 16,
-  },
-  badge: {
-    backgroundColor: "#27272a",
-    color: "#fff",
-    fontSize: 10,
-    fontWeight: "bold",
-    paddingHorizontal: 8,
+  countBadge: {
+    backgroundColor: COLORS.mainBlue,
+    paddingHorizontal: 10,
     paddingVertical: 2,
-    borderRadius: 10,
-    marginBottom: 16,
-    overflow: "hidden",
+    borderRadius: 4,
   },
-  featureGrid: {
-    gap: 12,
-  },
-  featureCard: {
-    backgroundColor: "#1d1d1dbe",
-    borderRadius: 10,
-    padding: 10,
-    flexDirection: "row",
+  countText: { color: "#000", fontSize: 10, fontWeight: "900" },
+  devBtn: {
+    marginTop: 40,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: "#333",
+    borderRadius: 8,
     alignItems: "center",
-    borderWidth: 2,
   },
-  featureIconContainer: {
-    borderRadius: 12,
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 16,
-  },
-  featureIcon: {
-    width: 52,
-    height: 52,
-  },
-  featureText: {
-    flex: 1,
-  },
-  featureTitle: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "700",
-    fontFamily: "Oswald",
-    textTransform: "uppercase",
-  },
-  featureSubtitle: {
-    color: "#71717a",
-    fontSize: 13,
-    fontStyle: "italic",
-  },
+  devText: { color: "#444", fontSize: 10, fontWeight: "900" },
 });
 
 export default HomeScreen;

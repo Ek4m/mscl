@@ -30,8 +30,10 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
           (e) => e.exercise_id === ex.exercise?.id,
         );
         const exerciseDone = Boolean(doneExercises.length);
-        const doneReps = exerciseDone ?doneExercises.map((ex) => ex.reps).join(", ") : 0;
-        console.log("____DONE_REPS______: ",doneExercises)
+        const doneReps = exerciseDone
+          ? doneExercises.map((ex) => ex.reps).join(", ")
+          : 0;
+        console.log("____DONE_REPS______: ", doneExercises);
         return (
           <View key={idx} style={styles.exCard}>
             <View style={styles.exImageWrapper}>
@@ -80,7 +82,7 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
                 </View>
               </View>
               {exerciseDone && (
-                <Chip label="Done" size="medium" type="info" />
+                <Chip label="Done" align="left" size="medium" type="info" />
               )}
             </View>
           </View>
