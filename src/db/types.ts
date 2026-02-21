@@ -3,6 +3,7 @@ export type WorkoutSessionExercise = {
   title: string;
   workout_session_id: number;
   plan_day_exercise_id: number;
+  reps: number;
   exercise_id: number;
   variation_id: number | null;
   order_index: number;

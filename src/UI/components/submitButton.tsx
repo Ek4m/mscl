@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
-    fontSize: IS_SMALL ? 16 : 18,
+    fontSize: IS_SMALL ? 12 : 15,
     fontWeight: "bold",
   },
 });

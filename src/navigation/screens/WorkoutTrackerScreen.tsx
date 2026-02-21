@@ -18,34 +18,39 @@ const WorkoutTrackerScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "workoutTracker">
 > = ({ route: { params }, navigation }) => {
   const activePlan = params.plan;
+  const weekId = params.weekId;
+  const week = activePlan.weeks[weekId];
   const { userInfo } = useAppSelector(selectUserInfo);
-  const activeWorkoutDay = activePlan.days.find((d) => d.id === params.id);
+  const activeWorkoutDay = week.days.find((d) => d.id === params.id);
   const [workoutSessionId, setWorkoutSessionId] = useState(0);
   const [exercises, setExercises] = useState<ActiveExercise[]>([]);
 
   useEffect(() => {
     if (userInfo && activeWorkoutDay) {
-      console.log(activeWorkoutDay.id);
       const sessionId = insertOrCreateWorkoutSession(
         userInfo.id,
         activePlan.id,
         activeWorkoutDay.id,
       );
       setWorkoutSessionId(sessionId);
-      const newExercises = activeWorkoutDay.exercises.map((ex) => ({
-        ...ex,
-        completedSets: new Array(ex.targetSets).fill(null),
-      }));
-      const copyExercises = [...newExercises];
+      const newExercises: ActiveExercise[] = activeWorkoutDay.exercises.map(
+        (ex) => ({
+          ...ex,
+          completedSets: new Array(ex.targetSets).fill(null),
+        }),
+      );
+      const copyExercises: ActiveExercise[] = [...newExercises];
       const savedExercises = getWorkoutExercises(sessionId);
+      console.log(savedExercises);
 
       if (savedExercises && savedExercises.length) {
         savedExercises.forEach((ex) => {
           const exerciseIndex = copyExercises.findIndex((e) => {
             return (
               e.id === ex.plan_day_exercise_id &&
-              e.exercise.id === ex.exercise_id &&
-              e.variation?.id === ex.variation_id
+              e.exercise?.id === ex.exercise_id &&
+              (e.variation?.id === ex.variation_id ||
+                (!e.variation && !ex.variation_id))
             );
           });
           if (exerciseIndex >= 0) {

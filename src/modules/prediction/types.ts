@@ -17,8 +17,10 @@ export interface ActiveExercise extends CustomPlanDayExercise {
 
 export interface WorkoutExercise {
   exercise?: Exercise;
+  orderIndex: number;
   variation?: { title: string; id: number };
   id: number;
+  createdAt: string;
   targetSets: number;
   targetReps: number;
 }

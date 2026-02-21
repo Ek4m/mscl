@@ -69,7 +69,7 @@ const PlanListItem: FC<{ program: CustomPlanDetails }> = ({ program }) => {
         <View style={{ flex: 1 }}>
           <Text style={styles.programTitle}>{program.title}</Text>
           <Text style={styles.subtitle}>
-            {program.days.length} Days Program
+            {program.weeks.length} Weeks Program
           </Text>
         </View>
         <TouchableOpacity
@@ -108,7 +108,7 @@ const PlanListItem: FC<{ program: CustomPlanDetails }> = ({ program }) => {
       {/* Footer: Stats */}
       <View style={styles.footer}>
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>{sessions.length}</Text>
+          <Text style={styles.statValue}>{sessions?.length}</Text>
           <Text style={styles.statLabel}>Total Sessions</Text>
         </View>
         <View style={styles.divider} />

@@ -1,3 +1,5 @@
+import { GymLevel } from "../prediction/enums";
+import { WorkoutDay, WorkoutExercise, WorkoutPlan } from "../prediction/types";
 import { MuscleGroup } from "./vault";
 
 export interface Equipment {
@@ -32,7 +34,8 @@ export interface CustomExercise {
 
 export interface CustomDayPlan {
   dayNumber: number;
-  exercises: CustomExercise[];
+  id: number;
+  exercises: WorkoutExercise[];
 }
 
 export interface CustomPlanCredentials {
@@ -48,6 +51,12 @@ export interface CustomPlanDay {
   exercises: CustomPlanDayExercise[];
 }
 
+export interface CustomPlanWeeks {
+  id: number;
+  weekIndex: number;
+  days: CustomDayPlan[];
+}
+
 export interface CustomPlanDayExercise {
   id: number;
   orderIndex: number;
@@ -55,13 +64,35 @@ export interface CustomPlanDayExercise {
   targetReps: number;
   variation?: { id: number; title: string };
   createdAt: string;
-  exercise: Exercise;
+  exercise?: Exercise;
 }
 
 export interface CustomPlanDetails {
   id: number;
   title: string;
+  template?: PremadePlan;
   createdAt: string;
   updatedAt: string;
-  days: CustomPlanDay[];
+  weeks: CustomPlanWeeks[];
+}
+
+export interface PremadePlanWeek {
+  id: number;
+  weekNumber: number;
+  description: string | null;
+  createdAt: string;
+  days: WorkoutDay[];
+}
+
+export interface PremadePlan {
+  id: number;
+  title: string;
+  thumbnail: string;
+  level: GymLevel;
+  description: string | null;
+  daysPerWeek: number;
+  isTemplate: boolean;
+  createdAt: string;
+  updatedAt: string;
+  weeks: PremadePlanWeek[];
 }

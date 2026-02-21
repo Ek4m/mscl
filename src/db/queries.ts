@@ -19,6 +19,7 @@ export const CREATE_WORKOUT_EXERCISES_TABLE = `
         plan_day_exercise_id INTEGER NOT NULL,
         exercise_id INTEGER NOT NULL,
         variation_id INTEGER,
+        reps INTEGER,
         order_index INTEGER NOT NULL,
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -79,9 +80,10 @@ export const INSERT_WORKOUT_EXERCISE = `
       exercise_id,
       variation_id,
       order_index,
+      reps,
       created_at
     )
-    VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     `;
 
 export const DELETE_WORKOUT_EXERCISE = `
@@ -111,4 +113,11 @@ export const COMPLETE_WORKOUT_SESSION = `
       finished_at = CURRENT_TIMESTAMP
       WHERE id = ?
       AND completed = 0
+    `;
+
+export const GET_DONE_SESSION_BY_DAY = `
+    SELECT * FROM workout_sessions
+    WHERE plan_day_id = ?
+      AND completed = 1
+    ORDER BY finished_at DESC
     `;

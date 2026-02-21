@@ -4,7 +4,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import axiosBaseQuery from "../baseQuery";
 import { RootState } from "../root";
 import { WorkoutPlan } from "../../modules/prediction/types";
-import { CustomPlanDetails } from "../../modules/workout/types";
+import { CustomPlanDetails, PremadePlan } from "../../modules/workout/types";
 
 export interface PlansState {
   plans: WorkoutPlan[];
@@ -20,6 +20,25 @@ export const planApi = createApi({
   endpoints: (builder) => ({
     getPlans: builder.query<CustomPlanDetails[], void>({
       query: () => ({ url: "workout/plans", method: "get" }),
+    }),
+    getExistingPlanRegistration: builder.query<
+      { id: number },
+      number
+    >({
+      query: (planId: number) => ({
+        url: "workout/plan-registration/" + planId,
+        method: "get",
+      }),
+    }),
+    registerPlan: builder.mutation<{ id: number }, { planId: number }>({
+      query: ({ planId }) => ({
+        url: "workout/plan/plan-registration",
+        method: "post",
+        data: { planId },
+      }),
+    }),
+    getPremadePlans: builder.query<PremadePlan[], void>({
+      query: () => ({ url: "workout/premade-plans", method: "get" }),
     }),
     getUserCustomPlanById: builder.query<CustomPlanDetails, any>({
       query: (id: string | number) => ({
@@ -41,6 +60,12 @@ export const planSlice = createSlice({
 });
 
 export const selectPlans = (state: RootState) => state.plans;
-export const { useGetPlansQuery, useGetUserCustomPlanByIdQuery } = planApi;
+export const {
+  useGetPlansQuery,
+  useGetUserCustomPlanByIdQuery,
+  useGetPremadePlansQuery,
+  useGetExistingPlanRegistrationQuery,
+  useRegisterPlanMutation,
+} = planApi;
 export const { reset } = planSlice.actions;
 export default planSlice.reducer;

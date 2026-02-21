@@ -5,22 +5,30 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  ImageBackground,
+  Dimensions,
+  StatusBar,
+  Platform,
   RefreshControl,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import AntDesignIcons from "react-native-vector-icons/AntDesign";
+import FeatherIcon from "react-native-vector-icons/Feather";
 import FAIcon from "react-native-vector-icons/FontAwesome5";
+import OctiIcon from "react-native-vector-icons/Octicons";
+import AntDesignIcons from "react-native-vector-icons/AntDesign";
 
 import { useGetUserCustomPlanByIdQuery } from "../../redux/plans/slice";
 import { useAppSelector } from "../../redux/root";
 import { selectUserInfo } from "../../redux/auth/slice";
-
 import { COLORS } from "../../constants/colors";
-import SubmitButton from "../../UI/components/submitButton";
 import { RootStackParamList } from "../types";
+import { getWorkoutSessionsByUser } from "../../db/services";
 import Modal from "../../UI/components/modal";
 import PlanUsageHistory from "../../modules/prediction/components/history";
-import { getWorkoutSessionsByUser } from "../../db/services";
+import SubmitButton from "../../UI/components/submitButton";
+import PlanDetailsExerciseList from "../../modules/prediction/components/planDetailsExerciseList";
+
+const { width } = Dimensions.get("window");
 
 const PlanDetailsScreen: FC<
   NativeStackScreenProps<RootStackParamList, "planDetails">
@@ -28,266 +36,299 @@ const PlanDetailsScreen: FC<
   const id = route.params?.id || 1;
   const { data: plan, isFetching, refetch } = useGetUserCustomPlanByIdQuery(id);
   const { userInfo } = useAppSelector(selectUserInfo);
-  const [activeIdx, setActiveIdx] = useState(0);
-  const currentDay = plan?.days[activeIdx];
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-  const [indexForNextDay, setIndexForNextDay] = useState(0);
 
-  const onStartSession = () => {
-    currentDay &&
-      navigation.navigate("workoutTracker", { id: currentDay.id, plan });
-  };
+  const [activeWeekIdx, setActiveWeekIdx] = useState(0);
+  const [activeDayIdx, setActiveDayIdx] = useState(0);
+  const [userProgress, setUserProgress] = useState({ week: 0, day: 0 });
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+
+  const currentWeek = plan?.weeks[activeWeekIdx];
+  const currentDay = currentWeek?.days[activeDayIdx];
 
   const sessions = useMemo(
     () => getWorkoutSessionsByUser(userInfo?.id!, id),
     [id, userInfo],
   );
 
-  const calculateIndex = useCallback(() => {
-    if (!plan || !sessions || !sessions.length) return 0;
+  const calculateProgress = useCallback(() => {
+    if (!plan?.weeks || !sessions || !sessions.length)
+      return { week: 0, day: 0 };
     const latestSession = sessions[0];
-    const index = plan.days.findIndex(
-      (d) => d.id === latestSession.plan_day_id,
-    );
-    if (index === plan.days.length - 1) return 0;
-    return index + 1 || 0;
+    let foundWeek = 0,
+      foundDay = 0;
+
+    plan.weeks.forEach((week, wIdx) => {
+      const dIdx = week.days.findIndex(
+        (d) => d.id === latestSession.plan_day_id,
+      );
+      if (dIdx !== -1) {
+        foundWeek = wIdx;
+        foundDay = dIdx;
+      }
+    });
+
+    if (foundDay === plan.weeks[foundWeek].days.length - 1) {
+      return foundWeek < plan.weeks.length - 1
+        ? { week: foundWeek + 1, day: 0 }
+        : { week: foundWeek, day: foundDay };
+    }
+    return { week: foundWeek, day: foundDay + 1 };
   }, [sessions, plan]);
 
   useEffect(() => {
-    const nextIndex = calculateIndex();
-    setIndexForNextDay(nextIndex);
-    setActiveIdx(nextIndex);
-  }, [calculateIndex]);
+    const nextProgress = calculateProgress();
+    setUserProgress(nextProgress);
+    setActiveWeekIdx(nextProgress.week);
+    setActiveDayIdx(nextProgress.day);
+  }, [calculateProgress]);
+
+  const onStartSession = () => {
+    if (currentDay && plan) {
+      navigation.navigate("workoutTracker", {
+        id: currentDay.id,
+        plan,
+        weekId: activeWeekIdx,
+      });
+    }
+  };
 
   return (
-    <>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.headerTitles}>
-            <Text style={styles.title}>{plan?.title}</Text>
-            <Text style={styles.subtitle}>
-              Ready for day {indexForNextDay + 1}?
-            </Text>
-          </View>
-          <TouchableOpacity onPress={() => setIsHistoryModalOpen(true)}>
-            <AntDesignIcons name="history" size={20} color={"#fff"} />
-          </TouchableOpacity>
-        </View>
-        <View>
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={isFetching} onRefresh={refetch} />
-            }
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.tabs}
-          >
-            {plan?.days?.map((day, idx) => (
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+
+      <ImageBackground
+        source={{
+          uri: plan?.template?.thumbnail,
+        }}
+        style={styles.hero}
+      >
+        <View style={styles.heroOverlay}>
+          <View style={styles.safeHeader}>
+            <View style={styles.navRow}>
               <TouchableOpacity
-                key={idx}
-                onPress={() => setActiveIdx(idx)}
+                onPress={() => navigation.goBack()}
+                style={styles.backCircle}
+              >
+                <FeatherIcon name="arrow-left" size={20} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setIsHistoryModalOpen(true)}
+                style={styles.backCircle}
+              >
+                <AntDesignIcons name="history" size={20} color="white" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.heroContent}>
+              <View style={styles.heroBadge}>
+                <OctiIcon name="flame" size={12} color={COLORS.mainBlue} />
+                <Text style={styles.heroBadgeText}>ELITE PROGRAM</Text>
+              </View>
+              <Text style={styles.heroTitle}>{plan?.title}</Text>
+              <Text style={styles.heroSub}>
+                Week {activeWeekIdx + 1} • {currentWeek?.days.length} Days
+                Active
+              </Text>
+            </View>
+          </View>
+        </View>
+      </ImageBackground>
+
+      {/* Week Selector */}
+      <View style={styles.weekContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.weekScroll}
+        >
+          {plan?.weeks.map((_, idx) => (
+            <TouchableOpacity
+              key={idx}
+              onPress={() => {
+                setActiveWeekIdx(idx);
+                setActiveDayIdx(0);
+              }}
+              style={[
+                styles.weekTab,
+                activeWeekIdx === idx && styles.activeWeekTab,
+              ]}
+            >
+              <Text
                 style={[
-                  styles.tab,
-                  activeIdx === idx && styles.activeTab,
-                  idx < indexForNextDay && styles.doneTab,
+                  styles.weekTabText,
+                  activeWeekIdx === idx && styles.activeWeekTabText,
                 ]}
               >
-                {idx < indexForNextDay ? (
-                  <FAIcon name="check" size={13} />
+                WEEK {idx + 1}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Day Selector */}
+      <View style={styles.dayContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.dayScroll}
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching}
+              onRefresh={refetch}
+              tintColor={COLORS.mainBlue}
+            />
+          }
+        >
+          {currentWeek?.days.map((day, idx) => {
+            const isDone =
+              activeWeekIdx < userProgress.week ||
+              (activeWeekIdx === userProgress.week && idx < userProgress.day);
+            const isActive = activeDayIdx === idx;
+            return (
+              <TouchableOpacity
+                key={idx}
+                onPress={() => setActiveDayIdx(idx)}
+                style={[
+                  styles.dayChip,
+                  isActive && styles.activeDayChip,
+                  isDone && !isActive && styles.doneDayChip,
+                ]}
+              >
+                {isDone ? (
+                  <FAIcon
+                    name="check"
+                    size={10}
+                    color={isActive ? "black" : COLORS.mainBlue}
+                  />
                 ) : (
                   <Text
                     style={[
-                      styles.tabText,
-                      activeIdx === idx && styles.activeTabText,
+                      styles.dayChipText,
+                      isActive && styles.activeDayChipText,
                     ]}
                   >
-                    {`Day ${idx + 1}`}
+                    DAY {idx + 1}
                   </Text>
                 )}
               </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-
-        <ScrollView
-          style={styles.exerciseList}
-          contentContainerStyle={styles.exerciseContent}
-        >
-          {currentDay?.exercises.map((ex, idx) => {
-            const title =
-              ex.variation && ex.variation.title
-                ? ex.variation.title
-                : ex.exercise.title;
-            return (
-              <View key={idx} style={styles.card}>
-                <View style={styles.indexBox}>
-                  <Text style={styles.indexText}>{idx + 1}</Text>
-                </View>
-                <View style={styles.cardInfo}>
-                  <Text style={styles.exName}>{title}</Text>
-                  <Text style={styles.exDetails}>
-                    {ex.targetSets} Sets × {ex.targetReps} Reps
-                  </Text>
-                </View>
-              </View>
             );
           })}
         </ScrollView>
-        <View style={styles.footer}>
-          {activeIdx === indexForNextDay ? (
+      </View>
+      {/* Exercise List */}
+      {currentDay && <PlanDetailsExerciseList day={currentDay} />}
+      {activeWeekIdx === userProgress.week &&
+        activeDayIdx === userProgress.day && (
+          <View style={styles.footer}>
             <SubmitButton
-              title={`${indexForNextDay === 0 ? "Start" : "Continue"} Session`}
+              icon={<FeatherIcon name="play" size={18} color="black" />}
               bgColor={COLORS.mainBlue}
               onPress={onStartSession}
+              title="START SESSION"
             />
-          ) : null}
-        </View>
-      </View>
+          </View>
+        )}
+
       <Modal
         isVisible={isHistoryModalOpen}
         onRequestClose={() => setIsHistoryModalOpen(false)}
       >
         <PlanUsageHistory plan={plan!} />
       </Modal>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container: { flex: 1, backgroundColor: "#000" },
+  hero: { height: 380, width: width },
+  heroOverlay: {
     flex: 1,
-    backgroundColor: "#000",
-    paddingHorizontal: 24,
+    padding: 20,
+    backgroundColor: "rgba(0,0,0,0.5)", // Uniform dark overlay for text contrast
+    justifyContent: "flex-end",
   },
-  header: {
-    width: "100%",
+  safeHeader: { flex: 1, justifyContent: "space-between" },
+  navRow: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-  },
-  headerTitles: {
-    paddingTop: 40,
-    paddingBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "900",
-    color: COLORS.white,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-  },
-  refreshBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: "#111",
     alignItems: "center",
+    marginTop: Platform.OS === "ios" ? 0 : 20,
+  },
+  backCircle: {
+    width: 45,
+    height: 45,
+    borderRadius: 23,
+    backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
-  },
-  refreshIcon: {
-    fontSize: 18,
-  },
-  tabs: {
-    overflow: "hidden",
-    paddingBottom: 24,
-  },
-  tab: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 30,
-    backgroundColor: "#111",
     alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
   },
-  activeTab: {
-    backgroundColor: "#fff",
-  },
-  tabText: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#666",
-  },
-  activeTabText: {
-    color: "#000",
-  },
-  exerciseList: {
-    flex: 1,
-  },
-  exerciseContent: {
-    paddingBottom: 100,
-  },
-  card: {
-    backgroundColor: "#111",
-    borderRadius: 20,
-    padding: 16,
+  heroContent: { marginBottom: 10 },
+  heroBadge: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    gap: 6,
+    marginBottom: 8,
   },
-  indexBox: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: "#1a1a1a",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  indexText: {
-    color: "#444",
-    fontSize: 18,
+  heroBadgeText: {
+    color: COLORS.mainBlue,
     fontWeight: "900",
+    fontSize: 11,
+    letterSpacing: 2,
   },
-  cardInfo: {
-    marginHorizontal: 16,
-    paddingRight: 20,
-  },
-  exName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    flexShrink: 1,
-    color: COLORS.white,
-  },
-  exDetails: {
-    fontSize: 12,
-    color: "#666",
-    marginTop: 4,
+  heroTitle: {
+    color: "white",
+    fontSize: 38,
+    fontWeight: "900",
+    fontStyle: "italic",
     textTransform: "uppercase",
-    letterSpacing: 1,
+    lineHeight: 40,
   },
-  restBox: {
-    alignItems: "center",
+  heroSub: { color: "#ccc", fontSize: 14, fontWeight: "600", marginTop: 8 },
+
+  weekContainer: {
+    backgroundColor: "#050505",
+    borderBottomWidth: 1,
+    borderBottomColor: "#1a1a1a",
+  },
+  weekScroll: { paddingHorizontal: 20 },
+  weekTab: {
+    paddingVertical: 16,
+    marginRight: 25,
+    borderBottomWidth: 3,
+    borderBottomColor: "transparent",
+  },
+  activeWeekTab: { borderBottomColor: COLORS.mainBlue },
+  weekTabText: { color: "#444", fontWeight: "900", fontSize: 13 },
+  activeWeekTabText: { color: "white" },
+
+  dayContainer: { backgroundColor: "#000" },
+  dayScroll: { paddingHorizontal: 20, paddingVertical: 10 },
+  dayChip: {
+    height: 45,
+    minWidth: 80,
+    paddingHorizontal: 20,
+    backgroundColor: "#111",
+    borderRadius: 12,
+    marginRight: 12,
     justifyContent: "center",
-    paddingTop: 80,
-    opacity: 0.5,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#222",
   },
-  restEmoji: {
-    fontSize: 64,
-  },
-  restTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: COLORS.white,
-    marginTop: 16,
-  },
-  restSubtitle: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
-    marginTop: 8,
-    maxWidth: 240,
-  },
+  activeDayChip: { backgroundColor: "#fff", borderColor: "#fff" },
+  doneDayChip: { borderColor: COLORS.mainBlue },
+  dayChipText: { color: "#666", fontWeight: "900", fontSize: 12 },
+  activeDayChipText: { color: "black" },
   footer: {
-    padding: 24,
     position: "absolute",
     bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  doneTab: {
-    backgroundColor: COLORS.lightBlue,
+    width: "100%",
+    padding: 24,
+    backgroundColor: "rgba(0,0,0,0.92)",
   },
 });
 

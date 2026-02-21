@@ -10,6 +10,7 @@ import {
   SELECT_WORKOUT_EXERCISES_BY_SESSION_ID,
   SELECT_WORKOUT_SESSION_FOR_DAY,
   GET_WORKOUT_SESSIONS_BY_USER,
+  GET_DONE_SESSION_BY_DAY,
 } from "./queries";
 import { WorkoutSession, WorkoutSessionExercise } from "./types";
 
@@ -69,6 +70,7 @@ export function createWorkoutExercise(
   exerciseId: number,
   orderIndex: number,
   variationId?: number | null,
+  reps: number = 0,
 ) {
   const result = db.runSync(INSERT_WORKOUT_EXERCISE, [
     workoutSessionId,
@@ -76,6 +78,7 @@ export function createWorkoutExercise(
     exerciseId,
     variationId || null,
     orderIndex,
+    reps
   ]);
   return getWorkoutExerciseByid(result.lastInsertRowId);
 }
@@ -96,10 +99,16 @@ export function finishWorkoutSession(
   return result.changes;
 }
 
+export function getDoneSessionByDay(dayId: number): WorkoutSession | null {
+  const result = db.getFirstSync<WorkoutSession>(GET_DONE_SESSION_BY_DAY, [
+    dayId,
+  ]);
+  return result;
+}
+
 export function getWorkoutSessionsByUser(
   userId: number,
   planId: number,
 ): WorkoutSession[] {
   return db.getAllSync(GET_WORKOUT_SESSIONS_BY_USER, [userId, planId]);
 }
-

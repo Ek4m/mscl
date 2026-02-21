@@ -21,11 +21,12 @@ import { ActiveExercise } from "../types";
 import ExerciseCard from "./MoveCard";
 import SubmitButton from "../../../UI/components/submitButton";
 import { COLORS } from "../../../constants/colors";
-import { useAppSelector } from "../../../redux/root";
-import { selectUserInfo } from "../../../redux/auth/slice";
 import { formatTime } from "../helpers";
 import RestTimer from "./RestTimer";
-import { CustomPlanDetails } from "../../workout/types";
+import {
+  CustomDayPlan,
+  CustomPlanDetails,
+} from "../../workout/types";
 import {
   createWorkoutExercise,
   finishWorkoutSession,
@@ -33,7 +34,7 @@ import {
 } from "../../../db/services";
 
 interface ActiveWorkoutProps {
-  workoutDay: CustomPlanDetails["days"][number];
+  workoutDay: CustomDayPlan;
   plan: CustomPlanDetails;
   exercises: ActiveExercise[];
   sessionId: number;
@@ -83,32 +84,35 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   }, [isResting, restSeconds]);
 
   const handleToggleSet = useCallback(
-    (exerciseId: number, index: number, variationId: number | null) => {
+    (
+      exerciseId: number,
+      index: number,
+      variationId: number | null,
+      reps?: number,
+    ) => {
       setExercises((prev) =>
         prev.map((ex) => {
           if (
-            ex.exercise.id === exerciseId &&
-            ex.variation?.id === variationId
+            ex.exercise?.id === exerciseId &&
+            (ex.variation?.id === variationId ||
+              (!ex.variation && !variationId))
           ) {
             const newSets = [...ex.completedSets];
-            console.log("newSets: ", exerciseId, variationId, newSets);
             const doneExercise = newSets[index];
-            const exercise = exercises.find((ex) => {
-              return (
-                ex.exercise.id === exerciseId &&
-                ex.variation?.id === variationId
-              );
-            });
-            console.log("EXERCISE: ", doneExercise);
+
             if (!doneExercise) {
+              // Logic to create set with REPS
               const created = createWorkoutExercise(
                 sessionId,
-                exercise!.id,
+                ex.id,
                 exerciseId,
                 index,
                 ex.variation?.id ?? null,
+                reps, // Make sure your DB service accepts reps here
               );
-              newSets[index] = created;
+              if (created) {
+                newSets[index] = { ...created, reps: reps || 0 };
+              }
               setRestSeconds(60);
               setIsResting(true);
             } else {

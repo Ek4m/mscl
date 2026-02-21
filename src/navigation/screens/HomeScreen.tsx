@@ -42,7 +42,6 @@ const HomeScreen: React.FC<
       onPress: () => {
         navigation.navigate("customPlan");
       },
-      screen: "customPlan",
       color: "#63ff20", // green
     },
     {
@@ -50,9 +49,8 @@ const HomeScreen: React.FC<
       title: "Elite Library",
       subtitle: "Pro-made gym plans",
       icon: PremadePlanLogo,
-      screen: "upload",
       onPress: () => {
-        navigation.navigate("createAiPlan", { screen: "upload" });
+        navigation.navigate("premadePlans");
       },
       color: "#ff3217", // orange
     },
@@ -67,7 +65,6 @@ const HomeScreen: React.FC<
           navigation.navigate("createAiPlan", { screen: "upload" });
         });
       },
-      screen: "upload",
       color: COLORS.mainBlue, // mainBlue
     },
   ];
@@ -120,9 +117,9 @@ const HomeScreen: React.FC<
               ))}
             </View>
           </View>
-          {/* {__DEV__ ? (
+          {__DEV__ ? (
             <Button onPress={clearWorkoutDbDev} title="Clear db" />
-          ) : null} */}
+          ) : null}
           {/* Programs List */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>

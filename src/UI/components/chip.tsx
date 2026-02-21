@@ -42,10 +42,10 @@ const styles = StyleSheet.create({
     fontSize: 8,
   },
   medium: {
-    fontSize: 12,
+    fontSize: 10,
   },
   large: {
-    fontSize: 15,
+    fontSize: 14,
   },
 });
 export default Chip;

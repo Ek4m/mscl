@@ -20,8 +20,6 @@ const axiosBaseQuery =
   async ({ url, method, data, params, headers }) => {
     const accessToken = await AsyncStorage.getItem(ACCESS_TOKEN);
     try {
-      console.log("____API_URL_____", API_BASE_URL + url);
-      console.log("__ACCESS_TOKEN", accessToken);
       const result = await axios({
         url: urlFactory(API_BASE_URL + url, params),
         method,
