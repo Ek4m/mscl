@@ -11,8 +11,6 @@ import ProfileScreen from "./screens/ProfileScreen";
 import HomeScreen from "./screens/HomeScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import WorkoutTrackerScreen from "./screens/WorkoutTrackerScreen";
-import CustomPlanCreatorSceen from "./screens/CustomPlanScreen";
-import PlanReviewScreen from "./screens/InspectPlanScreen";
 import TestScreen from "./screens/TestScreen";
 import InitialInfoScreen from "./screens/InitialInfoScreen";
 import PremadePlansScreen from "./screens/PreMadePlansScreen";
@@ -27,6 +25,7 @@ import {
   useGetInitialInfoQuery,
 } from "../redux/workout/create-ai";
 import PremadePlanDetailsScreen from "./screens/PremadePlanDetailsScreen";
+import CreateCustomStack from "./screens/create-custom/Stack";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -53,9 +52,11 @@ export default function RootNavigator() {
             name="workoutTracker"
             component={WorkoutTrackerScreen}
           />
-          <Stack.Screen name="customPlan" component={CustomPlanCreatorSceen} />
-          <Stack.Screen name="inspectPlan" component={PlanReviewScreen} />
-          <Stack.Screen name="premadePlanDetails" component={PremadePlanDetailsScreen} />
+          <Stack.Screen name="customPlan" component={CreateCustomStack} />
+          <Stack.Screen
+            name="premadePlanDetails"
+            component={PremadePlanDetailsScreen}
+          />
           <Stack.Screen name="premadePlans" component={PremadePlansScreen} />
           {started && (
             <Stack.Screen name="createAiPlan" component={CreateAiStack} />

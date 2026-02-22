@@ -1,89 +1,93 @@
+import React, { FC } from "react";
 import {
-  Image,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
-import React, { FC } from "react";
 import FaIcons from "react-native-vector-icons/FontAwesome5";
 
 import { COLORS } from "../../../constants/colors";
-import { CustomExercise } from "../../workout/types";
-import Chip from "../../../UI/components/chip";
-import { MuscleGroup, MuscleGroupTitles } from "../../workout/vault";
+import { MuscleGroupTitles } from "../../workout/vault";
 import { useAppDispatch } from "../../../redux/root";
 import { updateMetrics } from "../../../redux/workout/create-plan";
+import { CustomCreateExerciseEntry } from "../../workout/types/create-custom";
 
 const SelectedExerciseItem: FC<{
-  ex: CustomExercise;
+  ex: CustomCreateExerciseEntry;
   handleRemoveExercise(): void;
 }> = ({ ex, handleRemoveExercise }) => {
   const dispatch = useAppDispatch();
+
+  const handleUpdate = (type: "sets" | "reps", value: string) => {
+    dispatch(
+      updateMetrics({
+        instanceId: ex.instanceId,
+        [type]: value,
+      }),
+    );
+  };
+
   return (
     <View style={styles.cardContainer}>
-      <View style={styles.topSection}>
+      <View style={styles.topRow}>
+        {/* EXERCISE IMAGE */}
         <Image
           source={{
-            uri: "https://liftmanual.com/wp-content/uploads/2023/04/barbell-full-squat.jpg",
+            uri: "https://images.ctfassets.net/8urtyqugdt2l/2bMyO0jZaRJjfRptw60iwG/17c391156dd01ae6920c672cc2744fb1/desktop-bench-press.jpg",
           }}
           style={styles.exThumbnail}
           resizeMode="cover"
         />
 
-        <View style={styles.headerText}>
-          <Text style={styles.exName} numberOfLines={2}>
-            {ex.name}
+        <View style={styles.infoContent}>
+          <View style={styles.nameRow}>
+            <Text style={styles.exName} numberOfLines={1}>
+              {ex.name}
+            </Text>
+            <TouchableOpacity
+              onPress={handleRemoveExercise}
+              style={styles.deleteBtn}
+            >
+              <FaIcons name="times" size={12} color="#3f3f46" />
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.exMuscle}>
+            {ex.muscleGroups.map((m) => MuscleGroupTitles[m]).join(" • ")}
           </Text>
-          <View style={styles.muscleBadge}>
-            {ex.muscle?.map((e: MuscleGroup) => (
-              <Chip type="info" label={MuscleGroupTitles[e]} key={e} />
-            ))}
+
+          {/* COMPACT INPUTS INSIDE THE INFO AREA */}
+          <View style={styles.inputRow}>
+            <View style={styles.inputPill}>
+              <Text style={styles.label}>SETS</Text>
+              <TextInput
+                style={styles.textInput}
+                value={ex.sets}
+                onChangeText={(v) => handleUpdate("sets", v)}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor="#27272a"
+              />
+            </View>
+
+            <Text style={styles.multiplier}>×</Text>
+
+            <View style={styles.inputPill}>
+              <Text style={styles.label}>REPS</Text>
+              <TextInput
+                style={styles.textInput}
+                value={ex.reps}
+                onChangeText={(v) => handleUpdate("reps", v)}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor="#27272a"
+              />
+            </View>
           </View>
         </View>
-      </View>
-
-      <View style={styles.divider} />
-
-      <View style={styles.bottomSection}>
-        <View style={styles.inputGroup}>
-          <View style={styles.inputWrapper}>
-            <Text style={styles.inputLabel}>SETS</Text>
-            <TextInput
-              style={styles.setRepInput}
-              placeholder="4"
-              value={ex.sets}
-              onChangeText={(v) =>
-                dispatch(updateMetrics({ id: ex.id, sets: v }))
-              }
-              placeholderTextColor="#52525b"
-              keyboardType="numeric"
-            />
-          </View>
-
-          <Text style={styles.multiplier}>×</Text>
-
-          <View style={styles.inputWrapper}>
-            <Text style={styles.inputLabel}>REPS</Text>
-            <TextInput
-              style={styles.setRepInput}
-              placeholder="12"
-              placeholderTextColor="#52525b"
-              value={ex.reps}
-              onChangeText={(v) =>
-                dispatch(updateMetrics({ id: ex.id, reps: v }))
-              }
-              keyboardType="numeric"
-            />
-          </View>
-        </View>
-        <TouchableOpacity
-          onPress={handleRemoveExercise}
-          style={styles.deleteAction}
-        >
-          <FaIcons name="trash" size={12} color="#ef4444" />
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -93,113 +97,84 @@ export default SelectedExerciseItem;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    backgroundColor: "#1c1c1e",
-    borderRadius: 20,
+    backgroundColor: "#09090b",
+    borderRadius: 24,
     marginBottom: 12,
-    padding: 10,
+    padding: 12,
     borderWidth: 1,
-    borderColor: "#2c2c2e",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    borderColor: "#18181b",
   },
-  topSection: {
+  topRow: {
     flexDirection: "row",
-    alignItems: "center",
+    gap: 12,
   },
   exThumbnail: {
-    width: 100,
-    height: 60,
-    borderWidth: 2,
-    borderColor: COLORS.lightBlue,
-    borderRadius: 12,
-    backgroundColor: "#2c2c2e",
+    width: 85,
+    height: 85,
+    borderRadius: 18,
+    backgroundColor: "#18181b",
   },
-  headerText: {
+  infoContent: {
     flex: 1,
-    paddingHorizontal: 12,
-    justifyContent: "center",
-  },
-  exName: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: "700",
-    letterSpacing: 0.3,
-    lineHeight: 20,
-  },
-  muscleBadge: {
-    marginTop: 6,
-    flexDirection: "row",
-    gap: 1,
-    paddingHorizontal: 8,
+    justifyContent: "space-between",
     paddingVertical: 2,
-    borderRadius: 6,
   },
-  exMuscleTag: {
-    color: COLORS.mainBlue,
-    fontSize: 10,
-    fontWeight: "800",
-    textTransform: "uppercase",
-  },
-  deleteAction: {
-    padding: 10,
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
-    borderRadius: 10,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#2c2c2e",
-    marginVertical: 6,
-  },
-  bottomSection: {
+  nameRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  inputGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
+  exName: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "800",
+    flex: 1,
+    marginRight: 8,
   },
-  inputWrapper: {
+  deleteBtn: {
+    width: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "flex-end",
+  },
+  exMuscle: {
+    color: "#52525b",
+    fontSize: 11,
+    fontWeight: "600",
+    marginTop: -4,
+  },
+  inputRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#09090b",
+    marginTop: 8,
+    gap: 8,
+  },
+  inputPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#000",
     borderRadius: 10,
     paddingLeft: 10,
     borderWidth: 1,
-    borderColor: "#27272a",
+    borderColor: "#18181b",
+    flex: 1,
   },
-  inputLabel: {
-    color: "#71717a",
-    fontSize: 9,
-    fontWeight: "800",
-    marginRight: 4,
+  label: {
+    color: "#3f3f46",
+    fontSize: 8,
+    fontWeight: "900",
   },
-  setRepInput: {
-    width: 40,
-    height: 36,
-    color: COLORS.white,
+  textInput: {
+    flex: 1,
+    height: 42,
+    color: COLORS.mainBlue,
     textAlign: "center",
-    fontWeight: "bold",
+    fontWeight: "900",
     fontSize: 14,
   },
   multiplier: {
-    color: "#52525b",
-    fontSize: 18,
-    fontWeight: "300",
-  },
-  weightHint: {
-    backgroundColor: "#27272a",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  hintText: {
-    color: "#a1a1aa",
-    fontSize: 11,
-    fontWeight: "500",
+    color: "#18181b",
+    fontSize: 14,
+    fontWeight: "bold",
   },
 });

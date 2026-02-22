@@ -11,17 +11,13 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { CompositeScreenProps, useFocusEffect } from "@react-navigation/native";
 
 import { RootStackParamList } from "../../types";
-import PlanList from "../../../modules/prediction/components/planList";
 import {
   reset,
   selectAiPlan,
   useGeneratePlanMutation,
 } from "../../../redux/workout/create-ai";
-import { useAppDispatch, useAppSelector } from "../../../redux/root";
+import { useAppSelector } from "../../../redux/root";
 import { COLORS } from "../../../constants/colors";
-import Chip from "../../../UI/components/chip";
-import SubmitButton from "../../../UI/components/submitButton";
-import Link from "../../../modules/auth/components/link";
 import { CreateAiPlanParamList } from "./types";
 
 type PreviewPlanProps = CompositeScreenProps<
@@ -30,13 +26,8 @@ type PreviewPlanProps = CompositeScreenProps<
 >;
 
 const PreviewPlanScreen: React.FC<PreviewPlanProps> = ({ navigation }) => {
-  const [generateProgram, { isLoading, isSuccess, data, error }] =
-    useGeneratePlanMutation();
+  const [generateProgram, { isLoading }] = useGeneratePlanMutation();
   const { days, level, gender, weeks } = useAppSelector(selectAiPlan);
-
-  const onStartWorkout = () => {
-    navigation.navigate("planDetails", { id: data?.id || 0 });
-  };
 
   useFocusEffect(
     useCallback(() => {

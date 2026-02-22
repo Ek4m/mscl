@@ -44,7 +44,7 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
       },
     },
     {
-      id: "custom",
+      id: "customPlan",
       title: "Plan Builder",
       subtitle: "Design custom volume",
       icon: require("../../../assets/custom.png"),
