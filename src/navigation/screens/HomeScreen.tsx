@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/root";
 import { selectUserInfo } from "../../redux/auth/slice";
 
 import { RootStackParamList } from "../types";
+import { useFocusEffect } from "@react-navigation/native";
 
 const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
   navigation,
@@ -28,6 +29,16 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
   const { data, isFetching, refetch } = useGetPlansQuery();
   const dispatch = useAppDispatch();
   const { userInfo } = useAppSelector(selectUserInfo);
+  const isFirstRender = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+      }
+      refetch();
+    }, [refetch]),
+  );
 
   const features = [
     {

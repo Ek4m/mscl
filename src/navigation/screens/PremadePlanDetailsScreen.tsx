@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from "react";
+import React, { FC, useCallback, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -20,17 +20,29 @@ import {
   useRegisterPlanMutation,
 } from "../../redux/plans/slice";
 import SubmitButton from "../../UI/components/submitButton";
+import { useFocusEffect } from "@react-navigation/native";
+import Modal from "../../UI/components/modal";
 
 const PremadePlanDetailsScreen: FC<
   NativeStackScreenProps<RootStackParamList, "premadePlanDetails">
 > = ({ route, navigation }) => {
   const plan: PremadePlan = route.params?.plan;
 
+  const [isDescVisible, setIsDescVisible] = useState(false);
   const [selectedWeekIdx, setSelectedWeekIdx] = useState(0);
   const activeWeek: PremadePlanWeek = plan.weeks[selectedWeekIdx];
-  const { data: existingPlanRegistration } =
+  const { data: existingPlanRegistration, refetch } =
     useGetExistingPlanRegistrationQuery(plan.id);
-
+  const isFirstRender = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+      }
+      refetch();
+    }, [refetch]),
+  );
   const [registerPlan, { isLoading }] = useRegisterPlanMutation();
 
   const onRegisterPlan = useCallback(async () => {
@@ -56,8 +68,6 @@ const PremadePlanDetailsScreen: FC<
           </TouchableOpacity>
         </View>
       </ImageBackground>
-
-      {/* WARNING SECTION: ACTIVE PLAN OVERLAY */}
       {existingPlanRegistration && (
         <View style={styles.warningRibbon}>
           <View style={styles.warningIconContent}>
@@ -83,27 +93,36 @@ const PremadePlanDetailsScreen: FC<
       )}
 
       <View style={styles.contentCard}>
-        <View style={styles.headerRow}>
-          <View>
-            <Text style={styles.title}>{plan.title}</Text>
-            <View style={styles.badgeRow}>
-              <View style={styles.levelBadge}>
-                <Text style={styles.levelText}>{plan.level.toUpperCase()}</Text>
-              </View>
-              <Text style={styles.durationText}>{plan.weeks.length} Weeks</Text>
-            </View>
+        <Text style={styles.title}>{plan.title}</Text>
+        <View style={styles.badgeRow}>
+          <View style={styles.levelBadge}>
+            <Text style={styles.levelText}>{plan.level.toUpperCase()}</Text>
           </View>
+          <Text style={styles.durationText}>{plan.weeks.length} Weeks</Text>
+          <TouchableOpacity onPress={() => setIsDescVisible((prev) => !prev)}>
+            <FeatherIcon name="info" color={COLORS.white} size={15} />
+          </TouchableOpacity>
         </View>
-
-        <Text style={styles.description}>
-          {plan.description ||
-            "This elite program focuses on progressive overload across multiple planes of movement to maximize muscle fiber recruitment."}
-        </Text>
-
+        <Modal
+          onRequestClose={() => setIsDescVisible(false)}
+          isVisible={isDescVisible}
+        >
+          <Text style={styles.description}>
+            {plan.description ||
+              "This elite program focuses on progressive overload across multiple planes of movement to maximize muscle fiber recruitment."}
+          </Text>
+        </Modal>
+        <SubmitButton
+          bgColor={existingPlanRegistration ? "grey" : COLORS.mainBlue}
+          title={
+            existingPlanRegistration ? "ALREADY ACTIVE" : "START THIS PROGRAM"
+          }
+          disabled={Boolean(existingPlanRegistration)}
+          loading={isLoading}
+          onPress={onRegisterPlan}
+        />
         <View style={styles.divider} />
 
-        {/* WEEK SELECTOR */}
-        <Text style={styles.sectionTitle}>Plan details</Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -158,25 +177,13 @@ const PremadePlanDetailsScreen: FC<
           ))}
         </ScrollView>
       </View>
-
-      <View style={styles.footer}>
-        <SubmitButton
-          bgColor={existingPlanRegistration ? "grey" : COLORS.mainBlue}
-          title={
-            existingPlanRegistration ? "ALREADY ACTIVE" : "START THIS PROGRAM"
-          }
-          disabled={Boolean(existingPlanRegistration)}
-          loading={isLoading}
-          onPress={onRegisterPlan}
-        />
-      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
-  hero: { height: 250, width: "100%" },
+  hero: { height: 200, width: "100%" },
   heroOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.3)", padding: 20 },
   backCircle: {
     width: 40,
@@ -212,13 +219,12 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     padding: 24,
   },
-  headerRow: { marginBottom: 15 },
   title: { color: "white", fontSize: 26, fontWeight: "900" },
   badgeRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    marginTop: 8,
+    marginVertical: 8,
   },
   levelBadge: {
     backgroundColor: "#1a1a1a",
@@ -230,16 +236,22 @@ const styles = StyleSheet.create({
   },
   levelText: { color: COLORS.mainBlue, fontSize: 10, fontWeight: "bold" },
   durationText: { color: "#666", fontSize: 12, fontWeight: "bold" },
-  description: { color: "#aaa", fontSize: 14, lineHeight: 22, marginTop: 10 },
-  divider: { height: 1, backgroundColor: "#1a1a1a", marginVertical: 20 },
-
-  sectionTitle: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
+  description: {
+    color: "#000000",
+    fontSize: 14,
+    lineHeight: 22,
+    fontStyle:"italic",
+    marginTop: 10,
+    backgroundColor: "#e8e8e8cb",
+    borderRadius: 10,
+    padding: 20,
   },
-  weekScroll: { marginBottom: 20, alignItems: "center" },
+  divider: { height: 1, backgroundColor: "#1a1a1a", marginVertical: 10 },
+  weekScroll: {
+    alignItems: "center",
+    height: 35,
+    marginBottom: 30,
+  },
   weekChip: {
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -270,14 +282,6 @@ const styles = StyleSheet.create({
   exCount: { color: COLORS.mainBlue, fontSize: 12, fontWeight: "bold" },
   exercisePreview: { marginTop: 8 },
   exNames: { color: "#444", fontSize: 12 },
-
-  footer: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    padding: 24,
-    backgroundColor: "rgba(0,0,0,0.8)",
-  },
 });
 
 export default PremadePlanDetailsScreen;

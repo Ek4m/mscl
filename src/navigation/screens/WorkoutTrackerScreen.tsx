@@ -75,14 +75,12 @@ const WorkoutTrackerScreen: React.FC<
   );
 
   const onFinishTracking = async () => {
-    const result = updateStatus({
+    await updateStatus({
       userPlanId: activePlan.id,
       status: PlanStatus.ARCHIVED,
     }).unwrap();
-    console.log(result);
     successToast("Tracking was saved successfully");
-
-    navigation.goBack();
+    navigation.navigate("home");
   };
   if (activeWorkoutDay && activePlan)
     return (

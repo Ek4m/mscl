@@ -60,14 +60,14 @@ export default SubmitButton;
 
 const styles = StyleSheet.create({
   button: {
-    height: IS_SMALL ? 55 : 64,
+    height: IS_SMALL ? 48 : 55,
     borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
   buttonText: {
-    fontSize: IS_SMALL ? 12 : 15,
+    fontSize: IS_SMALL ? 10 : 12,
     fontWeight: "bold",
   },
 });
