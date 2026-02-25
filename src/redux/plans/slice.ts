@@ -5,6 +5,7 @@ import axiosBaseQuery from "../baseQuery";
 import { RootState } from "../root";
 import { WorkoutPlan } from "../../modules/prediction/types";
 import { CustomPlanDetails, PremadePlan } from "../../modules/workout/types";
+import { PlanStatus } from "../../modules/prediction/enums";
 
 export interface PlansState {
   plans: WorkoutPlan[];
@@ -21,20 +22,30 @@ export const planApi = createApi({
     getPlans: builder.query<CustomPlanDetails[], void>({
       query: () => ({ url: "workout/plans", method: "get" }),
     }),
-    getExistingPlanRegistration: builder.query<
-      { id: number },
-      number
-    >({
+    getExistingPlanRegistration: builder.query<{ id: number }, number>({
       query: (planId: number) => ({
         url: "workout/plan-registration/" + planId,
         method: "get",
       }),
     }),
     registerPlan: builder.mutation<{ id: number }, { planId: number }>({
-      query: ({ planId }) => ({
+      query: (data) => ({
         url: "workout/plan/plan-registration",
         method: "post",
-        data: { planId },
+        data,
+      }),
+    }),
+    updateStatus: builder.mutation<
+      { id: number },
+      {
+        userPlanId: number;
+        status: PlanStatus;
+      }
+    >({
+      query: (data) => ({
+        url: "workout/plan/update-status",
+        method: "post",
+        data,
       }),
     }),
     getPremadePlans: builder.query<PremadePlan[], void>({
@@ -63,6 +74,7 @@ export const selectPlans = (state: RootState) => state.plans;
 export const {
   useGetPlansQuery,
   useGetUserCustomPlanByIdQuery,
+  useUpdateStatusMutation,
   useGetPremadePlansQuery,
   useGetExistingPlanRegistrationQuery,
   useRegisterPlanMutation,

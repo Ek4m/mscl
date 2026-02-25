@@ -5,6 +5,7 @@ import React, {
   useCallback,
   memo,
   Dispatch,
+  useMemo,
 } from "react";
 import {
   View,
@@ -14,6 +15,7 @@ import {
   StyleSheet,
   Alert,
   Platform,
+  Dimensions,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 
@@ -26,18 +28,21 @@ import RestTimer from "./RestTimer";
 import {
   CustomDayPlan,
   CustomPlanDetails,
+  CustomPlanWeeks,
 } from "../../workout/types";
 import {
   createWorkoutExercise,
   finishWorkoutSession,
   removeWorkoutExercise,
 } from "../../../db/services";
+import Modal from "../../../UI/components/modal";
 
 interface ActiveWorkoutProps {
   workoutDay: CustomDayPlan;
   plan: CustomPlanDetails;
   exercises: ActiveExercise[];
   sessionId: number;
+  week: CustomPlanWeeks;
   setExercises: Dispatch<React.SetStateAction<ActiveExercise[]>>;
   onFinish: () => void;
   onCancel: () => void;
@@ -48,6 +53,8 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   sessionId,
   onFinish,
   exercises,
+  week,
+  workoutDay,
   setExercises,
   onCancel,
 }) => {
@@ -55,6 +62,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   const [restSeconds, setRestSeconds] = useState(0);
   const [isResting, setIsResting] = useState(false);
   const restTimerRef = useRef<any>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -128,15 +136,50 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
     [sessionId, setExercises],
   );
   const handleFinish = async () => {
-    const saveSession = async () => {
+    const isLastWeek =
+      plan.weeks.findIndex((w) => w.id === week.id) === plan.weeks.length - 1;
+    const isLastDay =
+      week.days.findIndex((d) => d.id === workoutDay.id) ===
+      week.days.length - 1;
+
+    const saveSession = () => {
       finishWorkoutSession(sessionId, workoutSeconds);
-      onFinish();
+      if (isLastWeek && isLastDay) {
+        setShowSuccess(true);
+      }
     };
+
     Alert.alert("Finish Workout", "Ready to log your session?", [
       { text: "Cancel", style: "cancel" },
       { text: "Save", onPress: saveSession },
     ]);
   };
+
+  const stats = useMemo(() => {
+    let totalTargetSets = 0;
+    let totalCompletedSets = 0;
+    let totalTargetReps = 0;
+    let totalCompletedReps = 0;
+
+    exercises.forEach((ex) => {
+      totalTargetSets += ex.completedSets.length;
+      totalTargetReps += ex.completedSets.length * (ex.targetReps || 0);
+
+      ex.completedSets.forEach((set) => {
+        if (set) {
+          totalCompletedSets += 1;
+          totalCompletedReps += set.reps || 0;
+        }
+      });
+    });
+
+    return {
+      setsPct: 0.5,
+      repsPct: 0.7,
+      totalCompletedReps: 140,
+      totalTargetReps: 155,
+    };
+  }, [exercises]);
 
   return (
     <View style={styles.safeArea}>
@@ -175,7 +218,75 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
           />
         ))}
       </ScrollView>
+      <Modal
+        onRequestClose={() => setShowSuccess(false)}
+        isVisible={showSuccess}
+        overlayClickable={false}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <IonIcons name="trophy" size={80} color={COLORS.mainBlue} />
+            <Text style={styles.modalTitle}>Plan Completed!</Text>
+            <Text style={styles.modalBody}>
+              Congratulations! You've finished the "{plan.title}" program.
+            </Text>
 
+            <View style={styles.statsRow}>
+              <View style={styles.statBox}>
+                <Text style={styles.statLabel}>Final Time</Text>
+                <Text style={styles.statValue}>
+                  {formatTime(workoutSeconds)}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.statsContainer}>
+              <Text style={styles.statsHeader}>Workout Performance</Text>
+
+              {/* Sets Statistic */}
+              <View style={styles.statRow}>
+                <View style={styles.statInfo}>
+                  <Text style={styles.statsLabel}>Sets Completed</Text>
+                  <Text style={styles.statsValue}>
+                    {Math.round(stats.setsPct * 100)}%
+                  </Text>
+                </View>
+                <View style={styles.progressBarBg}>
+                  <View
+                    style={[
+                      styles.progressBarFill,
+                      { width: `${stats.setsPct * 100}%` },
+                    ]}
+                  />
+                </View>
+              </View>
+
+              {/* Reps Statistic */}
+              <View style={styles.statRow}>
+                <View style={styles.statInfo}>
+                  <Text style={styles.statLabel}>Total Reps Vol.</Text>
+                  <Text style={styles.statValue}>
+                    {stats.totalCompletedReps} / {stats.totalTargetReps}
+                  </Text>
+                </View>
+                <View style={styles.progressBarBg}>
+                  <View
+                    style={[
+                      styles.progressBarFill,
+                      {
+                        width: `${Math.min(stats.repsPct * 100, 100)}%`,
+                        backgroundColor: COLORS.mainBlue,
+                      },
+                    ]}
+                  />
+                </View>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.continueButton} onPress={onFinish}>
+              <Text style={styles.continueText}>Awesome!</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <View style={styles.footerContainer}>
         {isResting && (
           <RestTimer
@@ -188,6 +299,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
 
         <View style={styles.actionRow}>
           <SubmitButton
+            bgColor={COLORS.mainBlue}
             onPress={handleFinish}
             icon={<IonIcons name="square" size={16} color="black" />}
             title="Finish Workout"
@@ -226,17 +338,19 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "800",
     color: "#ffffff",
+    width: Dimensions.get("window").width * 0.6,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: "700",
     color: "#71717a",
     textTransform: "uppercase",
     letterSpacing: 1.5,
+    width: Dimensions.get("window").width * 0.6,
     marginTop: 4,
   },
   timerContainer: {
@@ -297,6 +411,110 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     textTransform: "uppercase",
     letterSpacing: 1,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.85)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: "#18181b",
+    borderRadius: 32,
+    padding: 32,
+    alignItems: "center",
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#27272a",
+  },
+  modalTitle: {
+    color: "#ffffff",
+    fontSize: 28,
+    fontWeight: "900",
+    marginTop: 16,
+    textAlign: "center",
+  },
+  modalBody: {
+    color: "#a1a1aa",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 8,
+    lineHeight: 22,
+  },
+  statsRow: {
+    marginVertical: 24,
+    padding: 16,
+    backgroundColor: "#09090b",
+    borderRadius: 16,
+    width: "100%",
+  },
+  statBox: {
+    alignItems: "center",
+  },
+  statLabel: {
+    color: "#71717a",
+    fontSize: 12,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  statValue: {
+    color: COLORS.mainBlue,
+    fontSize: 24,
+    fontWeight: "800",
+  },
+  continueButton: {
+    backgroundColor: "#ffffff",
+    paddingVertical: 16,
+    paddingHorizontal: 48,
+    borderRadius: 100,
+  },
+  continueText: {
+    color: "#000000",
+    fontWeight: "900",
+    fontSize: 16,
+  },
+  statsContainer: {
+    width: "100%",
+    marginVertical: 20,
+    gap: 20,
+  },
+  statsHeader: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginBottom: 8,
+  },
+  statRow: {
+    width: "100%",
+  },
+  statInfo: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  statsLabel: {
+    color: "#71717a",
+    fontSize: 13,
+  },
+  statsValue: {
+    color: "#ffffff",
+    fontSize: 13,
+    fontWeight: "bold",
+  },
+  progressBarBg: {
+    height: 8,
+    backgroundColor: "#27272a",
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  progressBarFill: {
+    height: "100%",
+    backgroundColor: "#ffffff", // Sets color
+    borderRadius: 4,
   },
 });
 

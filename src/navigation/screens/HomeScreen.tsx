@@ -224,7 +224,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 30,
     marginBottom: 15,
   },
   countBadge: {

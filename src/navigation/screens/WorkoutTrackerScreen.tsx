@@ -13,6 +13,8 @@ import {
 import { useAppSelector } from "../../redux/root";
 import { selectUserInfo } from "../../redux/auth/slice";
 import { ActiveExercise } from "../../modules/prediction/types";
+import { useUpdateStatusMutation } from "../../redux/plans/slice";
+import { PlanStatus } from "../../modules/prediction/enums";
 
 const WorkoutTrackerScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "workoutTracker">
@@ -24,7 +26,7 @@ const WorkoutTrackerScreen: React.FC<
   const activeWorkoutDay = week.days.find((d) => d.id === params.id);
   const [workoutSessionId, setWorkoutSessionId] = useState(0);
   const [exercises, setExercises] = useState<ActiveExercise[]>([]);
-
+  const [updateStatus] = useUpdateStatusMutation();
   useEffect(() => {
     if (userInfo && activeWorkoutDay) {
       const sessionId = insertOrCreateWorkoutSession(
@@ -72,8 +74,14 @@ const WorkoutTrackerScreen: React.FC<
     }, []),
   );
 
-  const onFinishTracking = () => {
+  const onFinishTracking = async () => {
+    const result = updateStatus({
+      userPlanId: activePlan.id,
+      status: PlanStatus.ARCHIVED,
+    }).unwrap();
+    console.log(result);
     successToast("Tracking was saved successfully");
+
     navigation.goBack();
   };
   if (activeWorkoutDay && activePlan)
@@ -81,6 +89,7 @@ const WorkoutTrackerScreen: React.FC<
       <ActiveWorkout
         exercises={exercises}
         sessionId={workoutSessionId}
+        week={week}
         setExercises={setExercises}
         workoutDay={activeWorkoutDay}
         plan={activePlan}

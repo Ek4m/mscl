@@ -1,17 +1,41 @@
-import { StyleSheet, Modal as RNModal, Pressable } from "react-native";
 import React, { FC, PropsWithChildren } from "react";
+import {
+  StyleSheet,
+  Modal as RNModal,
+  Pressable,
+  Dimensions,
+} from "react-native";
 
-const Modal: FC<
-  PropsWithChildren<{ isVisible: boolean; onRequestClose(): void }>
-> = ({ isVisible, children, onRequestClose }) => {
+// Get screen dimensions to ensure full coverage
+const { height, width } = Dimensions.get("window");
+
+interface ModalProps {
+  isVisible: boolean;
+  onRequestClose: () => void;
+  overlayClickable?: boolean;
+}
+
+const Modal: FC<PropsWithChildren<ModalProps>> = ({
+  isVisible,
+  children,
+  onRequestClose,
+  overlayClickable = true,
+}) => {
   return (
     <RNModal
       animationType="fade"
       transparent={true}
       visible={isVisible}
       onRequestClose={onRequestClose}
+      // This prop is key for Android to cover the status bar area
+      statusBarTranslucent={true}
     >
-      <Pressable style={styles.modalOverlay} onPress={onRequestClose}>
+      <Pressable
+        style={styles.modalOverlay}
+        onPress={() => {
+          if (overlayClickable) onRequestClose();
+        }}
+      >
         {children}
       </Pressable>
     </RNModal>
