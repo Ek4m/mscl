@@ -13,9 +13,11 @@ import RegisterScreen from "./screens/RegisterScreen";
 import WorkoutTrackerScreen from "./screens/WorkoutTrackerScreen";
 import TestScreen from "./screens/TestScreen";
 import InitialInfoScreen from "./screens/InitialInfoScreen";
+import PremadePlanDetailsScreen from "./screens/PremadePlanDetailsScreen";
 import PremadePlansScreen from "./screens/PreMadePlansScreen";
 
 import CreateAiStack from "./screens/create-ai/Stack";
+import CreateCustomStack from "./screens/create-custom/Stack";
 import { RootStackParamList } from "./types";
 
 import { useAppSelector } from "../redux/root";
@@ -24,14 +26,14 @@ import {
   selectAiPlan,
   useGetInitialInfoQuery,
 } from "../redux/workout/create-ai";
-import PremadePlanDetailsScreen from "./screens/PremadePlanDetailsScreen";
-import CreateCustomStack from "./screens/create-custom/Stack";
+import { selectCreatePlanState } from "../redux/workout/create-plan";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   const { userInfo } = useAppSelector(selectUserInfo);
   const { started } = useAppSelector(selectAiPlan);
+  const { started: customPlanStarted } = useAppSelector(selectCreatePlanState);
   useGetInitialInfoQuery();
   const { data, error } = useGetProfileQuery();
   return (
@@ -52,7 +54,9 @@ export default function RootNavigator() {
             name="workoutTracker"
             component={WorkoutTrackerScreen}
           />
-          <Stack.Screen name="customPlan" component={CreateCustomStack} />
+          {customPlanStarted && (
+            <Stack.Screen name="customPlan" component={CreateCustomStack} />
+          )}
           <Stack.Screen
             name="premadePlanDetails"
             component={PremadePlanDetailsScreen}

@@ -31,5 +31,6 @@ export interface CustomCreatePlanSubmission {
 export interface CustomCreatePlanState extends CustomCreatePlanSubmission {
   activeWeek: number;
   activeDay: number;
+  started: boolean;
   pickerMode: MuscleGroup | "all";
 }

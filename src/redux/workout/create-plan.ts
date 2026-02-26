@@ -24,6 +24,7 @@ const initialState: CustomCreatePlanState = {
   title: "",
   weeksCount: 1,
   daysPerWeek: 3,
+  started: false,
   activeWeek: 1,
   activeDay: 1,
   pickerMode: "all",
@@ -64,6 +65,10 @@ export const createPlanSlice = createSlice({
     setDaysPerWeek: (state, action: PayloadAction<number>) => {
       state.daysPerWeek = action.payload;
       if (state.activeDay > action.payload) state.activeDay = action.payload;
+    },
+
+    startCustomPlanning: (state) => {
+      state.started = true;
     },
 
     addExercise: (
@@ -146,6 +151,7 @@ export const {
   addExercise,
   removeExercise,
   updateMetrics,
+  startCustomPlanning,
   setActiveWeek,
   reset,
   setActiveDay,

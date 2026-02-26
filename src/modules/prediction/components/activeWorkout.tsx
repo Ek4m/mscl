@@ -1,27 +1,18 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  memo,
-  Dispatch,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useCallback, memo, Dispatch } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   StyleSheet,
   Alert,
   Platform,
   Dimensions,
+  Image, // Added Image
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 
 import { ActiveExercise } from "../types";
 import ExerciseCard from "./MoveCard";
-import SubmitButton from "../../../UI/components/submitButton";
 import { COLORS } from "../../../constants/colors";
 import { formatTime } from "../helpers";
 import RestTimer from "./RestTimer";
@@ -36,6 +27,8 @@ import {
   removeWorkoutExercise,
 } from "../../../db/services";
 import Modal from "../../../UI/components/modal";
+
+const { width } = Dimensions.get("window");
 
 interface ActiveWorkoutProps {
   workoutDay: CustomDayPlan;
@@ -58,38 +51,20 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   setExercises,
   onCancel,
 }) => {
+  const [currentExIdx, setCurrentExIdx] = useState(0);
   const [workoutSeconds, setWorkoutSeconds] = useState(0);
   const [restSeconds, setRestSeconds] = useState(0);
   const [isResting, setIsResting] = useState(false);
-  const restTimerRef = useRef<any>(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setWorkoutSeconds((prev) => prev + 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const currentExercise = exercises[currentExIdx];
+  // Calculate progress based on exercises completed
+  const progress = ((currentExIdx + 1) / exercises.length) * 100;
 
   useEffect(() => {
-    if (isResting && restSeconds > 0) {
-      restTimerRef.current = setInterval(() => {
-        setRestSeconds((prev) => {
-          if (prev <= 1) {
-            setIsResting(false);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      if (restTimerRef.current) clearInterval(restTimerRef.current);
-      setIsResting(false);
-    }
-    return () => {
-      if (restTimerRef.current) clearInterval(restTimerRef.current);
-    };
-  }, [isResting, restSeconds]);
+    const interval = setInterval(() => setWorkoutSeconds((p) => p + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleToggleSet = useCallback(
     (
@@ -98,43 +73,52 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
       variationId: number | null,
       reps?: number,
     ) => {
-      setExercises((prev) =>
-        prev.map((ex) => {
-          if (
-            ex.exercise?.id === exerciseId &&
-            (ex.variation?.id === variationId ||
-              (!ex.variation && !variationId))
-          ) {
-            const newSets = [...ex.completedSets];
-            const doneExercise = newSets[index];
+      setExercises((prev) => {
+        const newExercises = [...prev];
+        const ex = newExercises[currentExIdx];
 
-            if (!doneExercise) {
-              // Logic to create set with REPS
-              const created = createWorkoutExercise(
-                sessionId,
-                ex.id,
-                exerciseId,
-                index,
-                ex.variation?.id ?? null,
-                reps, // Make sure your DB service accepts reps here
-              );
-              if (created) {
-                newSets[index] = { ...created, reps: reps || 0 };
-              }
+        if (ex && ex.exercise?.id === exerciseId) {
+          const newSets = [...ex.completedSets];
+          const existingSet = newSets[index];
+
+          if (!existingSet) {
+            const created = createWorkoutExercise(
+              sessionId,
+              ex.id,
+              exerciseId,
+              index,
+              ex.variation?.id ?? null,
+              reps,
+            );
+            if (created) {
+              newSets[index] = { ...created, reps: reps || 0 };
               setRestSeconds(60);
               setIsResting(true);
-            } else {
-              removeWorkoutExercise(doneExercise.id);
-              newSets[index] = null;
             }
-            return { ...ex, completedSets: newSets };
+          } else {
+            removeWorkoutExercise(existingSet.id);
+            newSets[index] = null;
           }
-          return ex;
-        }),
-      );
+          newExercises[currentExIdx] = { ...ex, completedSets: newSets };
+        }
+        return newExercises;
+      });
     },
-    [sessionId, setExercises],
+    [currentExIdx, sessionId, setExercises],
   );
+
+  const nextStep = () => {
+    if (currentExIdx < exercises.length - 1) {
+      setCurrentExIdx((p) => p + 1);
+    } else {
+      handleFinish();
+    }
+  };
+
+  const prevStep = () => {
+    if (currentExIdx > 0) setCurrentExIdx((p) => p - 1);
+  };
+
   const handleFinish = async () => {
     const isLastWeek =
       plan.weeks.findIndex((w) => w.id === week.id) === plan.weeks.length - 1;
@@ -142,152 +126,73 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
       week.days.findIndex((d) => d.id === workoutDay.id) ===
       week.days.length - 1;
 
-    const saveSession = () => {
-      finishWorkoutSession(sessionId, workoutSeconds);
-      if (isLastWeek && isLastDay) {
-        setShowSuccess(true);
-      }
-    };
-
     Alert.alert("Finish Workout", "Ready to log your session?", [
       { text: "Cancel", style: "cancel" },
-      { text: "Save", onPress: saveSession },
+      {
+        text: "Save",
+        onPress: () => {
+          finishWorkoutSession(sessionId, workoutSeconds);
+          if (isLastWeek && isLastDay) setShowSuccess(true);
+          else onFinish();
+        },
+      },
     ]);
   };
 
-  const stats = useMemo(() => {
-    let totalTargetSets = 0;
-    let totalCompletedSets = 0;
-    let totalTargetReps = 0;
-    let totalCompletedReps = 0;
-
-    exercises.forEach((ex) => {
-      totalTargetSets += ex.completedSets.length;
-      totalTargetReps += ex.completedSets.length * (ex.targetReps || 0);
-
-      ex.completedSets.forEach((set) => {
-        if (set) {
-          totalCompletedSets += 1;
-          totalCompletedReps += set.reps || 0;
-        }
-      });
-    });
-
-    return {
-      setsPct: 0.5,
-      repsPct: 0.7,
-      totalCompletedReps: 140,
-      totalTargetReps: 155,
-    };
-  }, [exercises]);
-
   return (
     <View style={styles.safeArea}>
+      {/* Visual Progress Bar */}
+      <View style={styles.progressBarContainer}>
+        <View style={[styles.progressBarActive, { width: `${progress}%` }]} />
+      </View>
       <View style={styles.header}>
-        <View>
-          <TouchableOpacity
-            onPress={onCancel}
-            style={styles.backButton}
-            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-          >
-            <IonIcons name="chevron-back" size={20} color="#71717a" />
-            <Text style={styles.backText}>Cancel</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>{plan.title}</Text>
-          <Text style={styles.subtitle}>{plan.title}</Text>
+        <TouchableOpacity onPress={onCancel} style={styles.closeButton}>
+          <IonIcons name="close" size={24} color="#71717a" />
+        </TouchableOpacity>
+
+        <View style={styles.headerCenter}>
+          <Text style={styles.stepText}>
+            EXERCISE {currentExIdx + 1} OF {exercises.length}
+          </Text>
+          <Text style={styles.timerText}>{formatTime(workoutSeconds)}</Text>
         </View>
-        <View style={styles.timerContainer}>
-          <View style={styles.timerRow}>
-            <IonIcons name="timer-outline" size={18} color={COLORS.mainBlue} />
-            <Text style={styles.timerText}>{formatTime(workoutSeconds)}</Text>
-          </View>
-          <Text style={styles.timerLabel}>Total Time</Text>
-        </View>
+
+        <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {exercises.map((exercise) => (
-          <ExerciseCard
-            key={exercise.id}
-            exercise={exercise}
-            onToggleSet={handleToggleSet}
-          />
-        ))}
-      </ScrollView>
-      <Modal
-        onRequestClose={() => setShowSuccess(false)}
-        isVisible={showSuccess}
-        overlayClickable={false}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <IonIcons name="trophy" size={80} color={COLORS.mainBlue} />
-            <Text style={styles.modalTitle}>Plan Completed!</Text>
-            <Text style={styles.modalBody}>
-              Congratulations! You've finished the "{plan.title}" program.
+      <View style={styles.focusContainer}>
+        {currentExercise ? (
+          <View style={styles.activeExerciseWrapper}>
+            {/* Exercise Image Section */}
+            <View style={styles.imageContainer}>
+              <Image
+                source={{
+                  uri: "https://training.fit/wp-content/uploads/2020/02/bizepscurls-stehend-langhantel.png",
+                }}
+                style={styles.exerciseImage}
+                resizeMode="cover"
+              />
+              <View style={styles.logoRemover} />
+            </View>
+
+            <Text style={styles.exerciseTitle}>
+              {currentExercise.variation?.title ||
+                currentExercise.exercise?.title}
             </Text>
 
-            <View style={styles.statsRow}>
-              <View style={styles.statBox}>
-                <Text style={styles.statLabel}>Final Time</Text>
-                <Text style={styles.statValue}>
-                  {formatTime(workoutSeconds)}
-                </Text>
-              </View>
+            <View style={styles.cardWrapper}>
+              <ExerciseCard
+                exercise={currentExercise}
+                onToggleSet={handleToggleSet}
+              />
             </View>
-            <View style={styles.statsContainer}>
-              <Text style={styles.statsHeader}>Workout Performance</Text>
-
-              {/* Sets Statistic */}
-              <View style={styles.statRow}>
-                <View style={styles.statInfo}>
-                  <Text style={styles.statsLabel}>Sets Completed</Text>
-                  <Text style={styles.statsValue}>
-                    {Math.round(stats.setsPct * 100)}%
-                  </Text>
-                </View>
-                <View style={styles.progressBarBg}>
-                  <View
-                    style={[
-                      styles.progressBarFill,
-                      { width: `${stats.setsPct * 100}%` },
-                    ]}
-                  />
-                </View>
-              </View>
-
-              {/* Reps Statistic */}
-              <View style={styles.statRow}>
-                <View style={styles.statInfo}>
-                  <Text style={styles.statLabel}>Total Reps Vol.</Text>
-                  <Text style={styles.statValue}>
-                    {stats.totalCompletedReps} / {stats.totalTargetReps}
-                  </Text>
-                </View>
-                <View style={styles.progressBarBg}>
-                  <View
-                    style={[
-                      styles.progressBarFill,
-                      {
-                        width: `${Math.min(stats.repsPct * 100, 100)}%`,
-                        backgroundColor: COLORS.mainBlue,
-                      },
-                    ]}
-                  />
-                </View>
-              </View>
-            </View>
-            <TouchableOpacity style={styles.continueButton} onPress={onFinish}>
-              <Text style={styles.continueText}>Awesome!</Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
-      <View style={styles.footerContainer}>
+        ) : (
+          <Text style={styles.errorText}>No exercise found.</Text>
+        )}
+      </View>
+
+      <View style={styles.footer}>
         {isResting && (
           <RestTimer
             restSeconds={restSeconds}
@@ -297,131 +202,176 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
           />
         )}
 
-        <View style={styles.actionRow}>
-          <SubmitButton
-            bgColor={COLORS.mainBlue}
-            onPress={handleFinish}
-            icon={<IonIcons name="square" size={16} color="black" />}
-            title="Finish Workout"
-          />
+        <View style={styles.navButtons}>
+          <TouchableOpacity
+            style={[styles.navBtn, currentExIdx === 0 && { opacity: 0.3 }]}
+            onPress={prevStep}
+            disabled={currentExIdx === 0}
+          >
+            <IonIcons name="chevron-back" size={20} color="white" />
+            <Text style={styles.navBtnText}>Back</Text>
+          </TouchableOpacity>
+
+          {currentExIdx === exercises.length - 1 ? (
+            <TouchableOpacity style={styles.finishBtn} onPress={handleFinish}>
+              <Text style={styles.finishBtnText}>FINISH WORKOUT</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.navBtnPrimary} onPress={nextStep}>
+              <Text style={styles.navBtnTextPrimary}>Next</Text>
+              <IonIcons name="chevron-forward" size={20} color="black" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
+
+      {/* Reusing your Success Modal Logic */}
+      <Modal isVisible={showSuccess} onRequestClose={onFinish}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <IonIcons name="trophy" size={60} color={COLORS.mainBlue} />
+            <Text style={styles.modalTitle}>Workout Complete!</Text>
+            <TouchableOpacity style={styles.continueButton} onPress={onFinish}>
+              <Text style={styles.continueText}>Awesome!</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#000000",
+  safeArea: { flex: 1, backgroundColor: "#000000" },
+  progressBarContainer: {
+    height: 4,
+    backgroundColor: "#18181b",
+    width: "100%",
+    marginTop: 60,
+  },
+  progressBarActive: {
+    height: "100%",
+    backgroundColor: COLORS.mainBlue,
   },
   header: {
-    paddingTop: Platform.OS === "android" ? 40 : 20,
-    paddingHorizontal: 24,
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#18181b",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-end",
-    backgroundColor: "#09090b",
-  },
-  backButton: {
-    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
-  backText: {
+  headerCenter: { alignItems: "center" },
+  stepText: {
     color: "#71717a",
-    fontSize: 14,
-    fontWeight: "500",
-    marginLeft: 4,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "800",
-    color: "#ffffff",
-    width: Dimensions.get("window").width * 0.6,
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: 8,
-    fontWeight: "700",
-    color: "#71717a",
-    textTransform: "uppercase",
-    letterSpacing: 1.5,
-    width: Dimensions.get("window").width * 0.6,
-    marginTop: 4,
-  },
-  timerContainer: {
-    alignItems: "flex-end",
-  },
-  timerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  timerText: {
-    color: COLORS.mainBlue,
-    fontSize: 20,
-    fontWeight: "700",
-    marginLeft: 6,
-    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
-  },
-  timerLabel: {
     fontSize: 10,
     fontWeight: "700",
-    color: "#3f3f46",
+    letterSpacing: 1,
     textTransform: "uppercase",
-    marginTop: 2,
   },
-  scrollView: {
+  timerText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+  },
+  focusContainer: {
     flex: 1,
   },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 180,
+  activeExerciseWrapper: {
+    flex: 1,
+    alignItems: "center",
   },
-  footerContainer: {
-    position: "absolute",
+  imageContainer: {
+    width: width,
+    height: width * 0.55,
+    backgroundColor: "#09090b",
+    marginBottom: 20,
+    overflow: "hidden",
+    borderBottomWidth: 1,
+    borderBottomColor: "#18181b",
+  },
+  exerciseImage: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#eee",
+  },
+  imagePlaceholder: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#09090b",
+  },
+  logoRemover: {
+    width: 70,
+    height: 30,
     bottom: 0,
     left: 0,
-    right: 0,
-    padding: 16,
-    backgroundColor: "transparent",
+    position: "absolute",
+    backgroundColor: "#eee",
   },
-  actionRow: {
-    backgroundColor: "#18181b",
-    borderRadius: 20,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#27272a",
+  exerciseTitle: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: 16,
+    paddingHorizontal: 20,
+    textAlign: "center",
   },
-  finishButton: {
-    backgroundColor: COLORS.white,
-    paddingVertical: 16,
-    borderRadius: 16,
+  cardWrapper: {
+    flex: 1,
+    width: "100%",
+    paddingHorizontal: 16,
+  },
+  footer: {
+    padding: 20,
+    paddingBottom: Platform.OS === "ios" ? 40 : 20,
+    backgroundColor: "#000",
+    borderTopWidth: 1,
+    borderTopColor: "#18181b",
+  },
+  navButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  navBtn: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    gap: 4,
   },
-  finishText: {
-    color: "#000000",
-    fontSize: 14,
-    fontWeight: "900",
-    textTransform: "uppercase",
-    letterSpacing: 1,
+  navBtnPrimary: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.mainBlue,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 100,
+    gap: 4,
   },
+  navBtnText: { color: "#71717a", fontWeight: "600", fontSize: 16 },
+  navBtnTextPrimary: { color: "#000", fontWeight: "700", fontSize: 16 },
+  finishBtn: {
+    backgroundColor: COLORS.mainBlue,
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 100,
+  },
+  finishBtnText: { color: "#000", fontWeight: "900", fontSize: 14 },
+  closeButton: { padding: 5 },
+  errorText: { color: "white", textAlign: "center", marginTop: 50 },
+  // Modal styles from previous context
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.85)",
+    backgroundColor: "rgba(0,0,0,0.9)",
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
   },
   modalContent: {
     backgroundColor: "#18181b",
-    borderRadius: 32,
+    borderRadius: 24,
     padding: 32,
     alignItems: "center",
     width: "100%",
@@ -430,91 +380,22 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     color: "#ffffff",
-    fontSize: 28,
-    fontWeight: "900",
-    marginTop: 16,
-    textAlign: "center",
-  },
-  modalBody: {
-    color: "#a1a1aa",
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 8,
-    lineHeight: 22,
-  },
-  statsRow: {
-    marginVertical: 24,
-    padding: 16,
-    backgroundColor: "#09090b",
-    borderRadius: 16,
-    width: "100%",
-  },
-  statBox: {
-    alignItems: "center",
-  },
-  statLabel: {
-    color: "#71717a",
-    fontSize: 12,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  },
-  statValue: {
-    color: COLORS.mainBlue,
     fontSize: 24,
-    fontWeight: "800",
+    fontWeight: "900",
+    marginVertical: 16,
+    textAlign: "center",
   },
   continueButton: {
     backgroundColor: "#ffffff",
     paddingVertical: 16,
     paddingHorizontal: 48,
     borderRadius: 100,
+    marginTop: 10,
   },
   continueText: {
     color: "#000000",
     fontWeight: "900",
     fontSize: 16,
-  },
-  statsContainer: {
-    width: "100%",
-    marginVertical: 20,
-    gap: 20,
-  },
-  statsHeader: {
-    color: "#ffffff",
-    fontSize: 14,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    marginBottom: 8,
-  },
-  statRow: {
-    width: "100%",
-  },
-  statInfo: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  statsLabel: {
-    color: "#71717a",
-    fontSize: 13,
-  },
-  statsValue: {
-    color: "#ffffff",
-    fontSize: 13,
-    fontWeight: "bold",
-  },
-  progressBarBg: {
-    height: 8,
-    backgroundColor: "#27272a",
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  progressBarFill: {
-    height: "100%",
-    backgroundColor: "#ffffff", // Sets color
-    borderRadius: 4,
   },
 });
 

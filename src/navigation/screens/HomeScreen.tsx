@@ -22,6 +22,7 @@ import { selectUserInfo } from "../../redux/auth/slice";
 
 import { RootStackParamList } from "../types";
 import { useFocusEffect } from "@react-navigation/native";
+import { startCustomPlanning } from "../../redux/workout/create-plan";
 
 const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
   navigation,
@@ -59,8 +60,13 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
       title: "Plan Builder",
       subtitle: "Design custom volume",
       icon: require("../../../assets/custom.png"),
-      color: "#63ff20",
-      onPress: () => navigation.navigate("customPlan"),
+      color: "#4ead25",
+      onPress: () => {
+        dispatch(startCustomPlanning());
+        setTimeout(() => {
+          navigation.navigate("customPlan");
+        });
+      },
     },
     {
       id: "premade",
