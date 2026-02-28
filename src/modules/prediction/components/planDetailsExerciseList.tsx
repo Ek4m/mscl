@@ -34,12 +34,13 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
           ? doneExercises.map((ex) => ex.reps).join(", ")
           : 0;
         console.log("____DONE_REPS______: ", doneExercises);
+        console.log(ex);
         return (
           <View key={idx} style={styles.exCard}>
             <View style={styles.exImageWrapper}>
               <Image
                 source={{
-                  uri: "https://s3assets.skimble.com/assets/2289478/image_iphone.jpg",
+                  uri: `https://res.cloudinary.com/dx15pr9xn/image/upload/v1769200908/${ex.variation?.thumbnail}.jpg`,
                 }}
                 style={styles.exImage}
               />
@@ -118,11 +119,11 @@ const styles = StyleSheet.create({
   },
   exCard: {
     backgroundColor: "#0a0a0a",
-    borderRadius: 24,
+    borderRadius: 20,
     padding: 10,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: "#1a1a1a",
   },
@@ -130,9 +131,9 @@ const styles = StyleSheet.create({
     borderColor: COLORS.lightBlue,
   },
   exImageWrapper: {
-    width: 85,
-    height: 85,
-    borderRadius: 18,
+    width: 110,
+    height: 55,
+    borderRadius: 10,
     backgroundColor: "#111",
     overflow: "hidden",
   },

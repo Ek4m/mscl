@@ -62,7 +62,7 @@ export interface CustomPlanDayExercise {
   orderIndex: number;
   targetSets: number;
   targetReps: number;
-  variation?: { id: number; title: string };
+  variation?: { id: number; title: string; thumbnail: string };
   createdAt: string;
   exercise?: Exercise;
 }

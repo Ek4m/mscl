@@ -88,7 +88,6 @@ const PlanDetailsScreen: FC<
       });
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -212,8 +211,8 @@ const PlanDetailsScreen: FC<
       </View>
       {/* Exercise List */}
       {currentDay && <PlanDetailsExerciseList day={currentDay} />}
-      {/* {activeWeekIdx === userProgress.week &&
-        activeDayIdx === userProgress.day && ( */}
+      {activeWeekIdx === userProgress.week &&
+        activeDayIdx === userProgress.day && (
           <View style={styles.footer}>
             <SubmitButton
               icon={<FeatherIcon name="play" size={18} color="black" />}
@@ -222,7 +221,7 @@ const PlanDetailsScreen: FC<
               title="START SESSION"
             />
           </View>
-         {/* )} */}
+        )}
     </View>
   );
 };

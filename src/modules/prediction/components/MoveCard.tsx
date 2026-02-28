@@ -12,6 +12,8 @@ import FeatherIcon from "react-native-vector-icons/Feather";
 
 import { ActiveExercise } from "../types";
 import { COLORS } from "../../../constants/colors";
+import Chip from "../../../UI/components/chip";
+import { MuscleGroupTitles } from "../../workout/vault";
 
 interface ExerciseCardProps {
   exercise: ActiveExercise;
@@ -77,7 +79,18 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
     <View style={styles.card}>
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.exerciseName}>{title?.toUpperCase()}</Text>
+          <Text style={styles.exerciseName}>Primary muscles:</Text>
+          <View style={styles.setGrid}>
+            {exercise.exercise?.primaryMuscles.map((m) => (
+              <Chip align="left" type="info" label={MuscleGroupTitles[m]} />
+            ))}
+          </View>
+          <Text style={styles.exerciseName}>Secondary muscles:</Text>
+          <View style={styles.setGrid}>
+            {exercise.exercise?.secondaryMuscles.map((m) => (
+              <Chip align="left" type="info" label={MuscleGroupTitles[m]} />
+            ))}
+          </View>
           <View style={styles.statsRow}>
             <View style={styles.statBadge}>
               <Text style={styles.statText}>{exercise.targetSets} SETS</Text>
@@ -194,11 +207,12 @@ const styles = StyleSheet.create({
   },
   exerciseName: {
     color: "white",
-    fontSize: 18,
+    fontSize: 15,
+    marginBottom: 5,
     fontWeight: "900",
     fontStyle: "italic",
   },
-  statsRow: { flexDirection: "row", marginTop: 8 },
+  statsRow: { flexDirection: "row", marginVertical: 8 },
   statBadge: {
     backgroundColor: "#1f1f1f",
     paddingHorizontal: 8,
@@ -216,7 +230,12 @@ const styles = StyleSheet.create({
     borderTopColor: "#222",
   },
   stepText: { color: "#888", fontSize: 12, marginBottom: 4 },
-  setGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 20 },
+  setGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    marginBottom: 10,
+  },
   setBox: {
     width: 55,
     height: 55,

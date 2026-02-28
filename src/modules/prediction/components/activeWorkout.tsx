@@ -27,6 +27,8 @@ import {
   removeWorkoutExercise,
 } from "../../../db/services";
 import Modal from "../../../UI/components/modal";
+import Chip from "../../../UI/components/chip";
+import { MuscleGroupTitles } from "../../workout/vault";
 
 const { width } = Dimensions.get("window");
 
@@ -163,18 +165,17 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
       <View style={styles.focusContainer}>
         {currentExercise ? (
           <View style={styles.activeExerciseWrapper}>
+
             {/* Exercise Image Section */}
             <View style={styles.imageContainer}>
               <Image
                 source={{
-                  uri: "https://training.fit/wp-content/uploads/2020/02/bizepscurls-stehend-langhantel.png",
+                  uri: `https://res.cloudinary.com/dx15pr9xn/image/upload/v1769200908/${currentExercise.variation?.thumbnail}.jpg`,
                 }}
                 style={styles.exerciseImage}
                 resizeMode="cover"
               />
-              <View style={styles.logoRemover} />
             </View>
-
             <Text style={styles.exerciseTitle}>
               {currentExercise.variation?.title ||
                 currentExercise.exercise?.title}
@@ -282,10 +283,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imageContainer: {
-    width: width,
-    height: width * 0.55,
+    width: width * 0.9,
+    height: width * 0.45,
     backgroundColor: "#09090b",
     marginBottom: 20,
+    borderRadius: 10,
     overflow: "hidden",
     borderBottomWidth: 1,
     borderBottomColor: "#18181b",
@@ -300,14 +302,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#09090b",
-  },
-  logoRemover: {
-    width: 70,
-    height: 30,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-    backgroundColor: "#eee",
   },
   exerciseTitle: {
     color: "#fff",
