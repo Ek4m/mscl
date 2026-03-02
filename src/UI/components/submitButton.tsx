@@ -5,19 +5,25 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
   View,
+  ViewStyle,
+  TextStyle,
 } from "react-native";
 import React, { FC, ReactNode } from "react";
 import { IS_SMALL } from "../../constants/vault";
 
-const SubmitButton: FC<
-  TouchableOpacityProps & {
-    title: string;
-    icon?: ReactNode;
-    textColor?: string;
-    bgColor?: string;
-    loading?: boolean;
-  }
-> = ({
+// Define our variants
+type ButtonVariant = "default" | "outlined" | "titleOnly";
+
+interface SubmitButtonProps extends TouchableOpacityProps {
+  title: string;
+  icon?: ReactNode;
+  textColor?: string;
+  bgColor?: string;
+  loading?: boolean;
+  variant?: ButtonVariant; // Added variant prop
+}
+
+const SubmitButton: FC<SubmitButtonProps> = ({
   onPress,
   title,
   bgColor,
@@ -26,28 +32,55 @@ const SubmitButton: FC<
   loading,
   disabled,
   style,
+  variant = "default", // Defaulting to 'default'
   ...props
 }) => {
+  
+  // Logic to determine styles based on variant
+  const getVariantContainerStyle = (): ViewStyle => {
+    switch (variant) {
+      case "outlined":
+        return {
+          backgroundColor: "transparent",
+          borderWidth: 1,
+          borderColor: textColor || "#fff",
+        };
+      case "titleOnly":
+        return {
+          backgroundColor: "transparent",
+          height: "auto", // Let it shrink to text size if needed
+          paddingVertical: 10,
+        };
+      default:
+        return {
+          backgroundColor: bgColor || "#fff",
+        };
+    }
+  };
+
+  const finalTextColor = variant === "default" ? (textColor || "#000") : (textColor || "#fff");
+
   return (
     <TouchableOpacity
       disabled={disabled || loading}
+      activeOpacity={0.5}
       style={[
         styles.button,
+        getVariantContainerStyle(),
+        { opacity: disabled || loading ? 0.5 : 1 },
         style,
-        {
-          backgroundColor: bgColor || "#fff",
-          opacity: disabled || loading ? 0.5 : 1,
-        },
       ]}
       onPress={onPress}
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={textColor || "#000"} />
+        <ActivityIndicator color={finalTextColor} />
       ) : (
         <>
-          {icon && <View style={{ marginRight: 5 }}>{icon}</View>}
-          <Text style={[styles.buttonText, { color: textColor || "#000" }]}>
+          {icon && (
+            <View style={styles.iconContainer}>{icon}</View>
+          )}
+          <Text style={[styles.buttonText, { color: finalTextColor }]}>
             {title}
           </Text>
         </>
@@ -65,9 +98,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  iconContainer: {
+    marginRight: 8,
   },
   buttonText: {
-    fontSize: IS_SMALL ? 10 : 12,
+    fontSize: IS_SMALL ? 12 : 14, // Bumped slightly for readability
     fontWeight: "bold",
+    letterSpacing: 1,
+    textTransform: "uppercase",
   },
 });

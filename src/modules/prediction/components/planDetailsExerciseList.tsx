@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, memo } from "react";
 import { ScrollView, StyleSheet, Text, View, Image } from "react-native";
 
 import { COLORS } from "../../../constants/colors";
@@ -33,8 +33,7 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
         const doneReps = exerciseDone
           ? doneExercises.map((ex) => ex.reps).join(", ")
           : 0;
-        console.log("____DONE_REPS______: ", doneExercises);
-        console.log(ex);
+
         return (
           <View key={idx} style={styles.exCard}>
             <View style={styles.exImageWrapper}>
@@ -93,7 +92,7 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
   );
 };
 
-export default PlanDetailsExerciseList;
+export default memo(PlanDetailsExerciseList);
 
 const styles = StyleSheet.create({
   exerciseList: { flex: 1, backgroundColor: "#000" },
@@ -134,10 +133,10 @@ const styles = StyleSheet.create({
     width: 110,
     height: 55,
     borderRadius: 10,
-    backgroundColor: "#111",
+    backgroundColor: "#ffffff",
     overflow: "hidden",
   },
-  exImage: { width: "100%", height: "100%" },
+  exImage: { width: "100%", height: "100%",objectFit:"contain", },
   exDetails: { flex: 1, marginLeft: 10 },
   exName: {
     color: "white",

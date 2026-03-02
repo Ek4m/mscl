@@ -1,5 +1,9 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
-import { CustomPlanDetails, PremadePlan } from "../modules/workout/types";
+import {
+  CustomDayPlan,
+  CustomPlanDetails,
+  PremadePlan,
+} from "../modules/workout/types";
 import { CreateAiPlanParamList } from "./screens/create-ai/types";
 
 export type RootStackParamList = {
@@ -10,12 +14,13 @@ export type RootStackParamList = {
   test: undefined;
   initialInfo: undefined;
   premadePlans: undefined;
+  editDay: { dayPlan: CustomDayPlan };
   premadePlanDetails: { plan: PremadePlan };
   onboarding: undefined;
   customPlan: undefined;
   inspectPlan: undefined;
   createAiPlan: NavigatorScreenParams<CreateAiPlanParamList>;
-  planDetails: { id: number };
+  planDetails: { id: number; shouldRefetch?: boolean };
   home: undefined;
   payment: undefined;
   profile: undefined;

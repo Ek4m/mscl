@@ -27,6 +27,7 @@ import {
   useGetInitialInfoQuery,
 } from "../redux/workout/create-ai";
 import { selectCreatePlanState } from "../redux/workout/create-plan";
+import EditDayScreen from "./screens/EditWorkoutDayScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -66,6 +67,7 @@ export default function RootNavigator() {
             <Stack.Screen name="createAiPlan" component={CreateAiStack} />
           )}
           <Stack.Screen name="planDetails" component={PlanDetailsScreen} />
+          <Stack.Screen name="editDay" component={EditDayScreen} />
           <Stack.Screen
             name="workoutSession"
             component={WorkoutSessionScreen}

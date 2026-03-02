@@ -35,6 +35,24 @@ export const planApi = createApi({
         data,
       }),
     }),
+    editDay: builder.mutation<
+      { id: number },
+      {
+        dayId: number;
+        exercises: {
+          variationId?: number;
+          exerciseId?: number;
+          targetReps: number;
+          targetSets: number;
+        }[];
+      }
+    >({
+      query: (data) => ({
+        url: "workout/edit-day",
+        method: "put",
+        data,
+      }),
+    }),
     updateStatus: builder.mutation<
       { id: number },
       {
@@ -76,6 +94,7 @@ export const {
   useGetUserCustomPlanByIdQuery,
   useUpdateStatusMutation,
   useGetPremadePlansQuery,
+  useEditDayMutation,
   useGetExistingPlanRegistrationQuery,
   useRegisterPlanMutation,
 } = planApi;

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -25,13 +25,15 @@ import { RootStackParamList } from "../types";
 import { getWorkoutSessionsByUser } from "../../db/services";
 import SubmitButton from "../../UI/components/submitButton";
 import PlanDetailsExerciseList from "../../modules/prediction/components/planDetailsExerciseList";
+import { CustomDayPlan } from "../../modules/workout/types";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
 const PlanDetailsScreen: FC<
   NativeStackScreenProps<RootStackParamList, "planDetails">
 > = ({ route, navigation }) => {
-  const id = route.params?.id || 1;
+  const { id } = route.params;
   const { data: plan, isFetching, refetch } = useGetUserCustomPlanByIdQuery(id);
   const { userInfo } = useAppSelector(selectUserInfo);
 
@@ -47,6 +49,26 @@ const PlanDetailsScreen: FC<
     [id, userInfo],
   );
 
+  const onEditDay = () => {
+    if (plan) {
+      const day = plan.weeks[activeWeekIdx]?.days[activeDayIdx];
+      if (day) {
+        navigation.navigate("editDay", { dayPlan: day });
+      }
+    }
+  };
+
+  const isFirstRender = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+      }
+      refetch();
+    }, [refetch]),
+  );
+  
   const calculateProgress = useCallback(() => {
     if (!plan?.weeks || !sessions || !sessions.length)
       return { week: 0, day: 0 };
@@ -92,7 +114,6 @@ const PlanDetailsScreen: FC<
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-
       <ImageBackground
         source={{
           uri:
@@ -126,8 +147,6 @@ const PlanDetailsScreen: FC<
           </View>
         </View>
       </ImageBackground>
-
-      {/* Week Selector */}
       <View style={styles.weekContainer}>
         <ScrollView
           horizontal
@@ -158,8 +177,6 @@ const PlanDetailsScreen: FC<
           ))}
         </ScrollView>
       </View>
-
-      {/* Day Selector */}
       <View style={styles.dayContainer}>
         <ScrollView
           horizontal
@@ -209,16 +226,25 @@ const PlanDetailsScreen: FC<
           })}
         </ScrollView>
       </View>
-      {/* Exercise List */}
       {currentDay && <PlanDetailsExerciseList day={currentDay} />}
-      {activeWeekIdx === userProgress.week &&
-        activeDayIdx === userProgress.day && (
+      {activeWeekIdx >= userProgress.week &&
+        activeDayIdx >= userProgress.day && (
           <View style={styles.footer}>
+            {activeWeekIdx === userProgress.week &&
+              activeDayIdx === userProgress.day && (
+                <SubmitButton
+                  icon={<FeatherIcon name="play" size={18} color="black" />}
+                  bgColor={COLORS.mainBlue}
+                  onPress={onStartSession}
+                  title="START SESSION"
+                />
+              )}
             <SubmitButton
-              icon={<FeatherIcon name="play" size={18} color="black" />}
+              variant="titleOnly"
+              icon={<FeatherIcon name="edit" size={18} color="white" />}
               bgColor={COLORS.mainBlue}
-              onPress={onStartSession}
-              title="START SESSION"
+              onPress={onEditDay}
+              title="EDIT"
             />
           </View>
         )}
@@ -232,7 +258,7 @@ const styles = StyleSheet.create({
   heroOverlay: {
     flex: 1,
     padding: 20,
-    backgroundColor: "rgba(0,0,0,0.5)", // Uniform dark overlay for text contrast
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "flex-end",
   },
   safeHeader: { flex: 1, justifyContent: "space-between" },
@@ -313,7 +339,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     width: "100%",
-    padding: 24,
+    paddingBottom: 20,
     backgroundColor: "rgba(0,0,0,0.92)",
   },
 });

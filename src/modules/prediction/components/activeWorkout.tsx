@@ -143,7 +143,6 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
 
   return (
     <View style={styles.safeArea}>
-      {/* Visual Progress Bar */}
       <View style={styles.progressBarContainer}>
         <View style={[styles.progressBarActive, { width: `${progress}%` }]} />
       </View>
@@ -161,12 +160,9 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
 
         <View style={{ width: 24 }} />
       </View>
-
       <View style={styles.focusContainer}>
         {currentExercise ? (
           <View style={styles.activeExerciseWrapper}>
-
-            {/* Exercise Image Section */}
             <View style={styles.imageContainer}>
               <Image
                 source={{
@@ -180,7 +176,6 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
               {currentExercise.variation?.title ||
                 currentExercise.exercise?.title}
             </Text>
-
             <View style={styles.cardWrapper}>
               <ExerciseCard
                 exercise={currentExercise}
@@ -192,7 +187,6 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
           <Text style={styles.errorText}>No exercise found.</Text>
         )}
       </View>
-
       <View style={styles.footer}>
         {isResting && (
           <RestTimer
@@ -202,7 +196,6 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
             setIsResting={setIsResting}
           />
         )}
-
         <View style={styles.navButtons}>
           <TouchableOpacity
             style={[styles.navBtn, currentExIdx === 0 && { opacity: 0.3 }]}
@@ -225,8 +218,6 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
           )}
         </View>
       </View>
-
-      {/* Reusing your Success Modal Logic */}
       <Modal isVisible={showSuccess} onRequestClose={onFinish}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
