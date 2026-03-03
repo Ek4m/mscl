@@ -12,12 +12,12 @@ export interface CustomCreateExerciseEntry {
 }
 
 export interface CustomCreateDailySession {
-  dayIndex: number;
+  orderIndex: number;
   exercises: CustomCreateExerciseEntry[];
 }
 
 export interface CustomCreateWeeklyPlan {
-  weekNumber: number;
+  orderIndex: number;
   days: CustomCreateDailySession[];
 }
 

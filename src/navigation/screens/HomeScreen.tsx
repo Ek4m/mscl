@@ -76,8 +76,11 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
               {userInfo?.username?.toUpperCase() || "OPERATOR"}
             </Text>
           </View>
-          <TouchableOpacity style={styles.profileCircle}>
-            <FeatherIcon name="terminal" size={20} color={COLORS.mainBlue} />
+          <TouchableOpacity
+            onPress={() => navigation.navigate("profile")}
+            style={styles.profileCircle}
+          >
+            <FeatherIcon name="user" size={20} color={COLORS.mainBlue} />
           </TouchableOpacity>
         </View>
 

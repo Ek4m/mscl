@@ -26,7 +26,7 @@ export interface WorkoutExercise {
 export interface WorkoutDay {
   id: number;
   title: string;
-  dayIndex: number;
+  orderIndex: number;
   exercises: WorkoutExercise[];
 }
 export interface WorkoutPlanPreview {

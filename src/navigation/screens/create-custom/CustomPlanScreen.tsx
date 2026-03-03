@@ -38,8 +38,7 @@ const CustomPlanCreatorScreen: FC<
 
   // Safely get exercises for the currently selected Week and Day
   const currentWeek = plan[activeWeek - 1];
-  const currentDayExercises =
-    currentWeek?.days[activeDay - 1]?.exercises || [];
+  const currentDayExercises = currentWeek?.days[activeDay - 1]?.exercises || [];
 
   const adjustCount = (type: "weeks" | "days", delta: number) => {
     if (type === "weeks") {
@@ -107,20 +106,20 @@ const CustomPlanCreatorScreen: FC<
         >
           {plan.map((week) => (
             <TouchableOpacity
-              key={week.weekNumber}
-              onPress={() => dispatch(setActiveWeek(week.weekNumber))}
+              key={week.orderIndex}
+              onPress={() => dispatch(setActiveWeek(week.orderIndex))}
               style={[
                 styles.weekPill,
-                activeWeek === week.weekNumber && styles.weekPillActive,
+                activeWeek === week.orderIndex && styles.weekPillActive,
               ]}
             >
               <Text
                 style={[
                   styles.weekPillText,
-                  activeWeek === week.weekNumber && styles.textBlack,
+                  activeWeek === week.orderIndex && styles.textBlack,
                 ]}
               >
-                W{week.weekNumber}
+                W{week.orderIndex}
               </Text>
             </TouchableOpacity>
           ))}

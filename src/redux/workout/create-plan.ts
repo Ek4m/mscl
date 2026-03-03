@@ -12,12 +12,12 @@ import {
 import { Exercise } from "../../modules/workout/types";
 
 const createEmptySession = (dayNum: number): CustomCreateDailySession => ({
-  dayIndex: dayNum,
+  orderIndex: dayNum,
   exercises: [],
 });
 
 const createEmptyWeek = (weekNum: number): CustomCreateWeeklyPlan => ({
-  weekNumber: weekNum,
+  orderIndex: weekNum,
   days: Array.from({ length: 7 }, (_, i) => createEmptySession(i + 1)),
 });
 
@@ -72,10 +72,7 @@ export const createPlanSlice = createSlice({
       state.started = true;
     },
 
-    addExercise: (
-      state,
-      action: PayloadAction<Exercise>,
-    ) => {
+    addExercise: (state, action: PayloadAction<Exercise>) => {
       const exercise = action.payload;
       const weekIdx = state.activeWeek - 1;
       const dayIdx = state.activeDay - 1;
@@ -85,7 +82,7 @@ export const createPlanSlice = createSlice({
         instanceId: `${Date.now()}-${Math.random()}`,
         name: exercise.title,
         muscleGroups: exercise.primaryMuscles || [],
-        thumbnail:exercise.thumbnail,
+        thumbnail: exercise.thumbnail,
         reps: "12",
         sets: "4",
       });

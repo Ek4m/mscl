@@ -150,7 +150,9 @@ const EditDayScreen: React.FC<
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <FeatherIcon name="x" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>EDIT DAY {dayPlan.dayIndex + 1}</Text>
+        <Text style={styles.headerTitle}>
+          EDIT DAY {dayPlan.orderIndex + 1}
+        </Text>
         <TouchableOpacity onPress={() => setIsModalVisible(true)}>
           <FeatherIcon name="plus" size={24} color={COLORS.mainBlue} />
         </TouchableOpacity>

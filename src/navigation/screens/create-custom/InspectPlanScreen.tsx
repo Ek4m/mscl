@@ -43,7 +43,7 @@ const PlanReviewScreen: FC<PreviewPlanProps> = ({ navigation }) => {
       .map((week) => ({
         ...week,
         days: week.days.filter(
-          (s) => s.exercises.length > 0 && s.dayIndex <= daysPerWeek,
+          (s) => s.exercises.length > 0 && s.orderIndex <= daysPerWeek,
         ),
       }))
       .filter((week) => week.days.length > 0);
@@ -114,15 +114,17 @@ const PlanReviewScreen: FC<PreviewPlanProps> = ({ navigation }) => {
             <Text style={styles.emptyText}>No exercises added yet.</Text>
           ) : (
             summarizedPlan.map((week) => (
-              <View key={week.weekNumber} style={styles.weekContainer}>
+              <View key={week.orderIndex} style={styles.weekContainer}>
                 <View style={styles.weekHeader}>
-                  <Text style={styles.weekTitle}>WEEK {week.weekNumber}</Text>
+                  <Text style={styles.weekTitle}>WEEK {week.orderIndex}</Text>
                 </View>
 
                 {week.days.map((session) => (
-                  <View key={session.dayIndex} style={styles.dayCard}>
+                  <View key={session.orderIndex} style={styles.dayCard}>
                     <View style={styles.dayHeader}>
-                      <Text style={styles.dayText}>Day {session.dayIndex}</Text>
+                      <Text style={styles.dayText}>
+                        Day {session.orderIndex}
+                      </Text>
                       <Text style={styles.exerciseCount}>
                         {session.exercises.length} Exercises
                       </Text>

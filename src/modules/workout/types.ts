@@ -30,7 +30,7 @@ export interface CustomExercise {
 }
 
 export interface CustomDayPlan {
-  dayIndex: number;
+  orderIndex: number;
   id: number;
   exercises: WorkoutExercise[];
 }
@@ -42,7 +42,7 @@ export interface CustomPlanCredentials {
 
 export interface CustomPlanDay {
   id: number;
-  dayIndex: number;
+  orderIndex: number;
   title: string | null;
   createdAt: string;
   exercises: CustomPlanDayExercise[];
@@ -50,7 +50,7 @@ export interface CustomPlanDay {
 
 export interface CustomPlanWeeks {
   id: number;
-  weekIndex: number;
+  orderIndex: number;
   days: CustomDayPlan[];
 }
 
@@ -74,7 +74,7 @@ export interface CustomPlanDetails {
 
 export interface PremadePlanWeek {
   id: number;
-  weekNumber: number;
+  orderIndex: number;
   description: string | null;
   createdAt: string;
   days: WorkoutDay[];
