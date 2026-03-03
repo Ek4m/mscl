@@ -1,4 +1,11 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   View,
   Text,
@@ -9,7 +16,6 @@ import {
   Dimensions,
   StatusBar,
   Platform,
-  RefreshControl,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import FeatherIcon from "react-native-vector-icons/Feather";
@@ -25,7 +31,6 @@ import { RootStackParamList } from "../types";
 import { getWorkoutSessionsByUser } from "../../db/services";
 import SubmitButton from "../../UI/components/submitButton";
 import PlanDetailsExerciseList from "../../modules/prediction/components/planDetailsExerciseList";
-import { CustomDayPlan } from "../../modules/workout/types";
 import { useFocusEffect } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
@@ -68,7 +73,9 @@ const PlanDetailsScreen: FC<
       refetch();
     }, [refetch]),
   );
-  
+
+  console.log(JSON.stringify(plan));
+
   const calculateProgress = useCallback(() => {
     if (!plan?.weeks || !sessions || !sessions.length)
       return { week: 0, day: 0 };
@@ -182,13 +189,6 @@ const PlanDetailsScreen: FC<
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.dayScroll}
-          refreshControl={
-            <RefreshControl
-              refreshing={isFetching}
-              onRefresh={refetch}
-              tintColor={COLORS.mainBlue}
-            />
-          }
         >
           {currentWeek?.days.map((day, idx) => {
             const isDone =

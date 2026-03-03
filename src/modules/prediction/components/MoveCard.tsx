@@ -17,12 +17,7 @@ import { MuscleGroupTitles } from "../../workout/vault";
 
 interface ExerciseCardProps {
   exercise: ActiveExercise;
-  onToggleSet: (
-    exerciseId: number,
-    setIndex: number,
-    variationId: number | null,
-    reps?: number,
-  ) => void;
+  onToggleSet: (exerciseId: number, setIndex: number, reps?: number) => void;
 }
 
 const ExerciseCard: React.FC<ExerciseCardProps> = ({
@@ -33,7 +28,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
   const [loggingSetIndex, setLoggingSetIndex] = useState<number | null>(null);
   const [repsInput, setRepsInput] = useState("");
 
-  const title = exercise.variation?.title || exercise.exercise?.title;
+  const title = exercise.variation?.title;
 
   const handleSetPress = (idx: number, isDone: boolean) => {
     if (isDone) {
@@ -45,12 +40,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
           {
             text: "DELETE",
             style: "destructive",
-            onPress: () =>
-              onToggleSet(
-                exercise.exercise?.id!,
-                idx,
-                exercise.variation?.id ?? null,
-              ),
+            onPress: () => onToggleSet(exercise.variation.id, idx),
           },
         ],
         { cancelable: true },
@@ -65,12 +55,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
   const confirmReps = () => {
     if (loggingSetIndex !== null) {
       const reps = parseInt(repsInput) || exercise.targetReps || 0;
-      onToggleSet(
-        exercise.exercise?.id!,
-        loggingSetIndex,
-        exercise.variation?.id ?? null,
-        reps,
-      );
+      onToggleSet(exercise.variation.id, loggingSetIndex, reps);
       setLoggingSetIndex(null);
     }
   };
@@ -81,14 +66,24 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
         <View style={{ flex: 1 }}>
           <Text style={styles.exerciseName}>Primary muscles:</Text>
           <View style={styles.setGrid}>
-            {exercise.exercise?.primaryMuscles.map((m) => (
-              <Chip align="left" type="info" label={MuscleGroupTitles[m]} />
+            {exercise.variation?.primaryMuscles.map((m) => (
+              <Chip
+                key={m}
+                align="left"
+                type="info"
+                label={MuscleGroupTitles[m]}
+              />
             ))}
           </View>
           <Text style={styles.exerciseName}>Secondary muscles:</Text>
           <View style={styles.setGrid}>
-            {exercise.exercise?.secondaryMuscles.map((m) => (
-              <Chip align="left" type="info" label={MuscleGroupTitles[m]} />
+            {exercise.variation?.secondaryMuscles.map((m) => (
+              <Chip
+                key={m}
+                align="left"
+                type="info"
+                label={MuscleGroupTitles[m]}
+              />
             ))}
           </View>
           <View style={styles.statsRow}>
@@ -116,7 +111,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
 
       {infoVisible && (
         <View style={styles.infoContent}>
-          {exercise.exercise?.steps?.map((step, i) => (
+          {exercise.variation?.steps?.map((step, i) => (
             <Text key={i} style={styles.stepText}>
               {i + 1}. {step}
             </Text>

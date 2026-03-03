@@ -166,11 +166,7 @@ const PremadePlanDetailsScreen: FC<
               </View>
               <View style={styles.exercisePreview}>
                 <Text style={styles.exNames} numberOfLines={1}>
-                  {day.exercises
-                    .map((ex) =>
-                      ex.variation ? ex.variation.title : ex.exercise?.title,
-                    )
-                    .join(" • ")}
+                  {day.exercises.map((ex) => ex.variation.title).join(" • ")}
                 </Text>
               </View>
             </View>
@@ -240,7 +236,7 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 14,
     lineHeight: 22,
-    fontStyle:"italic",
+    fontStyle: "italic",
     marginTop: 10,
     backgroundColor: "#e8e8e8cb",
     borderRadius: 10,

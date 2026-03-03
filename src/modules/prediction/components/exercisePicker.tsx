@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
-  Platform,
 } from "react-native";
 import FaIcons from "react-native-vector-icons/FontAwesome5";
 
@@ -128,15 +127,15 @@ const ExercisePicker: React.FC<Props> = ({ visible, onClose }) => {
 
         <FlatList
           data={filteredExercises}
-          keyExtractor={(item) => item.createdAt}
+          keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <ExerciseAddItem
               item={item}
               onClose={onClose}
-              onSelect={(ex, variationId) => {
-                dispatch(addExercise({ exercise: ex, variationId }));
+              onSelect={(ex) => {
+                dispatch(addExercise(ex));
               }}
             />
           )}

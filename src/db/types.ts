@@ -5,7 +5,6 @@ export type WorkoutSessionExercise = {
   plan_day_exercise_id: number;
   reps: number;
   exercise_id: number;
-  variation_id: number | null;
   order_index: number;
   created_at: string;
 };

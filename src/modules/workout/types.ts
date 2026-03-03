@@ -10,17 +10,14 @@ export interface Equipment {
 }
 
 export interface Exercise {
-  createdAt: string;
   description: string;
   id: number;
+  thumbnail: string;
   primaryMuscles: MuscleGroup[];
   secondaryMuscles: MuscleGroup[];
-  variations: { title: string; id: number; description: string }[];
-  slug: string;
   steps: string[];
+  level: GymLevel;
   title: string;
-  variationId?: number;
-  updatedAt: string;
 }
 
 export interface CustomExercise {
@@ -62,9 +59,8 @@ export interface CustomPlanDayExercise {
   orderIndex: number;
   targetSets: number;
   targetReps: number;
-  variation?: { id: number; title: string; thumbnail: string };
+  variation: Exercise;
   createdAt: string;
-  exercise?: Exercise;
 }
 
 export interface CustomPlanDetails {

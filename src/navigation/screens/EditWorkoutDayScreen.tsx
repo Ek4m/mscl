@@ -19,6 +19,7 @@ import { selectAiPlan } from "../../redux/workout/create-ai";
 import { useAppSelector } from "../../redux/root";
 import { useEditDayMutation } from "../../redux/plans/slice";
 import { successToast } from "../../helpers/toast";
+import { Exercise } from "../../modules/workout/types";
 
 const EditDayScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "editDay">
@@ -39,27 +40,24 @@ const EditDayScreen: React.FC<
     const exercisePayload = {
       dayId: dayPlan.id,
       exercises: exercises.map((ex, index) => ({
-        exerciseId: ex.exercise?.id,
-        variationId: ex.variation?.id,
+        exerciseId: ex.variation?.id,
         orderIndex: index + 1,
         targetReps: ex.targetReps,
         targetSets: ex.targetSets,
       })),
     };
     await triggerEdit(exercisePayload).unwrap();
-    successToast("Workout plan updated!")
+    successToast("Workout plan updated!");
     navigation.goBack();
   };
 
-  const addExercise = (libraryEx: any) => {
+  const addExercise = (libraryEx: Exercise) => {
     const newEntry: WorkoutExercise = {
-      id: Date.now(), 
+      id: Date.now(),
       targetSets: 3,
       targetReps: 10,
       orderIndex: exercises.length,
-      exercise: libraryEx,
-      variation: { id: libraryEx?.variationId, title: "", thumbnail: "" },
-      createdAt: new Date().toISOString(),
+      variation: libraryEx,
     };
 
     setExercises([...exercises, newEntry]);
@@ -104,13 +102,13 @@ const EditDayScreen: React.FC<
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.exerciseTitle}>{item.exercise?.title}</Text>
+          <Text style={styles.exerciseTitle}>{item.variation?.title}</Text>
           <Text style={styles.muscleText}>
-            {item.exercise?.primaryMuscles.join(", ").toUpperCase()}
+            {item.variation?.primaryMuscles.join(", ").toUpperCase()}
           </Text>
         </View>
         <TouchableOpacity
-          onPress={() => handleRemove(item.id, item.exercise?.title)}
+          onPress={() => handleRemove(item.id, item.variation?.title)}
           style={styles.removeBtn}
         >
           <FeatherIcon name="trash-2" size={18} color="#ff4444" />
@@ -166,8 +164,6 @@ const EditDayScreen: React.FC<
           </Text>
         }
       />
-
-      {/* Exercise Selection Modal */}
       <Modal
         visible={isModalVisible}
         animationType="slide"

@@ -36,7 +36,7 @@ const SelectedExerciseItem: FC<{
         {/* EXERCISE IMAGE */}
         <Image
           source={{
-            uri: "https://images.ctfassets.net/8urtyqugdt2l/2bMyO0jZaRJjfRptw60iwG/17c391156dd01ae6920c672cc2744fb1/desktop-bench-press.jpg",
+            uri: `https://res.cloudinary.com/dx15pr9xn/image/upload/v1769200908/${ex?.thumbnail}.jpg`,
           }}
           style={styles.exThumbnail}
           resizeMode="cover"
@@ -109,10 +109,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   exThumbnail: {
-    width: 85,
-    height: 85,
+    width: 150,
+    height: 90,
+    objectFit: "contain",
     borderRadius: 18,
-    backgroundColor: "#18181b",
+    backgroundColor: COLORS.white,
   },
   infoContent: {
     flex: 1,

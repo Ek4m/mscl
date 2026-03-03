@@ -69,14 +69,12 @@ export function createWorkoutExercise(
   planDayExerciseId: number,
   exerciseId: number,
   orderIndex: number,
-  variationId?: number | null,
   reps: number = 0,
 ) {
   const result = db.runSync(INSERT_WORKOUT_EXERCISE, [
     workoutSessionId,
     planDayExerciseId,
     exerciseId,
-    variationId || null,
     orderIndex,
     reps
   ]);

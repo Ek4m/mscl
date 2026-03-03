@@ -9,6 +9,7 @@ import {
   CustomCreatePlanSubmission,
   CustomCreateWeeklyPlan,
 } from "../../modules/workout/types/create-custom";
+import { Exercise } from "../../modules/workout/types";
 
 const createEmptySession = (dayNum: number): CustomCreateDailySession => ({
   dayIndex: dayNum,
@@ -73,20 +74,20 @@ export const createPlanSlice = createSlice({
 
     addExercise: (
       state,
-      action: PayloadAction<{ exercise: any; variationId?: number }>,
+      action: PayloadAction<Exercise>,
     ) => {
-      const { exercise, variationId } = action.payload;
+      const exercise = action.payload;
       const weekIdx = state.activeWeek - 1;
       const dayIdx = state.activeDay - 1;
 
       state.plan[weekIdx].days[dayIdx].exercises.push({
         id: exercise.id,
         instanceId: `${Date.now()}-${Math.random()}`,
-        name: exercise.title || exercise.name,
+        name: exercise.title,
         muscleGroups: exercise.primaryMuscles || [],
+        thumbnail:exercise.thumbnail,
         reps: "12",
         sets: "4",
-        variationId,
       });
     },
 

@@ -27,7 +27,7 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
 
       {day?.exercises.map((ex, idx) => {
         const doneExercises = exercises.filter(
-          (e) => e.exercise_id === ex.exercise?.id,
+          (e) => e.exercise_id === ex.variation?.id,
         );
         const exerciseDone = Boolean(doneExercises.length);
         const doneReps = exerciseDone
@@ -52,7 +52,7 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
                     exerciseDone ? styles.paramDone : null,
                   ]}
                 >
-                  {ex.variation?.title || ex.exercise?.title}
+                  {ex.variation?.title}
                 </Text>
               </View>
               <View style={styles.targetRow}>
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     overflow: "hidden",
   },
-  exImage: { width: "100%", height: "100%",objectFit:"contain", },
+  exImage: { width: "100%", height: "100%", objectFit: "contain" },
   exDetails: { flex: 1, marginLeft: 10 },
   exName: {
     color: "white",

@@ -38,6 +38,7 @@ const WorkoutTrackerScreen: React.FC<
       const newExercises: ActiveExercise[] = activeWorkoutDay.exercises.map(
         (ex) => ({
           ...ex,
+          createdAt: "",
           completedSets: new Array(ex.targetSets).fill(null),
         }),
       );
@@ -49,9 +50,7 @@ const WorkoutTrackerScreen: React.FC<
           const exerciseIndex = copyExercises.findIndex((e) => {
             return (
               e.id === ex.plan_day_exercise_id &&
-              e.exercise?.id === ex.exercise_id &&
-              (e.variation?.id === ex.variation_id ||
-                (!e.variation && !ex.variation_id))
+              e.variation?.id === ex.exercise_id
             );
           });
           if (exerciseIndex >= 0) {

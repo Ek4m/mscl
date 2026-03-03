@@ -27,8 +27,6 @@ import {
   removeWorkoutExercise,
 } from "../../../db/services";
 import Modal from "../../../UI/components/modal";
-import Chip from "../../../UI/components/chip";
-import { MuscleGroupTitles } from "../../workout/vault";
 
 const { width } = Dimensions.get("window");
 
@@ -69,17 +67,12 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   }, []);
 
   const handleToggleSet = useCallback(
-    (
-      exerciseId: number,
-      index: number,
-      variationId: number | null,
-      reps?: number,
-    ) => {
+    (exerciseId: number, index: number, reps?: number) => {
       setExercises((prev) => {
         const newExercises = [...prev];
         const ex = newExercises[currentExIdx];
 
-        if (ex && ex.exercise?.id === exerciseId) {
+        if (ex && ex.variation?.id === exerciseId) {
           const newSets = [...ex.completedSets];
           const existingSet = newSets[index];
 
@@ -89,7 +82,6 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
               ex.id,
               exerciseId,
               index,
-              ex.variation?.id ?? null,
               reps,
             );
             if (created) {
@@ -174,7 +166,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
             </View>
             <Text style={styles.exerciseTitle}>
               {currentExercise.variation?.title ||
-                currentExercise.exercise?.title}
+                currentExercise.variation?.title}
             </Text>
             <View style={styles.cardWrapper}>
               <ExerciseCard
