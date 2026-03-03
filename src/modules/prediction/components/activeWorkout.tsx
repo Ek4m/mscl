@@ -14,7 +14,7 @@ import IonIcons from "react-native-vector-icons/Ionicons";
 import { ActiveExercise } from "../types";
 import ExerciseCard from "./MoveCard";
 import { COLORS } from "../../../constants/colors";
-import { formatTime } from "../helpers";
+import { formatTime, getImageUrl } from "../helpers";
 import RestTimer from "./RestTimer";
 import {
   CustomDayPlan,
@@ -158,7 +158,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
             <View style={styles.imageContainer}>
               <Image
                 source={{
-                  uri: `https://res.cloudinary.com/dx15pr9xn/image/upload/v1769200908/${currentExercise.variation?.thumbnail}.jpg`,
+                  uri: getImageUrl(currentExercise.variation?.thumbnail),
                 }}
                 style={styles.exerciseImage}
                 resizeMode="cover"

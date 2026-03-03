@@ -6,6 +6,7 @@ import { CustomDayPlan } from "../../workout/types";
 import { getDoneSessionByDay, getWorkoutExercises } from "../../../db/services";
 import { datePrettify } from "../../../helpers/datePrettify";
 import Chip from "../../../UI/components/chip";
+import { getImageUrl } from "../helpers";
 
 const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
   const doneSession = getDoneSessionByDay(day.id);
@@ -39,7 +40,7 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
             <View style={styles.exImageWrapper}>
               <Image
                 source={{
-                  uri: `https://res.cloudinary.com/dx15pr9xn/image/upload/v1769200908/${ex.variation?.thumbnail}.jpg`,
+                  uri: getImageUrl(ex.variation?.thumbnail),
                 }}
                 style={styles.exImage}
               />

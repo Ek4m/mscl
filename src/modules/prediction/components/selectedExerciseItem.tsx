@@ -14,6 +14,7 @@ import { MuscleGroupTitles } from "../../workout/vault";
 import { useAppDispatch } from "../../../redux/root";
 import { updateMetrics } from "../../../redux/workout/create-plan";
 import { CustomCreateExerciseEntry } from "../../workout/types/create-custom";
+import { getImageUrl } from "../helpers";
 
 const SelectedExerciseItem: FC<{
   ex: CustomCreateExerciseEntry;
@@ -35,9 +36,7 @@ const SelectedExerciseItem: FC<{
       <View style={styles.topRow}>
         {/* EXERCISE IMAGE */}
         <Image
-          source={{
-            uri: `https://res.cloudinary.com/dx15pr9xn/image/upload/v1769200908/${ex?.thumbnail}.jpg`,
-          }}
+          source={{ uri: getImageUrl(ex?.thumbnail) }}
           style={styles.exThumbnail}
           resizeMode="cover"
         />

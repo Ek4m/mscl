@@ -39,3 +39,6 @@ export const formatTime = (totalSeconds: number) => {
     .toString()
     .padStart(2, "0")}`;
 };
+
+export const getImageUrl = (slug: string) =>
+  `https://res.cloudinary.com/dx15pr9xn/image/upload/v1769200908/${slug}.jpg`;

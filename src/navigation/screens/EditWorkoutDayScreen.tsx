@@ -8,6 +8,7 @@ import {
   Alert,
   Modal,
   TextInput,
+  Image,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import FeatherIcon from "react-native-vector-icons/Feather";
@@ -20,6 +21,7 @@ import { useAppSelector } from "../../redux/root";
 import { useEditDayMutation } from "../../redux/plans/slice";
 import { successToast } from "../../helpers/toast";
 import { Exercise } from "../../modules/workout/types";
+import { getImageUrl } from "../../modules/prediction/helpers";
 
 const EditDayScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "editDay">
@@ -193,7 +195,13 @@ const EditDayScreen: React.FC<
                 style={styles.libraryItem}
                 onPress={() => addExercise(item)}
               >
-                <Text style={styles.libraryItemTitle}>{item.title}</Text>
+                <View style={styles.thumbnailContainer}>
+                  <Image
+                    style={styles.thumbnail}
+                    source={{ uri: getImageUrl(item.thumbnail) }}
+                  />
+                  <Text style={styles.libraryItemTitle}>{item.title}</Text>
+                </View>
                 <FeatherIcon
                   name="plus-circle"
                   size={20}
@@ -263,7 +271,8 @@ const styles = StyleSheet.create({
   libraryItem: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 18,
+    padding: 8,
+    alignItems: "center",
     borderBottomWidth: 1,
     borderBottomColor: "#222",
   },
@@ -273,7 +282,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#121212",
     borderRadius: 20,
-    padding: 20,
+    padding: 15,
     marginBottom: 16,
     borderWidth: 1,
     borderColor: "#222",
@@ -285,13 +294,13 @@ const styles = StyleSheet.create({
   },
   exerciseTitle: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: "800",
     textTransform: "uppercase",
   },
   muscleText: {
     color: COLORS.mainBlue,
-    fontSize: 11,
+    fontSize: 8,
     fontWeight: "700",
     marginTop: 4,
     letterSpacing: 1,
@@ -301,14 +310,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderTopWidth: 1,
     borderTopColor: "#222",
-    paddingTop: 15,
+    paddingTop: 10,
   },
   volumeControl: { width: "48%" },
   label: {
     color: "#555",
     fontSize: 10,
     fontWeight: "900",
-    marginBottom: 8,
+    marginBottom: 5,
     textAlign: "center",
   },
   counterGroup: {
@@ -321,7 +330,7 @@ const styles = StyleSheet.create({
   },
   volumeValue: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: "bold",
     minWidth: 30,
     textAlign: "center",
@@ -337,5 +346,17 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 20,
     backgroundColor: "rgba(0,0,0,0.9)",
+  },
+  thumbnailContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  thumbnail: {
+    width: 80,
+    height: 40,
+    backgroundColor: "white",
+    marginRight: 10,
+    borderRadius: 5,
+    objectFit: "contain",
   },
 });
