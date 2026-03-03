@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  Image,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import FeatherIcon from "react-native-vector-icons/Feather";
@@ -31,6 +30,7 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
   const dispatch = useAppDispatch();
   const { userInfo } = useAppSelector(selectUserInfo);
   const isFirstRender = useRef(true);
+
   useFocusEffect(
     useCallback(() => {
       if (isFirstRender.current) {
@@ -41,42 +41,17 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
     }, [refetch]),
   );
 
-  const features = [
-    {
-      id: "ai",
-      title: "AI Planner",
-      subtitle: "Powered by Gemini",
-      icon: require("../../../assets/ai.png"),
-      color: COLORS.mainBlue,
-      onPress: () => {
-        dispatch(startAIPlanning());
-        setTimeout(() => {
-          navigation.navigate("createAiPlan", { screen: "selectGender" });
-        });
-      },
-    },
-    {
-      id: "customPlan",
-      title: "Plan Builder",
-      subtitle: "Design custom volume",
-      icon: require("../../../assets/custom.png"),
-      color: "#4ead25",
-      onPress: () => {
-        dispatch(startCustomPlanning());
-        setTimeout(() => {
-          navigation.navigate("customPlan");
-        });
-      },
-    },
-    {
-      id: "premade",
-      title: "Ready Programs",
-      subtitle: "Browse professional plans",
-      icon: require("../../../assets/premade.png"),
-      color: "#ff4520",
-      onPress: () => navigation.navigate("premadePlans"),
-    },
-  ];
+  const handleAI = () => {
+    dispatch(startAIPlanning());
+    setTimeout(() =>
+      navigation.navigate("createAiPlan", { screen: "selectGender" }),
+    );
+  };
+
+  const handleCustom = () => {
+    dispatch(startCustomPlanning());
+    setTimeout(() => navigation.navigate("customPlan"));
+  };
 
   return (
     <View style={styles.safeArea}>
@@ -90,52 +65,73 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* Elite Header */}
+        {/* Header Section */}
         <View style={styles.header}>
           <View>
             <View style={styles.heroBadge}>
               <View style={styles.line} />
-              <Text style={styles.badgeText}>ELITE STATUS: ACTIVE</Text>
+              <Text style={styles.badgeText}>PLAN STATUS: OPTIMAL</Text>
             </View>
             <Text style={styles.username}>
               {userInfo?.username?.toUpperCase() || "OPERATOR"}
             </Text>
           </View>
           <TouchableOpacity style={styles.profileCircle}>
-            <FeatherIcon name="user" size={20} color={COLORS.mainBlue} />
+            <FeatherIcon name="terminal" size={20} color={COLORS.mainBlue} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.content}>
-          {/* Feature Row - Matching the "Elite Ecosystem" cards */}
           <Text style={styles.sectionTitle}>
             FORGE <Text style={{ color: COLORS.mainBlue }}>NEW PATH</Text>
           </Text>
-          <View style={styles.featureGrid}>
-            {features.map((f) => (
+
+          {/* New Bento-Style Grid */}
+          <View style={styles.bentoContainer}>
+            {/* Main AI Hero Card */}
+            <TouchableOpacity
+              style={[styles.heroCard, { borderColor: COLORS.mainBlue + "40" }]}
+              onPress={handleAI}
+            >
+              <View style={styles.cardHeader}>
+                <FeatherIcon name="cpu" size={24} color={COLORS.mainBlue} />
+                <View style={styles.aiTag}>
+                  <Text style={styles.aiTagText}>GEMINI AI</Text>
+                </View>
+              </View>
+              <Text style={styles.heroTitle}>AI PLANNER</Text>
+              <Text style={styles.heroSub}>
+                AI-based workout plan generation
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.row}>
+              {/* Custom Builder */}
               <TouchableOpacity
-                key={f.id}
-                style={[styles.featureCard, { borderColor: f.color + "40" }]}
-                onPress={f.onPress}
+                style={[styles.smallCard, { borderColor: "#4ead2540" }]}
+                onPress={handleCustom}
               >
-                <View
-                  style={[styles.iconBox, { backgroundColor: f.color + "15" }]}
-                >
-                  <Image source={f.icon} style={styles.featureIcon} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.featureTitle}>{f.title}</Text>
-                  <Text style={styles.featureSub}>{f.subtitle}</Text>
-                </View>
-                <FeatherIcon name="arrow-right" size={16} color={f.color} />
+                <FeatherIcon name="layers" size={20} color="#4ead25" />
+                <Text style={styles.smallCardTitle}>BUILDER</Text>
+                <Text style={styles.smallCardSub}>Custom plan building</Text>
               </TouchableOpacity>
-            ))}
+
+              {/* Ready Programs */}
+              <TouchableOpacity
+                style={[styles.smallCard, { borderColor: "#ff452040" }]}
+                onPress={() => navigation.navigate("premadePlans")}
+              >
+                <FeatherIcon name="award" size={20} color="#ff4520" />
+                <Text style={styles.smallCardTitle}>PROGRAMS</Text>
+                <Text style={styles.smallCardSub}>Pro Presets</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Programs Section */}
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>
-              YOUR <Text style={{ color: COLORS.mainBlue }}>PROGRAMS</Text>
+              ACTIVE <Text style={{ color: COLORS.mainBlue }}>PROTOCOLS</Text>
             </Text>
             <View style={styles.countBadge}>
               <Text style={styles.countText}>{data?.length || 0}</Text>
@@ -148,7 +144,7 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
 
           {__DEV__ && (
             <TouchableOpacity style={styles.devBtn} onPress={clearWorkoutDbDev}>
-              <Text style={styles.devText}>CLEAR DB CACHE</Text>
+              <Text style={styles.devText}>RESET LOCAL ENGINE</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -159,7 +155,7 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
 };
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: "#0a0a0a" },
+  safeArea: { flex: 1, backgroundColor: "#080808" },
   header: {
     paddingHorizontal: 24,
     paddingTop: 60,
@@ -170,7 +166,7 @@ const styles = StyleSheet.create({
   },
   heroBadge: { flexDirection: "row", alignItems: "center", marginBottom: 4 },
   line: {
-    width: 20,
+    width: 16,
     height: 2,
     backgroundColor: COLORS.mainBlue,
     marginRight: 8,
@@ -186,12 +182,11 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "900",
     fontStyle: "italic",
-    letterSpacing: -1,
   },
   profileCircle: {
     width: 45,
     height: 45,
-    borderRadius: 23,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: "#222",
     backgroundColor: "#111",
@@ -201,52 +196,78 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 24 },
   sectionTitle: {
     color: COLORS.white,
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "900",
     letterSpacing: 2,
     marginBottom: 16,
     marginTop: 20,
   },
-  featureGrid: { gap: 12 },
-  featureCard: {
-    backgroundColor: "#111",
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
+  /* Bento Grid Styles */
+  bentoContainer: { gap: 12, marginBottom: 10 },
+  heroCard: {
+    backgroundColor: "#121212",
+    borderRadius: 16,
+    padding: 20,
     borderWidth: 1,
+    height: 140,
+    justifyContent: "flex-end",
   },
-  iconBox: {
-    width: 50,
-    height: 50,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 15,
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    position: "absolute",
+    top: 20,
+    left: 20,
+    right: 20,
   },
-  featureIcon: {
-    width: 45,
-    height: 45,
-    resizeMode: "contain",
-    borderRadius: 10,
+  aiTag: {
+    backgroundColor: COLORS.mainBlue,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
   },
-  featureTitle: {
+  aiTagText: { color: "#000", fontSize: 8, fontWeight: "900" },
+  heroTitle: {
     color: COLORS.white,
-    fontSize: 16,
-    fontWeight: "800",
+    fontSize: 22,
+    fontWeight: "900",
     fontStyle: "italic",
   },
-  featureSub: { color: "#666", fontSize: 11, fontWeight: "600" },
+  heroSub: { color: "#888", fontSize: 12, fontWeight: "500", marginTop: 2 },
+  row: { flexDirection: "row", gap: 12 },
+  smallCard: {
+    flex: 1,
+    backgroundColor: "#121212",
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    minHeight: 110,
+    justifyContent: "center",
+  },
+  smallCardTitle: {
+    color: COLORS.white,
+    fontSize: 14,
+    fontWeight: "800",
+    marginTop: 12,
+  },
+  smallCardSub: {
+    color: "#666",
+    fontSize: 10,
+    fontWeight: "600",
+    marginTop: 2,
+  },
+
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 15,
+    marginTop: 20,
+    marginBottom: 10,
   },
   countBadge: {
     backgroundColor: COLORS.mainBlue,
-    paddingHorizontal: 10,
-    paddingVertical: 2,
+    paddingHorizontal: 8,
     borderRadius: 4,
   },
   countText: { color: "#000", fontSize: 10, fontWeight: "900" },
@@ -254,8 +275,8 @@ const styles = StyleSheet.create({
     marginTop: 40,
     padding: 15,
     borderWidth: 1,
-    borderColor: "#333",
-    borderRadius: 8,
+    borderColor: "#222",
+    borderRadius: 12,
     alignItems: "center",
   },
   devText: { color: "#444", fontSize: 10, fontWeight: "900" },

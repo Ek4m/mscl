@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#141414",
     borderRadius: 16,
-    padding: 20,
+    paddingVertical: 12,
+    paddingHorizontal:15,
     marginBottom: 16,
     borderWidth: 1,
     borderColor: "#222",
@@ -104,12 +105,12 @@ const styles = StyleSheet.create({
   muscleImage: {
     width: 30,
     height: 30,
-    opacity: 0.8,
+    opacity: 1,
     tintColor: COLORS.mainBlue,
   },
   title: {
     color: COLORS.white,
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: "900",
     fontStyle: "italic",
   },
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#0d0d0d",
     borderRadius: 12,
-    padding: 15,
+    padding: 10,
     borderWidth: 1,
     borderColor: "#1a1a1a",
   },
