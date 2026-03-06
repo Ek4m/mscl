@@ -2,11 +2,9 @@ import { GymLevel } from "../prediction/enums";
 import { WorkoutDay, WorkoutExercise, WorkoutPlan } from "../prediction/types";
 import { MuscleGroup } from "./vault";
 
-export interface Equipment {
-  createdAt: string;
+export interface ExerciseType {
   id: number;
   title: string;
-  updatedAt: string;
 }
 
 export interface Exercise {

@@ -27,7 +27,7 @@ type PreviewPlanProps = CompositeScreenProps<
 
 const PreviewPlanScreen: React.FC<PreviewPlanProps> = ({ navigation }) => {
   const [generateProgram, { isLoading }] = useGeneratePlanMutation();
-  const { days, level, gender, weeks } = useAppSelector(selectAiPlan);
+  const { days, level, gender, weeks, category } = useAppSelector(selectAiPlan);
 
   useFocusEffect(
     useCallback(() => {
@@ -35,6 +35,7 @@ const PreviewPlanScreen: React.FC<PreviewPlanProps> = ({ navigation }) => {
         level,
         numOfDays: days,
         gender,
+        category,
         weeks,
       })
         .unwrap()

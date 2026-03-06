@@ -9,7 +9,11 @@ import {
   GenPlanCredentials,
   WorkoutPlan,
 } from "../../modules/prediction/types";
-import { CustomPlanDetails, Equipment, Exercise } from "../../modules/workout/types";
+import {
+  CustomPlanDetails,
+  ExerciseType,
+  Exercise,
+} from "../../modules/workout/types";
 
 export interface PredictSliceState {
   predictions: string[];
@@ -18,7 +22,8 @@ export interface PredictSliceState {
   files: ImagePickerAsset[];
   started: boolean;
   level: GymLevel;
-  equipments: Equipment[];
+  category: number;
+  exerciseTypes: ExerciseType[];
   exercises: Exercise[];
   gender: Gender;
   weeks: number;
@@ -33,7 +38,8 @@ const initialState: PredictSliceState = {
   gender: Gender.MALE,
   started: false,
   level: GymLevel.INTERMEDIATE,
-  equipments: [],
+  exerciseTypes: [],
+  category: 0,
   exercises: [],
   weeks: 4,
   days: 3,
@@ -47,10 +53,10 @@ export const predictApi = createApi({
       query: () => ({ url: "workout/plans", method: "get" }),
     }),
     getInitialInfo: builder.query<
-      { exercises: Exercise[]; equipments: Equipment[] },
+      { exercises: Exercise[]; exerciseTypes: ExerciseType[] },
       void
     >({
-      query: () => ({ url: "common/exercises-and-equipments", method: "get" }),
+      query: () => ({ url: "common/metadata", method: "get" }),
     }),
     sendImages: builder.mutation<string[], FormData>({
       query: (credentials: FormData) => ({
@@ -111,6 +117,9 @@ export const predictSlice = createSlice({
     setWeeks: (state, action: PayloadAction<number>) => {
       state.weeks = action.payload;
     },
+    setCategory: (state, action: PayloadAction<number>) => {
+      state.category = action.payload;
+    },
     setGender: (state, action: PayloadAction<Gender>) => {
       state.gender = action.payload;
     },
@@ -138,7 +147,7 @@ export const predictSlice = createSlice({
       predictApi.endpoints.getInitialInfo.matchFulfilled,
       (state, action) => {
         state.exercises = action.payload.exercises;
-        state.equipments = action.payload.equipments;
+        state.exerciseTypes = action.payload.exerciseTypes;
       },
     );
   },
@@ -159,6 +168,7 @@ export const {
   addToSelected,
   setLevel,
   setGender,
+  setCategory,
   setDays,
   setWeeks,
   startAIPlanning,

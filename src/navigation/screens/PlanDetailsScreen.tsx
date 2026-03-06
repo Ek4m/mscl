@@ -39,7 +39,7 @@ const PlanDetailsScreen: FC<
   NativeStackScreenProps<RootStackParamList, "planDetails">
 > = ({ route, navigation }) => {
   const { id } = route.params;
-  const { data: plan, isFetching, refetch } = useGetUserCustomPlanByIdQuery(id);
+  const { data: plan, refetch } = useGetUserCustomPlanByIdQuery(id);
   const { userInfo } = useAppSelector(selectUserInfo);
 
   const [activeWeekIdx, setActiveWeekIdx] = useState(0);

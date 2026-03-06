@@ -45,6 +45,7 @@ export interface WorkoutHistoryCredentials {
 
 export interface GenPlanCredentials {
   gender: Gender;
+  category: number;
   weeks: number;
   level: GymLevel;
   numOfDays: number;

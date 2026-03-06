@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -18,6 +18,7 @@ import SubmitButton from "../../../UI/components/submitButton";
 import { useAppDispatch, useAppSelector } from "../../../redux/root";
 import {
   selectAiPlan,
+  setCategory,
   setDays,
   setGender,
   setLevel,
@@ -27,7 +28,8 @@ import {
 const AiGeneratorScreen: React.FC<
   NativeStackScreenProps<CreateAiPlanParamList, "selectGender">
 > = ({ navigation }) => {
-  const { days, level, gender, weeks } = useAppSelector(selectAiPlan);
+  const { days, level, gender, weeks, category, exerciseTypes } =
+    useAppSelector(selectAiPlan);
   const dispatch = useAppDispatch();
 
   const renderChip = (
@@ -61,6 +63,10 @@ const AiGeneratorScreen: React.FC<
       },
     ]);
   }, []);
+
+  useEffect(() => {
+    if (exerciseTypes.length) dispatch(setCategory(exerciseTypes[0].id));
+  }, [exerciseTypes]);
 
   return (
     <View style={styles.container}>
@@ -144,6 +150,17 @@ const AiGeneratorScreen: React.FC<
             <View style={styles.chipRow}>
               {Object.values(GymLevel).map((l) =>
                 renderChip(l, level === l, () => dispatch(setLevel(l))),
+              )}
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>CATEGORY</Text>
+            <View style={styles.chipRow}>
+              {exerciseTypes.map((type) =>
+                renderChip(type.title, category === type.id, () =>
+                  dispatch(setCategory(type.id)),
+                ),
               )}
             </View>
           </View>

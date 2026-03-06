@@ -36,7 +36,7 @@ export default function RootNavigator() {
   const { started } = useAppSelector(selectAiPlan);
   const { started: customPlanStarted } = useAppSelector(selectCreatePlanState);
   useGetInitialInfoQuery();
-  const { data, error } = useGetProfileQuery();
+ useGetProfileQuery();
   return (
     <Stack.Navigator
       initialRouteName="splash"
