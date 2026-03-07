@@ -66,6 +66,13 @@ export const predictApi = createApi({
         headers: { "Content-Type": "multipart/form-data" },
       }),
     }),
+    reusePlan: builder.mutation<{ id: number }, { id: number }>({
+      query: ({ id }) => ({
+        url: "workout/plan/reuse-plan",
+        method: "post",
+        data: { id },
+      }),
+    }),
     generatePlan: builder.mutation<CustomPlanDetails, GenPlanCredentials>({
       query: (credentials: GenPlanCredentials) => ({
         url: "workout/generate-program",
@@ -158,6 +165,7 @@ export const {
   useSendImagesMutation,
   useGeneratePlanMutation,
   useGetInitialInfoQuery,
+  useReusePlanMutation,
 } = predictApi;
 export const {
   reset,

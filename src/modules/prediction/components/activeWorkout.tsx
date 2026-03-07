@@ -27,6 +27,8 @@ import {
   removeWorkoutExercise,
 } from "../../../db/services";
 import Modal from "../../../UI/components/modal";
+import { useReusePlanMutation } from "../../../redux/workout/create-ai";
+import SubmitButton from "../../../UI/components/submitButton";
 
 const { width } = Dimensions.get("window");
 
@@ -37,7 +39,7 @@ interface ActiveWorkoutProps {
   sessionId: number;
   week: CustomPlanWeeks;
   setExercises: Dispatch<React.SetStateAction<ActiveExercise[]>>;
-  onFinish: () => void;
+  onFinish: () => Promise<void>;
   onCancel: () => void;
 }
 
@@ -56,9 +58,8 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   const [restSeconds, setRestSeconds] = useState(0);
   const [isResting, setIsResting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
   const currentExercise = exercises[currentExIdx];
-  // Calculate progress based on exercises completed
+  const [reUsePlan, { isLoading }] = useReusePlanMutation();
   const progress = ((currentExIdx + 1) / exercises.length) * 100;
 
   useEffect(() => {
@@ -71,7 +72,6 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
       setExercises((prev) => {
         const newExercises = [...prev];
         const ex = newExercises[currentExIdx];
-
         if (ex && ex.variation?.id === exerciseId) {
           const newSets = [...ex.completedSets];
           const existingSet = newSets[index];
@@ -113,21 +113,27 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
     if (currentExIdx > 0) setCurrentExIdx((p) => p - 1);
   };
 
-  const handleFinish = async () => {
-    const isLastWeek =
-      plan.weeks.findIndex((w) => w.id === week.id) === plan.weeks.length - 1;
-    const isLastDay =
-      week.days.findIndex((d) => d.id === workoutDay.id) ===
-      week.days.length - 1;
+  const handleCreateNewPlan = async () => {
+    await reUsePlan({ id: plan.id }).unwrap();
+    setShowSuccess(false);
+    await onFinish();
+  };
 
+  const handleFinish = async () => {
     Alert.alert("Finish Workout", "Ready to log your session?", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Save",
-        onPress: () => {
+        onPress: async () => {
           finishWorkoutSession(sessionId, workoutSeconds);
+          const isLastWeek =
+            plan.weeks.findIndex((w) => w.id === week.id) ===
+            plan.weeks.length - 1;
+          const isLastDay =
+            week.days.findIndex((d) => d.id === workoutDay.id) ===
+            week.days.length - 1;
           if (isLastWeek && isLastDay) setShowSuccess(true);
-          else onFinish();
+          else await onFinish();
         },
       },
     ]);
@@ -210,14 +216,36 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
           )}
         </View>
       </View>
-      <Modal isVisible={showSuccess} onRequestClose={onFinish}>
+      <Modal isVisible={showSuccess} onRequestClose={() => {}}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <IonIcons name="trophy" size={60} color={COLORS.mainBlue} />
-            <Text style={styles.modalTitle}>Workout Complete!</Text>
-            <TouchableOpacity style={styles.continueButton} onPress={onFinish}>
-              <Text style={styles.continueText}>Awesome!</Text>
-            </TouchableOpacity>
+            <IonIcons
+              name="trophy"
+              size={60}
+              color={COLORS.mainBlue}
+              style={{ marginBottom: 10 }}
+            />
+
+            <Text style={styles.modalTitle}>Plan Completed!</Text>
+
+            <Text style={styles.modalSubtitle}>
+              You've finished the last day of this plan. Would you like to
+              restart this plan next time, or browse for a new one?
+            </Text>
+            <SubmitButton
+              style={styles.submitButtonMain}
+              title="Stay on that plan"
+              bgColor={COLORS.mainBlue}
+              loading={isLoading}
+              onPress={handleCreateNewPlan}
+            />
+            <SubmitButton
+              variant="outlined"
+              textColor={COLORS.mainBlue}
+              style={{ width: "100%" }}
+              title="I'll choose a new one"
+              onPress={onFinish}
+            />
           </View>
         </View>
       </Modal>
@@ -341,9 +369,9 @@ const styles = StyleSheet.create({
   // Modal styles from previous context
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.9)",
     justifyContent: "center",
     alignItems: "center",
+    width: "100%",
     padding: 24,
   },
   modalContent: {
@@ -362,17 +390,16 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     textAlign: "center",
   },
-  continueButton: {
-    backgroundColor: "#ffffff",
-    paddingVertical: 16,
-    paddingHorizontal: 48,
-    borderRadius: 100,
-    marginTop: 10,
-  },
-  continueText: {
-    color: "#000000",
-    fontWeight: "900",
+  modalSubtitle: {
+    color: "#a1a1aa",
     fontSize: 16,
+    textAlign: "center",
+    marginBottom: 24,
+    lineHeight: 22,
+  },
+  submitButtonMain: {
+    width: "100%",
+    marginBottom: 10,
   },
 });
 
