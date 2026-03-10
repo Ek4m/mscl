@@ -85,7 +85,33 @@ export const createPlanSlice = createSlice({
         thumbnail: exercise.thumbnail,
         reps: "12",
         sets: "4",
+        metricId: exercise.exercise.defaultMetric.id,
+        targetValue: exercise.exercise.defaultMetric.defaultValue.toString(),
       });
+    },
+    updateMetrics: (
+      state,
+      action: PayloadAction<{
+        instanceId: string;
+        sets?: string;
+        reps?: string;
+        metricId?: number;
+        targetValue?: string;
+      }>,
+    ) => {
+      const { instanceId, sets, reps, metricId, targetValue } = action.payload;
+      const weekIdx = state.activeWeek - 1;
+      const dayIdx = state.activeDay - 1;
+
+      const ex = state.plan[weekIdx].days[dayIdx].exercises.find(
+        (e) => e.instanceId === instanceId,
+      );
+      if (ex) {
+        if (sets !== undefined) ex.sets = sets;
+        if (reps !== undefined) ex.reps = reps;
+        if (metricId !== undefined) ex.metricId = metricId; // Add this
+        if (targetValue !== undefined) ex.targetValue = targetValue;
+      }
     },
 
     removeExercise: (state, action: PayloadAction<string>) => {
@@ -96,27 +122,6 @@ export const createPlanSlice = createSlice({
       state.plan[weekIdx].days[dayIdx].exercises = state.plan[weekIdx].days[
         dayIdx
       ].exercises.filter((ex) => ex.instanceId !== instId);
-    },
-
-    updateMetrics: (
-      state,
-      action: PayloadAction<{
-        instanceId: string;
-        sets?: string;
-        reps?: string;
-      }>,
-    ) => {
-      const { instanceId, sets, reps } = action.payload;
-      const weekIdx = state.activeWeek - 1;
-      const dayIdx = state.activeDay - 1;
-
-      const ex = state.plan[weekIdx].days[dayIdx].exercises.find(
-        (e) => e.instanceId === instanceId,
-      );
-      if (ex) {
-        if (sets !== undefined) ex.sets = sets;
-        if (reps !== undefined) ex.reps = reps;
-      }
     },
 
     setActiveWeek: (state, action: PayloadAction<number>) => {

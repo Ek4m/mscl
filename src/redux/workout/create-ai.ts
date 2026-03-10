@@ -7,6 +7,7 @@ import { RootState } from "../root";
 import { Gender, GymLevel } from "../../modules/prediction/enums";
 import {
   GenPlanCredentials,
+  Metric,
   WorkoutPlan,
 } from "../../modules/prediction/types";
 import {
@@ -23,6 +24,7 @@ export interface PredictSliceState {
   started: boolean;
   level: GymLevel;
   category: number;
+  metrics: Metric[];
   exerciseTypes: ExerciseType[];
   exercises: Exercise[];
   gender: Gender;
@@ -33,6 +35,7 @@ export interface PredictSliceState {
 const initialState: PredictSliceState = {
   predictions: [],
   selectedPredictions: [],
+  metrics: [],
   isFetching: true,
   files: [],
   gender: Gender.MALE,
@@ -53,7 +56,11 @@ export const predictApi = createApi({
       query: () => ({ url: "workout/plans", method: "get" }),
     }),
     getInitialInfo: builder.query<
-      { exercises: Exercise[]; exerciseTypes: ExerciseType[] },
+      {
+        exercises: Exercise[];
+        exerciseTypes: ExerciseType[];
+        metrics: Metric[];
+      },
       void
     >({
       query: () => ({ url: "common/metadata", method: "get" }),
@@ -155,6 +162,7 @@ export const predictSlice = createSlice({
       (state, action) => {
         state.exercises = action.payload.exercises;
         state.exerciseTypes = action.payload.exerciseTypes;
+        state.metrics = action.payload.metrics;
       },
     );
   },

@@ -5,7 +5,9 @@ export interface CustomCreateExerciseEntry {
   instanceId: string;
   name: string;
   sets: string;
+  metricId: number;
   thumbnail: string;
+  targetValue: string;
   reps: string;
   muscleGroups: MuscleGroup[];
   variationId?: number;

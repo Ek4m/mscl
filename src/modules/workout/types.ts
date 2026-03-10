@@ -1,5 +1,10 @@
 import { GymLevel } from "../prediction/enums";
-import { WorkoutDay, WorkoutExercise, WorkoutPlan } from "../prediction/types";
+import {
+  Metric,
+  WorkoutDay,
+  WorkoutExercise,
+  WorkoutPlan,
+} from "../prediction/types";
 import { MuscleGroup } from "./vault";
 
 export interface ExerciseType {
@@ -15,6 +20,7 @@ export interface Exercise {
   secondaryMuscles: MuscleGroup[];
   steps: string[];
   level: GymLevel;
+  exercise: { id: number; defaultMetric: Metric };
   title: string;
 }
 
@@ -85,7 +91,6 @@ export interface PremadePlan {
   level: GymLevel;
   description: string | null;
   daysPerWeek: number;
-  isTemplate: boolean;
   createdAt: string;
   updatedAt: string;
   weeks: PremadePlanWeek[];

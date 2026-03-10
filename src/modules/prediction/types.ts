@@ -15,12 +15,21 @@ export interface ActiveExercise extends CustomPlanDayExercise {
   completedSets: (WorkoutSessionExercise | null)[];
 }
 
+export interface Metric {
+  id: number;
+  name: string;
+  defaultValue: number;
+  unitSymbol: string;
+}
+
 export interface WorkoutExercise {
   variation: Exercise;
+  metric: Metric;
   orderIndex: number;
   id: number;
   targetSets: number;
   targetReps: number;
+  targetValue: number;
 }
 
 export interface WorkoutDay {

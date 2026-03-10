@@ -77,9 +77,17 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
                       doneSession ? styles.paramDone : null,
                     ]}
                   >
-                    {doneSession ? doneReps : ex?.targetReps}
+                    {doneSession
+                      ? doneReps
+                      : ex.targetReps === 1
+                        ? ex.targetValue
+                        : ex?.targetReps}
                   </Text>
-                  <Text style={styles.paramLabel}>REPS</Text>
+                  <Text style={styles.paramLabel}>
+                    {ex.targetReps === 1
+                      ? ex.metric.unitSymbol.toUpperCase()
+                      : "REPS"}
+                  </Text>
                 </View>
               </View>
               {exerciseDone && (
