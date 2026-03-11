@@ -104,7 +104,7 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
 export default memo(PlanDetailsExerciseList);
 
 const styles = StyleSheet.create({
-  exerciseList: { flex: 1, backgroundColor: "#000" },
+  exerciseList: { flex: 1, backgroundColor: COLORS.black },
   listContent: { padding: 20, paddingBottom: 120 },
   dayHeader: { marginBottom: 10 },
   dayTitle: {
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     width: 110,
     height: 55,
     borderRadius: 10,
-    backgroundColor: "#ffffff",
+    backgroundColor: COLORS.white,
     overflow: "hidden",
   },
   exImage: { width: "100%", height: "100%", objectFit: "contain" },

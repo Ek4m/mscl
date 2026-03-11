@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     overflow:"hidden"
   },
   actionTitle: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 16,
     fontWeight: "bold",
   },

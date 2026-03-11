@@ -25,7 +25,7 @@ const RestTimer: FC<RestTimerProps> = ({
       <View style={styles.restCard}>
         <View style={styles.restInfo}>
           <View style={styles.restIcon}>
-            <IonIcons name="timer-outline" size={50} color="#ffffff" />
+            <IonIcons name="timer-outline" size={50} color={COLORS.white} />
           </View>
           <View>
             <Text style={styles.restLabel}>Rest Timer</Text>
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "space-between",
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: COLORS.black,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 15,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   restTime: {
-    color: "#ffffff",
+    color: COLORS.white,
     fontSize: 24,
     fontWeight: "900",
   },
@@ -105,12 +105,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   restAddText: {
-    color: "#ffffff",
+    color: COLORS.white,
     fontSize: 15,
     fontWeight: "700",
   },
   restSkip: {
-    backgroundColor: "#ffffff",
+    backgroundColor: COLORS.white,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 10,

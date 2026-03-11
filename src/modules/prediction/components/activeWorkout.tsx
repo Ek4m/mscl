@@ -254,7 +254,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
 };
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: "#000000" },
+  safeArea: { flex: 1, backgroundColor: COLORS.black },
   progressBarContainer: {
     height: 4,
     backgroundColor: "#18181b",
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   timerText: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 16,
     fontWeight: "700",
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#09090b",
   },
   exerciseTitle: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 24,
     fontWeight: "800",
     marginBottom: 16,
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   footer: {
     padding: 20,
     paddingBottom: Platform.OS === "ios" ? 40 : 20,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
     borderTopWidth: 1,
     borderTopColor: "#18181b",
   },
@@ -356,14 +356,14 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   navBtnText: { color: "#71717a", fontWeight: "600", fontSize: 16 },
-  navBtnTextPrimary: { color: "#000", fontWeight: "700", fontSize: 16 },
+  navBtnTextPrimary: { color: COLORS.black, fontWeight: "700", fontSize: 16 },
   finishBtn: {
     backgroundColor: COLORS.mainBlue,
     paddingVertical: 14,
     paddingHorizontal: 30,
     borderRadius: 100,
   },
-  finishBtnText: { color: "#000", fontWeight: "900", fontSize: 14 },
+  finishBtnText: { color: COLORS.black, fontWeight: "900", fontSize: 14 },
   closeButton: { padding: 5 },
   errorText: { color: "white", textAlign: "center", marginTop: 50 },
   // Modal styles from previous context
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
     borderColor: "#27272a",
   },
   modalTitle: {
-    color: "#ffffff",
+    color: COLORS.white,
     fontSize: 24,
     fontWeight: "900",
     marginVertical: 16,

@@ -19,6 +19,7 @@ import {
   useSendImagesMutation,
 } from "../../../redux/workout/create-ai";
 import { generateImages } from "../../../modules/prediction/helpers";
+import { COLORS } from "../../../constants/colors";
 
 const UploadScreen: FC<
   NativeStackScreenProps<CreateAiPlanParamList, "upload">
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
   },
   top: {
     marginTop: 40,
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
+    color: COLORS.white,
   },
   subtitle: {
     fontSize: 14,
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   removeIcon: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 16,
   },
   addBtn: {
@@ -203,7 +204,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   mainButtonText: {
-    color: "#000",
+    color: COLORS.black,
     fontSize: 18,
     fontWeight: "bold",
   },

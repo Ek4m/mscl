@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#141414",
     borderRadius: 16,
     paddingVertical: 12,
-    paddingHorizontal:15,
+    paddingHorizontal: 15,
     marginBottom: 16,
     borderWidth: 1,
     borderColor: "#222",
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 50,
     height: 50,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   stat: { flex: 1, alignItems: "center" },
   vLine: { width: 1, height: "100%", backgroundColor: "#222" },
   statLabel: { color: "#444", fontSize: 9, fontWeight: "900", marginBottom: 4 },
-  statValue: { color: "#fff", fontSize: 16, fontWeight: "900" },
+  statValue: { color: COLORS.white, fontSize: 16, fontWeight: "900" },
   unit: { fontSize: 10, color: "#444" },
   activityBar: {
     flexDirection: "row",

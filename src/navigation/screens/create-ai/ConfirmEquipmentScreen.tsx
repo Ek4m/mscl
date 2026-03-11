@@ -106,7 +106,7 @@ const ConfirmEquipmentScreen: React.FC<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
     paddingHorizontal: 24,
     paddingTop: 48,
     paddingBottom: 24,
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 8,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   textSelected: {
-    color: "#fff",
+    color: COLORS.white,
   },
   textUnselected: {
     color: "#71717a",
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     }),
   },
   primaryButtonText: {
-    color: "#000",
+    color: COLORS.black,
     fontSize: 18,
     fontWeight: "bold",
   },

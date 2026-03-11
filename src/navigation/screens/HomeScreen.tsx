@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 4,
   },
-  aiTagText: { color: "#000", fontSize: 8, fontWeight: "900" },
+  aiTagText: { color: COLORS.black, fontSize: 8, fontWeight: "900" },
   heroTitle: {
     color: COLORS.white,
     fontSize: 22,
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 4,
   },
-  countText: { color: "#000", fontSize: 10, fontWeight: "900" },
+  countText: { color: COLORS.black, fontSize: 10, fontWeight: "900" },
   devBtn: {
     marginTop: 40,
     padding: 15,

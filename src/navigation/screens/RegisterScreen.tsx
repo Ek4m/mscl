@@ -13,6 +13,7 @@ import { errorToast } from "../../helpers/toast";
 import SubmitButton from "../../UI/components/submitButton";
 import Link from "../../modules/auth/components/link";
 import Input from "../../UI/form/input";
+import { COLORS } from "../../constants/colors";
 
 const RegisterScreen: FC<
   NativeStackScreenProps<RootStackParamList, "register">
@@ -103,12 +104,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 32,
     paddingTop: 50,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
   },
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#fff",
+    color: COLORS.white,
   },
   subtitle: {
     fontSize: 16,

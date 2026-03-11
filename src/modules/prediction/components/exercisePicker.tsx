@@ -80,7 +80,7 @@ const ExercisePicker: React.FC<Props> = ({ visible, onClose }) => {
             </Text>
           </View>
           <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-            <FaIcons name="times" size={16} color="#fff" />
+            <FaIcons name="times" size={16} color={COLORS.white} />
           </TouchableOpacity>
         </View>
 
@@ -148,7 +148,7 @@ const ExercisePicker: React.FC<Props> = ({ visible, onClose }) => {
 export default ExercisePicker;
 
 const styles = StyleSheet.create({
-  modalContainer: { flex: 1, backgroundColor: "#000", padding: 20 },
+  modalContainer: { flex: 1, backgroundColor: COLORS.black, padding: 20 },
   handle: {
     width: 40,
     height: 4,
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  modalTitle: { color: "#fff", fontSize: 24, fontWeight: "900" },
+  modalTitle: { color: COLORS.white, fontSize: 24, fontWeight: "900" },
   modalSub: {
     color: COLORS.mainBlue,
     fontSize: 12,
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     borderColor: "#18181b",
     marginBottom: 15,
   },
-  input: { flex: 1, height: 50, color: "#fff", marginLeft: 10, fontSize: 15 },
+  input: { flex: 1, height: 50, color: COLORS.white, marginLeft: 10, fontSize: 15 },
   filterWrapper: { marginBottom: 20 },
   chipList: { gap: 8 },
   chip: {
@@ -204,6 +204,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.mainBlue,
   },
   chipText: { color: "#71717a", fontSize: 13, fontWeight: "700" },
-  chipTextActive: { color: "#000" },
+  chipTextActive: { color: COLORS.black },
   listContent: { paddingBottom: 40 },
 });

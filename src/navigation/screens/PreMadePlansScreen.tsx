@@ -110,7 +110,7 @@ const PreMadePlansScreen: FC<
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000", paddingTop: 40 },
+  container: { flex: 1, backgroundColor: COLORS.black, paddingTop: 40 },
   header: {
     flexDirection: "row",
     alignItems: "center",

@@ -65,5 +65,5 @@ const styles = StyleSheet.create({
     borderColor: COLORS.mainBlue,
   },
   dayBadgeText: { color: "#71717a", fontWeight: "bold" },
-  textBlack: { color: "#000" },
+  textBlack: { color: COLORS.black },
 });

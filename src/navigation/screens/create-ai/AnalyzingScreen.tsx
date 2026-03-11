@@ -57,7 +57,7 @@ const AnalyzingScreen: FC<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
     alignItems: "center",
     justifyContent: "center",
     padding: 40,
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     marginTop: 32,
     fontSize: 22,
     fontWeight: "bold",
-    color: "#fff",
+    color: COLORS.white,
     textAlign: "center",
   },
   subtitle: {

@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "800",
-    color: "#ffffff",
+    color: COLORS.white,
     marginBottom: 8,
   },
   subtitle: {
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
   },
   activeText: {
-    color: "#000",
+    color: COLORS.black,
   },
   inactiveText: {
     color: "#a1a1aa",

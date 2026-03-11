@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     width: 100, // Slightly smaller to prioritize text area
     height: 65,
     borderRadius: 12,
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
   },
   infoContent: {
     flex: 1,
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   exName: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 14,
     fontWeight: "800",
     flex: 1,
@@ -203,13 +203,13 @@ const styles = StyleSheet.create({
     color: "#52525b",
   },
   textBlack: {
-    color: "#000",
+    color: COLORS.black,
   },
   /* NEW WORKLOAD DESIGN */
   workloadRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
     borderRadius: 12,
     padding: 8,
     gap: 8,
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   mainInput: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 15,
     fontWeight: "900",
     height: 25,

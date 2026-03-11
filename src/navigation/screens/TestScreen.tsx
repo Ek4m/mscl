@@ -19,7 +19,7 @@ import { selectUserInfo } from "../../redux/auth/slice";
 const TestScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { userInfo } = useAppSelector(selectUserInfo);
-  console.log(userInfo)
+  console.log(userInfo);
   const features = [
     {
       id: "ai",
@@ -220,11 +220,11 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: 40,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
   },
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
   },
   header: {
     flexDirection: "row",
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   username: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 24,
     fontWeight: "800",
     fontFamily: "Oswald",
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   statValue: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 18,
     fontWeight: "800",
     fontFamily: "Oswald",
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
   },
   badge: {
     backgroundColor: "#27272a",
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 10,
     fontWeight: "bold",
     paddingHorizontal: 8,
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   featureTitle: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 16,
     fontWeight: "700",
     fontFamily: "Oswald",
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   programTitle: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 18,
     fontWeight: "700",
     fontFamily: "Oswald",
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   progressPercent: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 11,
     fontWeight: "800",
   },

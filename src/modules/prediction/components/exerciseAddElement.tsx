@@ -63,11 +63,11 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
     justifyContent: "center",
     alignItems: "center",
   },
-  exName: { color: "#fff", fontSize: 15, fontWeight: "700" },
+  exName: { color: COLORS.white, fontSize: 15, fontWeight: "700" },
   muscleRow: { flexDirection: "row", marginTop: 3 },
   exMuscle: { color: "#52525b", fontSize: 11, fontWeight: "600" },
   addBtn: {

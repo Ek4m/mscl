@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 32,
     justifyContent: "space-between",
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
   },
   top: {
     marginTop: 60,
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: IS_SMALL ? 38 : 48,
     fontWeight: "900",
-    color: "#fff",
+    color: COLORS.white,
     lineHeight: 56,
   },
   highlight: {

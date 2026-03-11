@@ -45,7 +45,7 @@ const ProfileScreen: React.FC<
       [
         {
           style: "cancel",
-          text:"cancel",
+          text: "cancel",
         },
         {
           text: "Delete",
@@ -62,7 +62,7 @@ const ProfileScreen: React.FC<
     >
       <View style={styles.header}>
         <View style={styles.avatarContainer}>
-          <FontAwesome name="user" size={28} color="#fff" />
+          <FontAwesome name="user" size={28} color={COLORS.white} />
         </View>
 
         <Text style={styles.emailText}>{userInfo?.email || "Guest User"}</Text>
@@ -115,7 +115,7 @@ export default ProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
   },
   contentContainer: {
     paddingHorizontal: 24,
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   emailText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
+    color: COLORS.white,
   },
   badgeRow: {
     flexDirection: "row",
@@ -197,13 +197,13 @@ const styles = StyleSheet.create({
   switchCircle: {
     width: 16,
     height: 16,
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
     borderRadius: 8,
   },
   unitText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#fff",
+    color: COLORS.white,
   },
   logoutButton: {
     backgroundColor: "#18181b",

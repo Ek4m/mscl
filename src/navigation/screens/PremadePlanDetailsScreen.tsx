@@ -74,7 +74,7 @@ const PremadePlanDetailsScreen: FC<
             <FontAwesome5Icon
               name="exclamation-triangle"
               size={14}
-              color="#000"
+              color={COLORS.black}
             />
             <Text style={styles.warningText}>
               You already have this plan in progress.
@@ -178,7 +178,7 @@ const PremadePlanDetailsScreen: FC<
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000" },
+  container: { flex: 1, backgroundColor: COLORS.black },
   hero: { height: 200, width: "100%" },
   heroOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.3)", padding: 20 },
   backCircle: {
@@ -200,9 +200,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   warningIconContent: { flexDirection: "row", alignItems: "center", gap: 8 },
-  warningText: { color: "#000", fontWeight: "700", fontSize: 12 },
+  warningText: { color: COLORS.black, fontWeight: "700", fontSize: 12 },
   resumeText: {
-    color: "#000",
+    color: COLORS.black,
     fontWeight: "900",
     textDecorationLine: "underline",
     fontSize: 12,
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
 
   contentCard: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     padding: 24,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   levelText: { color: COLORS.mainBlue, fontSize: 10, fontWeight: "bold" },
   durationText: { color: "#666", fontSize: 12, fontWeight: "bold" },
   description: {
-    color: "#000000",
+    color: COLORS.black,
     fontSize: 14,
     lineHeight: 22,
     fontStyle: "italic",
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   },
   activeWeekChip: { backgroundColor: "white", borderColor: "white" },
   weekChipText: { color: "#666", fontWeight: "bold", fontSize: 12 },
-  activeWeekChipText: { color: "#000" },
+  activeWeekChipText: { color: COLORS.black },
 
   dayItem: {
     backgroundColor: "#0a0a0a",

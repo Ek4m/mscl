@@ -12,16 +12,20 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import FeatherIcon from "react-native-vector-icons/Feather";
-import { RootStackParamList } from "../types";
+
 import { COLORS } from "../../constants/colors";
 import SubmitButton from "../../UI/components/submitButton";
-import { WorkoutExercise } from "../../modules/prediction/types";
-import { selectAiPlan } from "../../redux/workout/create-ai";
-import { useAppSelector } from "../../redux/root";
-import { useEditDayMutation } from "../../redux/plans/slice";
+
 import { successToast } from "../../helpers/toast";
-import { Exercise } from "../../modules/workout/types";
 import { getImageUrl } from "../../modules/prediction/helpers";
+
+import { Metric, WorkoutExercise } from "../../modules/prediction/types";
+import { Exercise } from "../../modules/workout/types";
+import { RootStackParamList } from "../types";
+
+import { selectAiPlan } from "../../redux/workout/create-ai";
+import { useEditDayMutation } from "../../redux/plans/slice";
+import { useAppSelector } from "../../redux/root";
 
 const EditDayScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "editDay">
@@ -29,8 +33,7 @@ const EditDayScreen: React.FC<
   const [triggerEdit, { isLoading }] = useEditDayMutation();
   const { dayPlan } = route.params;
 
-  // 1. Get library of all available exercises from Redux
-  const { exercises: exerciseLibrary } = useAppSelector(selectAiPlan);
+  const { exercises: exerciseLibrary, metrics } = useAppSelector(selectAiPlan);
   const [exercises, setExercises] = useState<WorkoutExercise[]>(
     [...dayPlan.exercises].sort((a, b) => a.orderIndex - b.orderIndex),
   );
@@ -46,6 +49,8 @@ const EditDayScreen: React.FC<
         orderIndex: index + 1,
         targetReps: ex.targetReps,
         targetSets: ex.targetSets,
+        targetValue: Number(ex.targetValue) || 0,
+        metric: { id: ex.metric.id },
       })),
     };
     await triggerEdit(exercisePayload).unwrap();
@@ -60,6 +65,8 @@ const EditDayScreen: React.FC<
       targetReps: 10,
       orderIndex: exercises.length,
       variation: libraryEx,
+      metric: libraryEx.exercise.defaultMetric,
+      targetValue: libraryEx.exercise.defaultMetric.defaultValue,
     };
 
     setExercises([...exercises, newEntry]);
@@ -81,19 +88,40 @@ const EditDayScreen: React.FC<
 
   const updateVolume = (
     id: number,
-    field: "targetSets" | "targetReps",
+    field: "targetSets" | "targetReps" | "targetValue",
     amount: number,
   ) => {
+    if (field !== "targetValue") {
+      setExercises((current) =>
+        current.map((ex) =>
+          ex.id === id
+            ? { ...ex, [field]: Math.max(1, (ex[field] || 0) + amount) }
+            : ex,
+        ),
+      );
+    } else {
+      setExercises((current) =>
+        current.map((ex) =>
+          ex.id === id ? { ...ex, targetValue: amount } : ex,
+        ),
+      );
+    }
+  };
+
+  const updateMetric = (exerciseId: number, selectedMetric: Metric) => {
     setExercises((current) =>
       current.map((ex) =>
-        ex.id === id
-          ? { ...ex, [field]: Math.max(1, (ex[field] || 0) + amount) }
+        ex.id === exerciseId
+          ? {
+              ...ex,
+              metric: selectedMetric,
+              targetValue: selectedMetric.defaultValue,
+            }
           : ex,
       ),
     );
   };
 
-  // Filtered list for the "Add" Modal
   const filteredLibrary = useMemo(() => {
     return exerciseLibrary.filter((ex) =>
       ex.title.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -116,7 +144,27 @@ const EditDayScreen: React.FC<
           <FeatherIcon name="trash-2" size={18} color="#ff4444" />
         </TouchableOpacity>
       </View>
-
+      <View style={styles.metricsRow}>
+        {metrics.map((m) => {
+          const isActive = item.metric.id === m.id;
+          return (
+            <TouchableOpacity
+              key={m.id}
+              style={[styles.metricTab, isActive && styles.activeMetricTab]}
+              onPress={() => updateMetric(item.id, m)}
+            >
+              <Text
+                style={[
+                  styles.metricTabText,
+                  isActive && styles.activeMetricTabText,
+                ]}
+              >
+                {m.name.toUpperCase()}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
       <View style={styles.volumeRow}>
         {(["targetSets", "targetReps"] as const).map((field) => (
           <View key={field} style={styles.volumeControl}>
@@ -140,6 +188,17 @@ const EditDayScreen: React.FC<
             </View>
           </View>
         ))}
+        <View style={styles.volumeControl}>
+          <Text style={styles.label}>{item.metric.name.toUpperCase()}</Text>
+          <TextInput
+            keyboardType="numeric"
+            style={[styles.counterGroup, styles.counterGroupInput]}
+            onChangeText={(val) =>
+              updateVolume(item.id, "targetValue", Number(val))
+            }
+            value={item.targetValue.toString()}
+          />
+        </View>
       </View>
     </View>
   );
@@ -180,7 +239,6 @@ const EditDayScreen: React.FC<
               <FeatherIcon name="chevron-down" size={28} color="white" />
             </TouchableOpacity>
           </View>
-
           <TextInput
             style={styles.searchInput}
             placeholder="Search exercises..."
@@ -188,7 +246,6 @@ const EditDayScreen: React.FC<
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
-
           <FlatList
             data={filteredLibrary}
             keyExtractor={(item) => item.id.toString()}
@@ -230,8 +287,7 @@ const EditDayScreen: React.FC<
 export default EditDayScreen;
 
 const styles = StyleSheet.create({
-  // ... (keep your existing styles)
-  container: { flex: 1, backgroundColor: "#000" },
+  container: { flex: 1, backgroundColor: COLORS.black },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -295,7 +351,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   exerciseTitle: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 15,
     fontWeight: "800",
     textTransform: "uppercase",
@@ -314,7 +370,7 @@ const styles = StyleSheet.create({
     borderTopColor: "#222",
     paddingTop: 10,
   },
-  volumeControl: { width: "48%" },
+  volumeControl: { width: "30%" },
   label: {
     color: "#555",
     fontSize: 10,
@@ -328,10 +384,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     backgroundColor: "#080808",
     borderRadius: 12,
+    color: COLORS.white,
     paddingVertical: 5,
   },
+  counterGroupInput: {
+    height: 38,
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 15,
+  },
   volumeValue: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 15,
     fontWeight: "bold",
     minWidth: 30,
@@ -360,5 +423,42 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderRadius: 5,
     objectFit: "contain",
+  },
+  // ... existing styles
+  metricsRow: {
+    flexDirection: "row",
+    marginBottom: 15,
+    gap: 8,
+  },
+  metricTab: {
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    backgroundColor: "#1a1a1a",
+    borderWidth: 1,
+    borderColor: "#333",
+  },
+  activeMetricTab: {
+    backgroundColor: COLORS.mainBlue,
+    borderColor: COLORS.mainBlue,
+  },
+  metricTabText: {
+    color: "#666",
+    fontSize: 10,
+    fontWeight: "800",
+  },
+  activeMetricTabText: {
+    color: COLORS.white,
+  },
+  valueInput: {
+    backgroundColor: "#080808",
+    borderRadius: 12,
+    color: COLORS.white,
+    paddingVertical: 10,
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 15,
+    borderWidth: 1,
+    borderColor: "#222",
   },
 });

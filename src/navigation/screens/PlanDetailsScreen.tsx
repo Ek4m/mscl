@@ -253,7 +253,7 @@ const PlanDetailsScreen: FC<
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000" },
+  container: { flex: 1, backgroundColor: COLORS.black },
   hero: { height: 380, width: width },
   heroOverlay: {
     flex: 1,
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
   weekTabText: { color: "#444", fontWeight: "900", fontSize: 13 },
   activeWeekTabText: { color: "white" },
 
-  dayContainer: { backgroundColor: "#000" },
+  dayContainer: { backgroundColor: COLORS.black },
   dayScroll: { paddingHorizontal: 20, paddingVertical: 10 },
   dayChip: {
     height: 45,
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#222",
   },
-  activeDayChip: { backgroundColor: "#fff", borderColor: "#fff" },
+  activeDayChip: { backgroundColor: COLORS.white, borderColor: COLORS.white },
   doneDayChip: { borderColor: COLORS.mainBlue },
   dayChipText: { color: "#666", fontWeight: "900", fontSize: 12 },
   activeDayChipText: { color: "black" },

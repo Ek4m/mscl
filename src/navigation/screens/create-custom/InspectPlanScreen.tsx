@@ -74,7 +74,7 @@ const PlanReviewScreen: FC<PreviewPlanProps> = ({ navigation }) => {
           onPress={() => navigation.goBack()}
           style={styles.backBtn}
         >
-          <FaIcons name="chevron-left" size={16} color="#fff" />
+          <FaIcons name="chevron-left" size={16} color={COLORS.white} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Review Program</Text>
         <View style={{ width: 40 }} />
@@ -163,7 +163,7 @@ const PlanReviewScreen: FC<PreviewPlanProps> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000" },
+  container: { flex: 1, backgroundColor: COLORS.black },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  headerTitle: { color: "#fff", fontSize: 20, fontWeight: "900" },
+  headerTitle: { color: COLORS.white, fontSize: 20, fontWeight: "900" },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 120 },
 
   section: { marginTop: 20 },
@@ -202,12 +202,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#18181b",
   },
-  statVal: { color: "#fff", fontSize: 18, fontWeight: "900" },
+  statVal: { color: COLORS.white, fontSize: 18, fontWeight: "900" },
   statLab: { color: "#3f3f46", fontSize: 10, fontWeight: "bold", marginTop: 4 },
 
   weekContainer: { marginBottom: 25 },
   weekHeader: { marginBottom: 12, paddingLeft: 5 },
-  weekTitle: { color: "#fff", fontSize: 14, fontWeight: "900", opacity: 0.5 },
+  weekTitle: { color: COLORS.white, fontSize: 14, fontWeight: "900", opacity: 0.5 },
 
   dayCard: {
     backgroundColor: "#09090b",

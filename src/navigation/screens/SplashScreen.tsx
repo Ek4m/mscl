@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36,
     fontWeight: "900",
-    color: "#fff",
+    color: COLORS.white,
     letterSpacing: -1,
     textAlign: "center",
     fontFamily: "Oswald",

@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import React, { FC, ReactNode } from "react";
 import { IS_SMALL } from "../../constants/vault";
+import { COLORS } from "../../constants/colors";
 
 // Define our variants
 type ButtonVariant = "default" | "outlined" | "titleOnly";
@@ -35,7 +36,6 @@ const SubmitButton: FC<SubmitButtonProps> = ({
   variant = "default", // Defaulting to 'default'
   ...props
 }) => {
-  
   // Logic to determine styles based on variant
   const getVariantContainerStyle = (): ViewStyle => {
     switch (variant) {
@@ -43,7 +43,7 @@ const SubmitButton: FC<SubmitButtonProps> = ({
         return {
           backgroundColor: "transparent",
           borderWidth: 1,
-          borderColor: textColor || "#fff",
+          borderColor: textColor || COLORS.white,
         };
       case "titleOnly":
         return {
@@ -53,12 +53,15 @@ const SubmitButton: FC<SubmitButtonProps> = ({
         };
       default:
         return {
-          backgroundColor: bgColor || "#fff",
+          backgroundColor: bgColor || COLORS.white,
         };
     }
   };
 
-  const finalTextColor = variant === "default" ? (textColor || "#000") : (textColor || "#fff");
+  const finalTextColor =
+    variant === "default"
+      ? textColor || COLORS.black
+      : textColor || COLORS.white;
 
   return (
     <TouchableOpacity
@@ -77,9 +80,7 @@ const SubmitButton: FC<SubmitButtonProps> = ({
         <ActivityIndicator color={finalTextColor} />
       ) : (
         <>
-          {icon && (
-            <View style={styles.iconContainer}>{icon}</View>
-          )}
+          {icon && <View style={styles.iconContainer}>{icon}</View>}
           <Text style={[styles.buttonText, { color: finalTextColor }]}>
             {title}
           </Text>

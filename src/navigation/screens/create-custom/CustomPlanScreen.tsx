@@ -191,7 +191,7 @@ const CustomPlanCreatorScreen: FC<
           style={styles.mainAddBtn}
           onPress={() => openPicker("all")}
         >
-          <FaIcons name="plus" size={18} color="#000" />
+          <FaIcons name="plus" size={18} color={COLORS.black} />
         </TouchableOpacity>
       </View>
 
@@ -205,10 +205,10 @@ const CustomPlanCreatorScreen: FC<
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000" },
+  container: { flex: 1, backgroundColor: COLORS.black },
   topNav: {
     paddingTop: 50,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
     paddingBottom: 15,
     paddingHorizontal: 20,
   },
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   brandText: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 14,
     fontWeight: "900",
     letterSpacing: 3,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 6,
   },
-  saveText: { color: "#000", fontWeight: "900", fontSize: 11 },
+  saveText: { color: COLORS.black, fontWeight: "900", fontSize: 11 },
 
   configRow: {
     flexDirection: "row",
@@ -252,13 +252,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
   },
   counterValue: {
-    color: "#fff",
+    color: COLORS.white,
     fontSize: 13,
     fontWeight: "bold",
     minWidth: 15,
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.mainBlue,
   },
   weekPillText: { color: "#71717a", fontSize: 12, fontWeight: "bold" },
-  textBlack: { color: "#000" },
+  textBlack: { color: COLORS.black },
 
   scrollContent: { paddingBottom: 120 },
   dayContainer: {
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   },
   dayCircleActive: { borderColor: COLORS.mainBlue, backgroundColor: "#083344" },
   smallDayText: { color: "#3f3f46", fontSize: 14, fontWeight: "900" },
-  textWhite: { color: "#fff" },
+  textWhite: { color: COLORS.white },
   miniDot: {
     width: 4,
     height: 4,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     gap: 10,
     marginBottom: 20,
   },
-  statusTitle: { color: "#fff", fontSize: 16, fontWeight: "800" },
+  statusTitle: { color: COLORS.white, fontSize: 16, fontWeight: "800" },
   divider: { flex: 1, height: 1, backgroundColor: "#09090b" },
 
   emptyState: {
@@ -337,12 +337,12 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 15,
-    backgroundColor: "#000",
+    backgroundColor: COLORS.black,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 15,
   },
-  emptyTitle: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  emptyTitle: { color: COLORS.white, fontSize: 16, fontWeight: "700" },
   emptySub: { color: "#3f3f46", fontSize: 12, marginTop: 5 },
 
   dock: {
