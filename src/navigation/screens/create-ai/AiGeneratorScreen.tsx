@@ -1,20 +1,21 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   StyleSheet,
   Text,
   View,
   ScrollView,
   TouchableOpacity,
-  Platform,
   Alert,
 } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import { CreateAiPlanParamList } from "./types";
 import { COLORS } from "../../../constants/colors";
 import { Gender, GymLevel } from "../../../modules/prediction/enums";
 import SubmitButton from "../../../UI/components/submitButton";
+
 import { useAppDispatch, useAppSelector } from "../../../redux/root";
 import {
   selectAiPlan,

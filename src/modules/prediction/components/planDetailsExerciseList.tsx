@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   exDetails: { flex: 1, marginLeft: 10 },
   exName: {
     color: "white",
-    fontSize: 17,
+    fontSize: 14,
     fontWeight: "500",
     fontStyle: "italic",
   },
