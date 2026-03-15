@@ -14,10 +14,17 @@ import { ActiveExercise } from "../types";
 import { COLORS } from "../../../constants/colors";
 import Chip from "../../../UI/components/chip";
 import { MuscleGroupTitles } from "../../workout/vault";
+import SubmitButton from "../../../UI/components/submitButton";
 
 interface ExerciseCardProps {
   exercise: ActiveExercise;
-  onToggleSet: (exerciseId: number, setIndex: number, reps?: number) => void;
+  onToggleSet: (
+    exerciseId: number,
+    setIndex: number,
+    reps?: number,
+    doneValue?: number,
+    extraWeight?: number,
+  ) => void;
 }
 
 const ExerciseCard: React.FC<ExerciseCardProps> = ({
@@ -27,14 +34,16 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
   const [infoVisible, setInfoVisible] = useState(false);
   const [loggingSetIndex, setLoggingSetIndex] = useState<number | null>(null);
   const [repsInput, setRepsInput] = useState("");
+  const [doneValue, setDoneValue] = useState("");
+  const [extraWeight, setExtraWeight] = useState("");
 
-  const title = exercise.variation?.title;
+  const title = exercise.variation?.title || "Exercise";
 
   const handleSetPress = (idx: number, isDone: boolean) => {
     if (isDone) {
       Alert.alert(
         "REMOVE SET",
-        `Delete set ${idx + 1} from this session?`,
+        `Delete set ${idx + 1}?`,
         [
           { text: "KEEP", style: "cancel" },
           {
@@ -46,71 +55,93 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
         { cancelable: true },
       );
     } else {
-      // Open rep logger for new set
       setRepsInput(exercise.targetReps?.toString() || "");
+      setDoneValue(exercise.metric.defaultValue.toString());
       setLoggingSetIndex(idx);
     }
   };
 
   const confirmReps = () => {
     if (loggingSetIndex !== null) {
-      const reps = parseInt(repsInput) || exercise.targetReps || 0;
-      onToggleSet(exercise.variation.id, loggingSetIndex, reps);
+      const reps = parseInt(repsInput) || exercise.targetReps || 1;
+      const doneValueRep = parseInt(doneValue) || exercise.targetValue || 0;
+      const extraWeightNum = parseInt(extraWeight) || 0;
+      onToggleSet(
+        exercise.variation.id,
+        loggingSetIndex,
+        reps,
+        doneValueRep,
+        extraWeightNum,
+      );
       setLoggingSetIndex(null);
     }
   };
 
   return (
     <View style={styles.card}>
+      {/* Header Section */}
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.exerciseName}>Primary muscles:</Text>
-          <View style={styles.setGrid}>
-            {exercise.variation?.primaryMuscles.map((m) => (
-              <Chip
-                key={m}
-                align="left"
-                type="info"
-                label={MuscleGroupTitles[m]}
-              />
-            ))}
-          </View>
-          <Text style={styles.exerciseName}>Secondary muscles:</Text>
-          <View style={styles.setGrid}>
-            {exercise.variation?.secondaryMuscles.map((m) => (
-              <Chip
-                key={m}
-                align="left"
-                type="info"
-                label={MuscleGroupTitles[m]}
-              />
-            ))}
-          </View>
-          <View style={styles.statsRow}>
-            <View style={styles.statBadge}>
-              <Text style={styles.statText}>{exercise.targetSets} SETS</Text>
-            </View>
-            <View style={[styles.statBadge, { marginLeft: 8 }]}>
-              <Text style={styles.statText}>
-                {exercise.targetReps} REPS TARGET
-              </Text>
-            </View>
+          <Text style={styles.exerciseTitle}>{title}</Text>
+
+          <View style={styles.targetRow}>
+            {/* Only show Sets if they exist */}
+            {exercise.targetSets && (
+              <View style={styles.metricBadge}>
+                <Text style={styles.targetItem}>{exercise.targetSets}</Text>
+                <Text style={styles.targetLabel}> SETS</Text>
+              </View>
+            )}
+
+            {/* Only show Reps and Metric if they exist */}
+            {exercise.targetReps && (
+              <View style={styles.metricBadge}>
+                <Text style={styles.targetItem}>{exercise.targetReps}</Text>
+                <Text style={styles.targetLabel}> REPS</Text>
+              </View>
+            )}
+
+            {/* Only show Weight/Metric if preferred metric exists (e.g., 60 KG) */}
+            {exercise.targetValue && (
+              <View style={styles.metricBadge}>
+                <Text style={styles.targetLabel}>Preferred: </Text>
+                <Text style={styles.targetItem}>{exercise.targetValue}</Text>
+                <Text style={styles.targetLabel}>
+                  {" "}
+                  {exercise.metric.unitSymbol || "KG"}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
-        <TouchableOpacity
-          onPress={() => setInfoVisible(!infoVisible)}
-          style={styles.infoBtn}
-        >
-          <FeatherIcon
-            name={infoVisible ? "chevron-up" : "help-circle"}
-            size={20}
-            color={COLORS.mainBlue}
-          />
-        </TouchableOpacity>
+
+        {exercise.variation?.steps?.length && (
+          <TouchableOpacity
+            onPress={() => setInfoVisible(!infoVisible)}
+            style={styles.infoBtn}
+          >
+            <FeatherIcon
+              name={infoVisible ? "x-circle" : "info"}
+              size={22}
+              color={infoVisible ? COLORS.mainBlue : "#444"}
+            />
+          </TouchableOpacity>
+        )}
       </View>
 
+      {/* Conditional Muscle Chips */}
+      {!infoVisible && (
+        <View style={styles.muscleContainer}>
+          {exercise.variation?.primaryMuscles.map((m) => (
+            <Chip key={m} type="neutral" label={MuscleGroupTitles[m]} />
+          ))}
+        </View>
+      )}
+
+      {/* Collapsible Info */}
       {infoVisible && (
         <View style={styles.infoContent}>
+          <Text style={styles.sectionHeading}>INSTRUCTIONS</Text>
           {exercise.variation?.steps?.map((step, i) => (
             <Text key={i} style={styles.stepText}>
               {i + 1}. {step}
@@ -119,65 +150,94 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
         </View>
       )}
 
-      <View style={styles.setGrid}>
-        {exercise.completedSets.map((session, idx) => (
-          <TouchableOpacity
-            key={idx}
-            onPress={() => handleSetPress(idx, !!session)}
-            style={[
-              styles.setBox,
-              session ? styles.setDone : styles.setPending,
-            ]}
-          >
-            {session ? (
-              <View style={styles.doneContent}>
-                <Text style={styles.doneRepsText}>
-                  {session.reps || exercise.targetReps}
-                </Text>
-                <Text style={styles.doneLabel}>REPS</Text>
-              </View>
-            ) : (
-              <Text style={styles.setNumberText}>{idx + 1}</Text>
-            )}
-          </TouchableOpacity>
-        ))}
+      {/* Progress Section */}
+      <View style={styles.footer}>
+        <View style={styles.setGrid}>
+          {exercise.completedSets.map((session, idx) => (
+            <TouchableOpacity
+              key={idx}
+              onPress={() => handleSetPress(idx, !!session)}
+              style={[
+                styles.setBox,
+                session ? styles.setDone : styles.setPending,
+              ]}
+            >
+              {session ? (
+                <Text style={styles.doneRepsText}>{session.reps}</Text>
+              ) : (
+                <Text style={styles.setNumberText}>{idx + 1}</Text>
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
-
-      {/* Industrial Rep Logger Modal */}
       <Modal
         visible={loggingSetIndex !== null}
         transparent
-        animationType="fade"
+        animationType="slide"
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
-              LOG SET {loggingSetIndex! + 1}
+              LOGGING SET {loggingSetIndex! + 1}
             </Text>
-            <Text style={styles.modalSub}>{title?.toUpperCase()}</Text>
 
-            <View style={styles.inputContainer}>
+            {exercise.targetReps > 1 && (
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.repsInput}
+                  value={repsInput}
+                  onChangeText={setRepsInput}
+                  keyboardType="number-pad"
+                  autoFocus
+                  selectionColor={COLORS.mainBlue}
+                />
+                <Text style={styles.inputSubLabel}>REPS COMPLETED</Text>
+              </View>
+            )}
+            <View style={styles.inputWrapper}>
               <TextInput
+                placeholder={exercise.metric.defaultValue.toString()}
+                placeholderTextColor={"#9c9c9c74"}
                 style={styles.repsInput}
-                value={repsInput}
-                onChangeText={setRepsInput}
+                value={doneValue}
+                onChangeText={setDoneValue}
                 keyboardType="number-pad"
-                autoFocus
                 selectionColor={COLORS.mainBlue}
               />
-              <Text style={styles.inputLabel}>REPS COMPLETED</Text>
+              <Text style={styles.inputSubLabel}>
+                HOW MUCH YOU DID ({exercise.metric.unitSymbol.toUpperCase()})
+              </Text>
             </View>
-
+            {exercise.variation.exercise.allowsWeight && (
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  placeholder={"5"}
+                  placeholderTextColor={"#9c9c9c74"}
+                  style={styles.repsInput}
+                  value={extraWeight}
+                  onChangeText={setExtraWeight}
+                  keyboardType="number-pad"
+                  selectionColor={COLORS.mainBlue}
+                />
+                <Text style={styles.inputSubLabel}>
+                  EXTRA WEIGHT (KG, IF DONE)
+                </Text>
+              </View>
+            )}
             <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={styles.cancelBtn}
+              <SubmitButton
+                style={styles.modalBtn}
+                variant="outlined"
                 onPress={() => setLoggingSetIndex(null)}
-              >
-                <Text style={styles.cancelBtnText}>CANCEL</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.confirmBtn} onPress={confirmReps}>
-                <Text style={styles.confirmBtnText}>LOG SET</Text>
-              </TouchableOpacity>
+                title="CANCEL"
+              />
+              <SubmitButton
+                bgColor={COLORS.mainBlue}
+                style={styles.modalBtn}
+                onPress={confirmReps}
+                title="SAVE SET"
+              />
             </View>
           </View>
         </View>
@@ -188,119 +248,170 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#141414",
-    borderRadius: 12,
+    backgroundColor: "#111",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#222",
-    padding: 20,
-    marginBottom: 16,
+    borderColor: "#1A1A1A",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
+    marginBottom: 12,
   },
-  exerciseName: {
-    color: "white",
-    fontSize: 15,
-    marginBottom: 5,
-    fontWeight: "900",
-    fontStyle: "italic",
+  exerciseTitle: {
+    color: "#FFF",
+    fontSize: 18,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
-  statsRow: { flexDirection: "row", marginVertical: 8 },
-  statBadge: {
-    backgroundColor: "#1f1f1f",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "#333",
+  dot: {
+    width: 3,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: "#333",
+    marginHorizontal: 8,
   },
-  statText: { color: COLORS.mainBlue, fontSize: 10, fontWeight: "bold" },
-  infoBtn: { padding: 4 },
+  muscleContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+    marginBottom: 16,
+  },
+  infoBtn: {
+    padding: 8,
+  },
   infoContent: {
-    marginTop: 15,
-    paddingTop: 15,
-    borderTopWidth: 1,
-    borderTopColor: "#222",
+    backgroundColor: "#0A0A0A",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
   },
-  stepText: { color: "#888", fontSize: 12, marginBottom: 4 },
+  sectionHeading: {
+    color: "#444",
+    fontSize: 10,
+    fontWeight: "900",
+    marginBottom: 8,
+    letterSpacing: 1,
+  },
+  stepText: {
+    color: "#AAA",
+    fontSize: 12,
+    lineHeight: 18,
+    marginBottom: 6,
+  },
+  footer: {
+    borderTopWidth: 1,
+    borderTopColor: "#1A1A1A",
+    paddingTop: 16,
+  },
   setGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
-    marginBottom: 10,
+    gap: 12,
   },
   setBox: {
-    width: 55,
-    height: 55,
-    borderRadius: 8,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
+    borderWidth: 1.5,
   },
-  setPending: { backgroundColor: "#0d0d0d", borderColor: "#333" },
-  setDone: { backgroundColor: COLORS.mainBlue, borderColor: COLORS.mainBlue },
-  setNumberText: { color: "#444", fontWeight: "900", fontSize: 18 },
-  doneContent: { alignItems: "center" },
-  doneRepsText: { color: "white", fontWeight: "900", fontSize: 18 },
-  doneLabel: { color: "white", fontSize: 8, fontWeight: "bold", marginTop: -2 },
-
-  // Modal Styles
+  setPending: {
+    backgroundColor: "#0A0A0A",
+    borderColor: "#222",
+  },
+  setDone: {
+    backgroundColor: COLORS.mainBlue,
+    borderColor: COLORS.mainBlue,
+  },
+  setNumberText: {
+    color: "#333",
+    fontWeight: "800",
+    fontSize: 16,
+  },
+  doneRepsText: {
+    color: "#FFF",
+    fontWeight: "900",
+    fontSize: 18,
+  },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.85)",
+    backgroundColor: "rgba(0,0,0,0.9)",
     justifyContent: "center",
     alignItems: "center",
   },
   modalContent: {
-    width: "80%",
+    width: "85%",
     backgroundColor: "#111",
-    borderRadius: 20,
-    padding: 25,
+    borderRadius: 24,
+    padding: 24,
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: COLORS.mainBlue,
+    borderColor: "#222",
   },
   modalTitle: {
-    color: COLORS.mainBlue,
-    fontSize: 12,
+    color: "#444",
+    fontSize: 11,
     fontWeight: "900",
     letterSpacing: 2,
-    textAlign: "center",
   },
-  modalSub: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "900",
-    fontStyle: "italic",
-    textAlign: "center",
-    marginVertical: 10,
-  },
-  inputContainer: { alignItems: "center", marginVertical: 20 },
-  repsInput: {
-    color: "white",
-    fontSize: 60,
-    fontWeight: "900",
-    textAlign: "center",
-    width: "100%",
-  },
-  inputLabel: {
-    color: "#555",
-    fontSize: 10,
-    fontWeight: "bold",
-    letterSpacing: 1,
-  },
-  modalActions: { flexDirection: "row", gap: 10, marginTop: 10 },
-  cancelBtn: { flex: 1, padding: 15, alignItems: "center" },
-  cancelBtnText: { color: "#666", fontWeight: "bold" },
-  confirmBtn: {
-    flex: 2,
-    backgroundColor: COLORS.mainBlue,
-    padding: 15,
-    borderRadius: 10,
+  inputWrapper: {
     alignItems: "center",
+    marginBottom: 10,
   },
-  confirmBtnText: { color: "white", fontWeight: "900" },
+  repsInput: {
+    color: "#FFF",
+    fontSize: 40,
+    fontWeight: "900",
+    textAlign: "center",
+  },
+  inputSubLabel: {
+    color: COLORS.mainBlue,
+    fontSize: 10,
+    fontWeight: "700",
+  },
+  modalActions: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  modalBtn: {
+    width: "45%",
+  },
+  targetRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+    gap: 8,
+  },
+  metricBadge: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    backgroundColor: "#1A1A1A",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "#262626",
+  },
+  targetItem: {
+    color: COLORS.mainBlue, // Primary highlight color
+    fontSize: 14,
+    fontWeight: "900",
+    fontFamily: "System", // Or a mono font if available
+  },
+  targetLabel: {
+    color: "#666",
+    fontSize: 9,
+    fontWeight: "800",
+    textTransform: "uppercase",
+  },
 });
 
 export default ExerciseCard;

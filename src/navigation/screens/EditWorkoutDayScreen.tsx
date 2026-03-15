@@ -50,7 +50,7 @@ const EditDayScreen: React.FC<
         targetReps: ex.targetReps,
         targetSets: ex.targetSets,
         targetValue: Number(ex.targetValue) || 0,
-        metric: { id: ex.metric.id },
+        metric: { id: ex.metric?.id },
       })),
     };
     await triggerEdit(exercisePayload).unwrap();
@@ -146,7 +146,7 @@ const EditDayScreen: React.FC<
       </View>
       <View style={styles.metricsRow}>
         {metrics.map((m) => {
-          const isActive = item.metric.id === m.id;
+          const isActive = item.metric?.id === m.id;
           return (
             <TouchableOpacity
               key={m.id}
@@ -189,14 +189,14 @@ const EditDayScreen: React.FC<
           </View>
         ))}
         <View style={styles.volumeControl}>
-          <Text style={styles.label}>{item.metric.name.toUpperCase()}</Text>
+          <Text style={styles.label}>{item.metric?.name.toUpperCase()}</Text>
           <TextInput
             keyboardType="numeric"
             style={[styles.counterGroup, styles.counterGroupInput]}
             onChangeText={(val) =>
               updateVolume(item.id, "targetValue", Number(val))
             }
-            value={item.targetValue.toString()}
+            value={item.targetValue?.toString()}
           />
         </View>
       </View>

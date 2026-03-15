@@ -147,7 +147,7 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
 
           {__DEV__ && (
             <TouchableOpacity style={styles.devBtn} onPress={clearWorkoutDbDev}>
-              <Text style={styles.devText}>RESET LOCAL ENGINE</Text>
+              <Text style={styles.devText}>RESET LOCAL DB</Text>
             </TouchableOpacity>
           )}
         </View>

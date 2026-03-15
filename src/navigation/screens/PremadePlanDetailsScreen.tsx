@@ -152,7 +152,7 @@ const PremadePlanDetailsScreen: FC<
         {/* DAYS LIST */}
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 100,flex:1,backgroundColor:"red" }}
         >
           {activeWeek.days.map((day, dIdx) => (
             <View key={day.id} style={styles.dayItem}>

@@ -84,9 +84,7 @@ const PlanDetailsScreen: FC<
       foundDay = 0;
 
     plan.weeks.forEach((week, wIdx) => {
-      const dIdx = week.days.findIndex(
-        (d) => d.id === latestSession.plan_day_id,
-      );
+      const dIdx = week.days.findIndex((d) => d.id === latestSession.planDayId);
       if (dIdx !== -1) {
         foundWeek = wIdx;
         foundDay = dIdx;

@@ -44,17 +44,17 @@ const WorkoutTrackerScreen: React.FC<
       );
       const copyExercises: ActiveExercise[] = [...newExercises];
       const savedExercises = getWorkoutExercises(sessionId);
+      console.log(savedExercises)
 
       if (savedExercises && savedExercises.length) {
         savedExercises.forEach((ex) => {
           const exerciseIndex = copyExercises.findIndex((e) => {
             return (
-              e.id === ex.plan_day_exercise_id &&
-              e.variation?.id === ex.exercise_id
+              e.id === ex.planDayExerciseId && e.variation?.id === ex.exerciseId
             );
           });
           if (exerciseIndex >= 0) {
-            copyExercises[exerciseIndex].completedSets[ex.order_index] = ex;
+            copyExercises[exerciseIndex].completedSets[ex.orderIndex] = ex;
           }
         });
       }
@@ -72,6 +72,7 @@ const WorkoutTrackerScreen: React.FC<
       };
     }, []),
   );
+  
 
   const onFinishTracking = async () => {
     await updateStatus({

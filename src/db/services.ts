@@ -70,13 +70,17 @@ export function createWorkoutExercise(
   exerciseId: number,
   orderIndex: number,
   reps: number = 0,
+  doneValue: number = 0,
+  extraWeight: number = 0,
 ) {
   const result = db.runSync(INSERT_WORKOUT_EXERCISE, [
     workoutSessionId,
     planDayExerciseId,
     exerciseId,
     orderIndex,
-    reps
+    reps,
+    doneValue,
+    extraWeight
   ]);
   return getWorkoutExerciseByid(result.lastInsertRowId);
 }

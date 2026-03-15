@@ -1,21 +1,21 @@
 export type WorkoutSessionExercise = {
   id: number;
   title: string;
-  workout_session_id: number;
-  plan_day_exercise_id: number;
+  workoutSessionId: number;
+  planDayExerciseId: number;
   reps: number;
-  exercise_id: number;
-  order_index: number;
-  created_at: string;
+  exerciseId: number;
+  orderIndex: number;
+  createdAt: string;
 };
 
 export interface WorkoutSession {
   completed: number;
-  finished_at: string;
+  finishedAt: string;
   id: number;
-  plan_day_id: number;
+  planDayId: number;
   seconds: number;
-  started_at: string;
-  user_id: number;
-  user_plan_id: number;
+  startedAt: string;
+  userId: number;
+  userPlanId: number;
 }

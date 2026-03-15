@@ -68,7 +68,13 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   }, []);
 
   const handleToggleSet = useCallback(
-    (exerciseId: number, index: number, reps?: number) => {
+    (
+      exerciseId: number,
+      index: number,
+      reps?: number,
+      doneValue?: number,
+      extraWeight?: number,
+    ) => {
       setExercises((prev) => {
         const newExercises = [...prev];
         const ex = newExercises[currentExIdx];
@@ -83,6 +89,8 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
               exerciseId,
               index,
               reps,
+              doneValue,
+              extraWeight,
             );
             if (created) {
               newSets[index] = { ...created, reps: reps || 0 };

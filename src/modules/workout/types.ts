@@ -20,7 +20,12 @@ export interface Exercise {
   secondaryMuscles: MuscleGroup[];
   steps: string[];
   level: GymLevel;
-  exercise: { id: number; defaultMetric: Metric };
+  exercise: {
+    id: number;
+    defaultMetric: Metric;
+    isBodyweight: boolean;
+    allowsWeight: boolean;
+  };
   title: string;
 }
 
@@ -63,8 +68,10 @@ export interface CustomPlanDayExercise {
   orderIndex: number;
   targetSets: number;
   targetReps: number;
+  targetValue: number;
   variation: Exercise;
   createdAt: string;
+  metric: Metric;
 }
 
 export interface CustomPlanDetails {

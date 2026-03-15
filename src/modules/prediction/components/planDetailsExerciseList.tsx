@@ -21,14 +21,14 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
         <Text style={[styles.dayMeta, doneSession ? styles.paramDone : null]}>
           {day?.exercises.length || 0} TOTAL EXERCISES{" "}
           {doneSession
-            ? `- DONE (${datePrettify(doneSession?.finished_at, { showTime: true })})`
+            ? `- DONE (${datePrettify(doneSession?.finishedAt, { showTime: true })})`
             : ""}
         </Text>
       </View>
 
       {day?.exercises.map((ex, idx) => {
         const doneExercises = exercises.filter(
-          (e) => e.exercise_id === ex.variation?.id,
+          (e) => e.exerciseId === ex.variation?.id,
         );
         const exerciseDone = Boolean(doneExercises.length);
         const doneReps = exerciseDone
@@ -85,7 +85,7 @@ const PlanDetailsExerciseList: FC<{ day: CustomDayPlan }> = ({ day }) => {
                   </Text>
                   <Text style={styles.paramLabel}>
                     {ex.targetReps === 1
-                      ? ex.metric.unitSymbol.toUpperCase()
+                      ? ex.metric?.unitSymbol.toUpperCase()
                       : "REPS"}
                   </Text>
                 </View>

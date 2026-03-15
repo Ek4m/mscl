@@ -66,12 +66,9 @@ const PreMadePlansScreen: FC<
             <Image source={{ uri: plan.thumbnail }} style={styles.cardImage} />
             <View style={styles.cardOverlay}>
               <View style={styles.badgeRow}>
-                <View style={styles.categoryBadge}>
-                  <Text style={styles.categoryText}>Strength</Text>
-                </View>
                 <View style={styles.intensityBadge}>
                   <Text style={styles.intensityText}>
-                    {plan.daysPerWeek} Days/Week
+                    {plan.weeks[0].days.length} Days/Week
                   </Text>
                 </View>
               </View>
@@ -96,7 +93,7 @@ const PreMadePlansScreen: FC<
                       color={COLORS.mainBlue}
                     />
                     <Text style={styles.statText}>
-                      {plan.daysPerWeek} Days/Week
+                      {plan.weeks[0].days.length} Days/Week
                     </Text>
                   </View>
                 </View>
