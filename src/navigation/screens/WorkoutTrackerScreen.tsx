@@ -44,8 +44,6 @@ const WorkoutTrackerScreen: React.FC<
       );
       const copyExercises: ActiveExercise[] = [...newExercises];
       const savedExercises = getWorkoutExercises(sessionId);
-      console.log(savedExercises)
-
       if (savedExercises && savedExercises.length) {
         savedExercises.forEach((ex) => {
           const exerciseIndex = copyExercises.findIndex((e) => {
@@ -72,9 +70,8 @@ const WorkoutTrackerScreen: React.FC<
       };
     }, []),
   );
-  
 
-  const onFinishTracking = async () => {
+  const onFinishTracking = async (shouldUpdate: boolean) => {
     await updateStatus({
       userPlanId: activePlan.id,
       status: PlanStatus.ARCHIVED,

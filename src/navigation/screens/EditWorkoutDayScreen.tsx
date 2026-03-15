@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
   },
 
   // Modal Styles
-  modalContainer: { flex: 1, backgroundColor: "#111", padding: 20 },
+  modalContainer: { flex: 1, backgroundColor: COLORS.black1, padding: 20 },
   modalHeader: {
     flexDirection: "row",
     justifyContent: "space-between",

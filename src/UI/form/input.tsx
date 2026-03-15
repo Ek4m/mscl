@@ -13,7 +13,7 @@ export default Input;
 
 const styles = StyleSheet.create({
   input: {
-    backgroundColor: "#111",
+    backgroundColor: COLORS.black1,
     borderWidth: 1,
     borderColor: "#222",
     height: IS_SMALL ? 50 : 64,

@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   disabled: {
-    backgroundColor: "#111",
+    backgroundColor: COLORS.black1,
   },
   disabledText: {
     color: "#444",

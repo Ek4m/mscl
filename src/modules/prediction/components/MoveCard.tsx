@@ -248,7 +248,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#111",
+    backgroundColor: COLORS.black1,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "85%",
-    backgroundColor: "#111",
+    backgroundColor: COLORS.black1,
     borderRadius: 24,
     padding: 24,
     alignItems: "center",

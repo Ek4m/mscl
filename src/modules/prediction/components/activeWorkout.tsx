@@ -39,7 +39,7 @@ interface ActiveWorkoutProps {
   sessionId: number;
   week: CustomPlanWeeks;
   setExercises: Dispatch<React.SetStateAction<ActiveExercise[]>>;
-  onFinish: () => Promise<void>;
+  onFinish: (shouldUpdate: boolean) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -124,7 +124,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   const handleCreateNewPlan = async () => {
     await reUsePlan({ id: plan.id }).unwrap();
     setShowSuccess(false);
-    await onFinish();
+    await onFinish(true);
   };
 
   const handleFinish = async () => {
@@ -141,7 +141,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
             week.days.findIndex((d) => d.id === workoutDay.id) ===
             week.days.length - 1;
           if (isLastWeek && isLastDay) setShowSuccess(true);
-          else await onFinish();
+          else await onFinish(false);
         },
       },
     ]);
@@ -163,7 +163,6 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
           </Text>
           <Text style={styles.timerText}>{formatTime(workoutSeconds)}</Text>
         </View>
-
         <View style={{ width: 24 }} />
       </View>
       <View style={styles.focusContainer}>
@@ -252,7 +251,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
               textColor={COLORS.mainBlue}
               style={{ width: "100%" }}
               title="I'll choose a new one"
-              onPress={onFinish}
+              onPress={() => onFinish(true)}
             />
           </View>
         </View>

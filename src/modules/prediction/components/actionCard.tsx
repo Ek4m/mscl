@@ -1,5 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { FC } from "react";
+import { COLORS } from "../../../constants/colors";
 
 const ActionCard: FC<{
   title: string;
@@ -27,7 +28,7 @@ export default ActionCard;
 
 const styles = StyleSheet.create({
   actionCard: {
-    backgroundColor: "#111",
+    backgroundColor: COLORS.black1,
     padding: 16,
     borderRadius: 20,
     flexDirection: "row",
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
-    overflow:"hidden"
+    overflow: "hidden",
   },
   actionTitle: {
     color: COLORS.white,

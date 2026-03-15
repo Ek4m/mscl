@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   activeChipText: { color: "white" },
 
   aiActionCard: {
-    backgroundColor: "#111",
+    backgroundColor: COLORS.black1,
     borderRadius: 24,
     paddingHorizontal: 20,
     paddingVertical: 10,

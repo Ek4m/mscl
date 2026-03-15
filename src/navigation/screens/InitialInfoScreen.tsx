@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
   },
   planSection: { marginBottom: 30, padding: 20 },
   planCard: {
-    backgroundColor: "#111",
+    backgroundColor: COLORS.black1,
     borderRadius: 24,
     padding: 24,
     borderWidth: 1,

@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#111",
+    backgroundColor: COLORS.black1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     marginBottom: 20,
-    backgroundColor: "#111",
+    backgroundColor: COLORS.black1,
   },
   cardImage: { width: "100%", height: "100%", opacity: 0.7 },
   cardOverlay: {
