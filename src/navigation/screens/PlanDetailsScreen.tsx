@@ -74,7 +74,7 @@ const PlanDetailsScreen: FC<
     }, [refetch]),
   );
 
-  console.log(JSON.stringify(plan));
+  console.log("++++++",JSON.stringify(plan));
 
   const calculateProgress = useCallback(() => {
     if (!plan?.weeks || !sessions || !sessions.length)
@@ -228,15 +228,15 @@ const PlanDetailsScreen: FC<
       {activeWeekIdx >= userProgress.week &&
         activeDayIdx >= userProgress.day && (
           <View style={styles.footer}>
-            {activeWeekIdx === userProgress.week &&
-              activeDayIdx === userProgress.day && (
+            {/* {activeWeekIdx === userProgress.week &&
+              activeDayIdx === userProgress.day && ( */}
                 <SubmitButton
                   icon={<FeatherIcon name="play" size={18} color="black" />}
                   bgColor={COLORS.mainBlue}
                   onPress={onStartSession}
                   title="START SESSION"
                 />
-              )}
+              {/* )} */}
             <SubmitButton
               variant="titleOnly"
               icon={<FeatherIcon name="edit" size={18} color="white" />}

@@ -56,7 +56,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
       );
     } else {
       setRepsInput(exercise.targetReps?.toString() || "");
-      setDoneValue(exercise.metric.defaultValue.toString());
+      setDoneValue(exercise.metric?.defaultValue.toString());
       setLoggingSetIndex(idx);
     }
   };
@@ -197,7 +197,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
             )}
             <View style={styles.inputWrapper}>
               <TextInput
-                placeholder={exercise.metric.defaultValue.toString()}
+                placeholder={exercise.metric?.defaultValue.toString()}
                 placeholderTextColor={"#9c9c9c74"}
                 style={styles.repsInput}
                 value={doneValue}

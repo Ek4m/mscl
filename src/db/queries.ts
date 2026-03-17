@@ -123,3 +123,24 @@ export const GET_DONE_SESSION_BY_DAY = `
       AND completed = 1
     ORDER BY finishedAt DESC
     `;
+
+export const GET_SESSIONS_AND_EXERCISES_BY_PLAN = `
+SELECT 
+    s.id AS sessionId,
+    s.startedAt,
+    s.finishedAt,
+    s.completed,
+    s.seconds,
+    s.userPlanId,
+    s.planDayId,
+    e.planDayExerciseId AS exerciseResultId,
+    e.exerciseId,
+    e.reps,
+    e.doneValue,
+    e.extraWeight,
+    e.orderIndex
+FROM workout_sessions s
+LEFT JOIN workout_exercises e ON s.id = e.workoutSessionId
+WHERE s.userPlanId = ?
+ORDER BY s.startedAt DESC, e.orderIndex ASC;
+`;

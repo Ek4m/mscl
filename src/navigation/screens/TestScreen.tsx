@@ -19,7 +19,6 @@ import { selectUserInfo } from "../../redux/auth/slice";
 const TestScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { userInfo } = useAppSelector(selectUserInfo);
-  console.log(userInfo);
   const features = [
     {
       id: "ai",

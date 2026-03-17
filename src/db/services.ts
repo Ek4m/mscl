@@ -11,6 +11,7 @@ import {
   SELECT_WORKOUT_SESSION_FOR_DAY,
   GET_WORKOUT_SESSIONS_BY_USER,
   GET_DONE_SESSION_BY_DAY,
+  GET_SESSIONS_AND_EXERCISES_BY_PLAN,
 } from "./queries";
 import { WorkoutSession, WorkoutSessionExercise } from "./types";
 
@@ -80,7 +81,7 @@ export function createWorkoutExercise(
     orderIndex,
     reps,
     doneValue,
-    extraWeight
+    extraWeight,
   ]);
   return getWorkoutExerciseByid(result.lastInsertRowId);
 }
@@ -113,4 +114,12 @@ export function getWorkoutSessionsByUser(
   planId: number,
 ): WorkoutSession[] {
   return db.getAllSync(GET_WORKOUT_SESSIONS_BY_USER, [userId, planId]);
+}
+
+export function getAllSessionsWithExercisesByPlan(id: number) {
+  const result: WorkoutSession[] = db.getAllSync(
+    GET_SESSIONS_AND_EXERCISES_BY_PLAN,
+    id,
+  );
+  return result;
 }

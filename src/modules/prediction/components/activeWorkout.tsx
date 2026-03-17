@@ -7,7 +7,7 @@ import {
   Alert,
   Platform,
   Dimensions,
-  Image, // Added Image
+  Image,
 } from "react-native";
 import IonIcons from "react-native-vector-icons/Ionicons";
 
@@ -24,11 +24,17 @@ import {
 import {
   createWorkoutExercise,
   finishWorkoutSession,
+  getAllSessionsWithExercisesByPlan,
   removeWorkoutExercise,
 } from "../../../db/services";
 import Modal from "../../../UI/components/modal";
 import { useReusePlanMutation } from "../../../redux/workout/create-ai";
 import SubmitButton from "../../../UI/components/submitButton";
+import { useUpdateStatusMutation } from "../../../redux/plans/slice";
+import { PlanStatus } from "../enums";
+import { successToast } from "../../../helpers/toast";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../../navigation/types";
 
 const { width } = Dimensions.get("window");
 
@@ -39,14 +45,12 @@ interface ActiveWorkoutProps {
   sessionId: number;
   week: CustomPlanWeeks;
   setExercises: Dispatch<React.SetStateAction<ActiveExercise[]>>;
-  onFinish: (shouldUpdate: boolean) => Promise<void>;
   onCancel: () => void;
 }
 
 const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   plan,
   sessionId,
-  onFinish,
   exercises,
   week,
   workoutDay,
@@ -60,12 +64,28 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
   const [showSuccess, setShowSuccess] = useState(false);
   const currentExercise = exercises[currentExIdx];
   const [reUsePlan, { isLoading }] = useReusePlanMutation();
+  const [updateStatus, { isLoading: isUpdating }] = useUpdateStatusMutation();
+
   const progress = ((currentExIdx + 1) / exercises.length) * 100;
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     const interval = setInterval(() => setWorkoutSeconds((p) => p + 1), 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const onFinish = async (shouldUpdate: boolean) => {
+    const sessionRecords = getAllSessionsWithExercisesByPlan(plan.id);
+    if (shouldUpdate) {
+      await updateStatus({
+        userPlanId: plan.id,
+        status: PlanStatus.ARCHIVED,
+        sessionRecords,
+      }).unwrap();
+    }
+    successToast("Tracking was saved successfully");
+    navigation.navigate("home");
+  };
 
   const handleToggleSet = useCallback(
     (
@@ -243,7 +263,7 @@ const ActiveWorkout: React.FC<ActiveWorkoutProps> = ({
               style={styles.submitButtonMain}
               title="Stay on that plan"
               bgColor={COLORS.mainBlue}
-              loading={isLoading}
+              loading={isLoading || isUpdating}
               onPress={handleCreateNewPlan}
             />
             <SubmitButton

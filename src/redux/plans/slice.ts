@@ -6,6 +6,7 @@ import { RootState } from "../root";
 import { WorkoutPlan } from "../../modules/prediction/types";
 import { CustomPlanDetails, PremadePlan } from "../../modules/workout/types";
 import { PlanStatus } from "../../modules/prediction/enums";
+import { WorkoutSession } from "../../db/types";
 
 export interface PlansState {
   plans: WorkoutPlan[];
@@ -58,6 +59,7 @@ export const planApi = createApi({
       {
         userPlanId: number;
         status: PlanStatus;
+        sessionRecords: WorkoutSession[];
       }
     >({
       query: (data) => ({

@@ -5,7 +5,6 @@ import { useFocusEffect } from "@react-navigation/native";
 
 import ActiveWorkout from "../../modules/prediction/components/activeWorkout";
 import { RootStackParamList } from "../types";
-import { successToast } from "../../helpers/toast";
 import {
   getWorkoutExercises,
   insertOrCreateWorkoutSession,
@@ -13,8 +12,6 @@ import {
 import { useAppSelector } from "../../redux/root";
 import { selectUserInfo } from "../../redux/auth/slice";
 import { ActiveExercise } from "../../modules/prediction/types";
-import { useUpdateStatusMutation } from "../../redux/plans/slice";
-import { PlanStatus } from "../../modules/prediction/enums";
 
 const WorkoutTrackerScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, "workoutTracker">
@@ -26,7 +23,7 @@ const WorkoutTrackerScreen: React.FC<
   const activeWorkoutDay = week.days.find((d) => d.id === params.id);
   const [workoutSessionId, setWorkoutSessionId] = useState(0);
   const [exercises, setExercises] = useState<ActiveExercise[]>([]);
-  const [updateStatus] = useUpdateStatusMutation();
+
   useEffect(() => {
     if (userInfo && activeWorkoutDay) {
       const sessionId = insertOrCreateWorkoutSession(
@@ -71,14 +68,6 @@ const WorkoutTrackerScreen: React.FC<
     }, []),
   );
 
-  const onFinishTracking = async (shouldUpdate: boolean) => {
-    await updateStatus({
-      userPlanId: activePlan.id,
-      status: PlanStatus.ARCHIVED,
-    }).unwrap();
-    successToast("Tracking was saved successfully");
-    navigation.navigate("home");
-  };
   if (activeWorkoutDay && activePlan)
     return (
       <ActiveWorkout
@@ -89,7 +78,6 @@ const WorkoutTrackerScreen: React.FC<
         workoutDay={activeWorkoutDay}
         plan={activePlan}
         onCancel={() => navigation.goBack()}
-        onFinish={onFinishTracking}
       />
     );
 };

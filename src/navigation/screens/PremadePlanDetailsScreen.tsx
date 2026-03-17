@@ -155,7 +155,6 @@ const PremadePlanDetailsScreen: FC<
           contentContainerStyle={{
             paddingBottom: 100,
             flex: 1,
-            backgroundColor: "red",
           }}
         >
           {activeWeek.days.map((day, dIdx) => (
