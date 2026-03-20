@@ -15,6 +15,9 @@ import TestScreen from "./screens/TestScreen";
 import InitialInfoScreen from "./screens/InitialInfoScreen";
 import PremadePlanDetailsScreen from "./screens/PremadePlanDetailsScreen";
 import PremadePlansScreen from "./screens/PreMadePlansScreen";
+import EditDayScreen from "./screens/EditWorkoutDayScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 
 import CreateAiStack from "./screens/create-ai/Stack";
 import CreateCustomStack from "./screens/create-custom/Stack";
@@ -27,7 +30,6 @@ import {
   useGetInitialInfoQuery,
 } from "../redux/workout/create-ai";
 import { selectCreatePlanState } from "../redux/workout/create-plan";
-import EditDayScreen from "./screens/EditWorkoutDayScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -36,7 +38,7 @@ export default function RootNavigator() {
   const { started } = useAppSelector(selectAiPlan);
   const { started: customPlanStarted } = useAppSelector(selectCreatePlanState);
   useGetInitialInfoQuery();
- useGetProfileQuery();
+  useGetProfileQuery();
   return (
     <Stack.Navigator
       initialRouteName="splash"
@@ -44,6 +46,8 @@ export default function RootNavigator() {
     >
       <Stack.Screen name="auth" component={AuthScreen} />
       <Stack.Screen name="register" component={RegisterScreen} />
+      <Stack.Screen name="forgotPassword" component={ForgotPasswordScreen} />
+      <Stack.Screen name="resetPassword" component={ResetPasswordScreen} />
       <Stack.Screen name="test" component={TestScreen} />
       <Stack.Screen name="splash" component={SplashScreen} />
       <Stack.Screen name="initialInfo" component={InitialInfoScreen} />

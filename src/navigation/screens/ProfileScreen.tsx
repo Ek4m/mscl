@@ -99,6 +99,10 @@ const ProfileScreen: React.FC<
       </View>
 
       {/* Action Buttons */}
+      <TouchableOpacity style={styles.logoutButton} onPress={() => navigation.navigate("resetPassword")}>
+        <Text style={styles.logoutButtonText}>Change password</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>

@@ -1,4 +1,4 @@
-import { UserRole } from './enums';
+import { UserRole } from "./enums";
 
 export interface AuthUser {
   id: number;
@@ -21,4 +21,17 @@ export interface RegisterCredentials {
 export interface AuthResult {
   token: string;
   user: AuthUser;
+}
+
+export interface ForgotPasswordCredentials {
+  email: string;
+  token: string;
+  newPassword: string;
+  newPasswordRetyped: string;
+}
+
+export interface ChangePasswordCredentials {
+  password: string;
+  newPassword: string;
+  newPasswordRetyped: string;
 }

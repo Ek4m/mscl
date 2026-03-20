@@ -8,6 +8,8 @@ import { CreateAiPlanParamList } from "./screens/create-ai/types";
 
 export type RootStackParamList = {
   auth: undefined;
+  forgotPassword: undefined;
+  resetPassword: undefined;
   register: undefined;
   workoutTracker: { id: number; plan: CustomPlanDetails; weekId: number };
   splash: undefined;

@@ -5,6 +5,8 @@ import axiosBaseQuery from "../baseQuery";
 import {
   AuthResult,
   AuthUser,
+  ChangePasswordCredentials,
+  ForgotPasswordCredentials,
   LoginCredentials,
   RegisterCredentials,
 } from "../../modules/auth/types";
@@ -32,6 +34,33 @@ export const authApi = createApi({
         url: "auth/login",
         method: "post",
         data: credentials,
+      }),
+    }),
+    resetPassword: builder.mutation<
+      { success: boolean },
+      ForgotPasswordCredentials
+    >({
+      query: (data: ForgotPasswordCredentials) => ({
+        url: "auth/reset-password",
+        method: "post",
+        data,
+      }),
+    }),
+    changePassword: builder.mutation<
+      { success: boolean },
+      ChangePasswordCredentials
+    >({
+      query: (data: ChangePasswordCredentials) => ({
+        url: "auth/change-password",
+        method: "post",
+        data,
+      }),
+    }),
+    forgotPassword: builder.mutation<{ success: boolean }, string>({
+      query: (email: string) => ({
+        url: "auth/forgot-password",
+        method: "post",
+        data: { email },
       }),
     }),
     register: builder.mutation<AuthResult, RegisterCredentials>({
@@ -89,7 +118,10 @@ export const {
   useGetProfileQuery,
   useLoginMutation,
   useRegisterMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
   useFreezeAccountMutation,
+  useChangePasswordMutation,
 } = authApi;
 export const { logout } = authSlice.actions;
 export default authSlice.reducer;

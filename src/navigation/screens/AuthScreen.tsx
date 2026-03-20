@@ -75,6 +75,7 @@ const AuthScreen: FC<NativeStackScreenProps<RootStackParamList, "auth">> = ({
         <SubmitButton loading={isLoading} title="Continue" onPress={onLogin} />
       </View>
       <Link title="Don't have an account? Sign up" screen="register" />
+      <Link title="Forgot password?" screen="forgotPassword" />
     </ScrollView>
   );
 };
