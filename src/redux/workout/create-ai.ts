@@ -65,14 +65,6 @@ export const predictApi = createApi({
     >({
       query: () => ({ url: "common/metadata", method: "get" }),
     }),
-    sendImages: builder.mutation<string[], FormData>({
-      query: (credentials: FormData) => ({
-        url: "workout/detect",
-        method: "post",
-        data: credentials,
-        headers: { "Content-Type": "multipart/form-data" },
-      }),
-    }),
     reusePlan: builder.mutation<{ id: number }, { id: number }>({
       query: ({ id }) => ({
         url: "workout/plan/reuse-plan",
@@ -140,24 +132,6 @@ export const predictSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addMatcher(
-      predictApi.endpoints.sendImages.matchRejected,
-      (state) => {
-        state.isFetching = false;
-      },
-    );
-    builder.addMatcher(
-      predictApi.endpoints.sendImages.matchPending,
-      (state) => {
-        state.isFetching = true;
-      },
-    );
-    builder.addMatcher(
-      predictApi.endpoints.sendImages.matchFulfilled,
-      (state, action) => {
-        state.predictions = action.payload;
-      },
-    );
-    builder.addMatcher(
       predictApi.endpoints.getInitialInfo.matchFulfilled,
       (state, action) => {
         state.exercises = action.payload.exercises;
@@ -170,7 +144,6 @@ export const predictSlice = createSlice({
 
 export const selectAiPlan = (state: RootState) => state.detection;
 export const {
-  useSendImagesMutation,
   useGeneratePlanMutation,
   useGetInitialInfoQuery,
   useReusePlanMutation,
