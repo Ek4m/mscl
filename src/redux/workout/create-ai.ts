@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { ImagePickerAsset } from "expo-image-picker";
 
 import axiosBaseQuery from "../baseQuery";
 import { RootState } from "../root";
@@ -20,7 +19,6 @@ export interface PredictSliceState {
   predictions: string[];
   selectedPredictions: string[];
   isFetching: boolean;
-  files: ImagePickerAsset[];
   started: boolean;
   level: GymLevel;
   category: number;
@@ -37,7 +35,6 @@ const initialState: PredictSliceState = {
   selectedPredictions: [],
   metrics: [],
   isFetching: true,
-  files: [],
   gender: Gender.MALE,
   started: false,
   level: GymLevel.INTERMEDIATE,
@@ -92,14 +89,8 @@ export const predictSlice = createSlice({
     closeAnalyzing: (state) => {
       state.isFetching = false;
     },
-    addFile: (state, action: PayloadAction<ImagePickerAsset>) => {
-      state.files.push(action.payload);
-    },
     startAIPlanning: (state) => {
       state.started = true;
-    },
-    removeFile: (state, action: PayloadAction<number>) => {
-      state.files = state.files.filter((_, index) => index !== action.payload);
     },
     addToSelected: (state, action: PayloadAction<string | string[]>) => {
       state.selectedPredictions = [
@@ -151,8 +142,6 @@ export const {
 export const {
   reset,
   closeAnalyzing,
-  addFile,
-  removeFile,
   removeFromSelectedPredictions,
   addToSelected,
   setLevel,
