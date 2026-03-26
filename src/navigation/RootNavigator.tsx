@@ -17,6 +17,7 @@ import PremadePlanDetailsScreen from "./screens/PremadePlanDetailsScreen";
 import PremadePlansScreen from "./screens/PreMadePlansScreen";
 import EditDayScreen from "./screens/EditWorkoutDayScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+import GenderSelectionScreen from "./screens/GenderSelectionScreen";
 import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 
 import CreateAiStack from "./screens/create-ai/Stack";
@@ -45,6 +46,7 @@ export default function RootNavigator() {
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="auth" component={AuthScreen} />
+      <Stack.Screen name="genderSelection" component={GenderSelectionScreen} />
       <Stack.Screen name="register" component={RegisterScreen} />
       <Stack.Screen name="forgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen name="resetPassword" component={ResetPasswordScreen} />

@@ -1,6 +1,8 @@
 import { Dimensions } from "react-native";
 
 export const ACCESS_TOKEN = "@access_token";
+export const GENDER = "@gender";
+
 export const API_BASE_URL = __DEV__
   ? "http://10.0.2.2:3000/"
   : "https://api.yourproductionurl.com/";

@@ -15,6 +15,8 @@ import { useAppSelector } from "../../redux/root";
 import { selectUserInfo } from "../../redux/auth/slice";
 import { COLORS } from "../../constants/colors";
 import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GENDER } from "../../constants/vault";
 
 const { width } = Dimensions.get("window");
 
@@ -56,9 +58,15 @@ const SplashScreen: FC<
 
   useFocusEffect(
     useCallback(() => {
-      if (!isFetching) {
-        navigation.navigate(userInfo ? "home" : "initialInfo");
-      }
+      AsyncStorage.getItem(GENDER).then((g) => {
+        if (!g) {
+          navigation.navigate("genderSelection");
+        } else {
+          if (!isFetching) {
+            navigation.navigate(userInfo ? "home" : "initialInfo");
+          }
+        }
+      });
     }, [userInfo, isFetching]),
   );
 

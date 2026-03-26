@@ -8,6 +8,7 @@ import { CreateAiPlanParamList } from "./screens/create-ai/types";
 
 export type RootStackParamList = {
   auth: undefined;
+  genderSelection: undefined;
   forgotPassword: undefined;
   resetPassword: undefined;
   register: undefined;

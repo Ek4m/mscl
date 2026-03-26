@@ -13,7 +13,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { CreateAiPlanParamList } from "./types";
 import { COLORS } from "../../../constants/colors";
-import { Gender, GymLevel } from "../../../modules/prediction/enums";
+import { GymLevel } from "../../../modules/prediction/enums";
 import SubmitButton from "../../../UI/components/submitButton";
 
 import { useAppDispatch, useAppSelector } from "../../../redux/root";
@@ -25,6 +25,7 @@ import {
   setLevel,
   setWeeks,
 } from "../../../redux/workout/create-ai";
+import GenderSelection from "../../../modules/prediction/components/genderSelection";
 
 const AiGeneratorScreen: React.FC<
   NativeStackScreenProps<CreateAiPlanParamList, "selectGender">
@@ -83,69 +84,10 @@ const AiGeneratorScreen: React.FC<
         </View>
 
         <View style={styles.configSection}>
-          {/* VISUAL GENDER SELECTION */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>SELECT YOUR IDENTITY</Text>
-            <View style={styles.genderContainer}>
-              {/* MALE CARD */}
-              <TouchableOpacity
-                onPress={() => dispatch(setGender(Gender.MALE))}
-                style={[
-                  styles.genderCard,
-                  gender === Gender.MALE && styles.activeGenderCard,
-                ]}
-              >
-                <FontAwesome5Icon
-                  name="male"
-                  size={50}
-                  color={gender === Gender.MALE ? COLORS.mainBlue : "#444"}
-                />
-                <Text
-                  style={[
-                    styles.genderLabel,
-                    gender === Gender.MALE && styles.activeGenderLabel,
-                  ]}
-                >
-                  MALE
-                </Text>
-                {gender === Gender.MALE && (
-                  <View style={styles.checkCircle}>
-                    <FeatherIcon name="check" size={12} color="white" />
-                  </View>
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => dispatch(setGender(Gender.FEMALE))}
-                style={[
-                  styles.genderCard,
-                  gender === Gender.FEMALE && styles.activeGenderCard,
-                ]}
-              >
-                <FontAwesome5Icon
-                  name="female"
-                  size={50}
-                  color={gender === Gender.FEMALE ? COLORS.mainBlue : "#444"}
-                />
-                <Text
-                  style={[
-                    styles.genderLabel,
-                    gender === Gender.FEMALE && styles.activeGenderLabel,
-                  ]}
-                >
-                  FEMALE
-                </Text>
-                {gender === Gender.FEMALE && (
-                  <View style={styles.checkCircle}>
-                    <FeatherIcon name="check" size={12} color="white" />
-                  </View>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* FITNESS LEVEL */}
+          <GenderSelection
+            gender={gender}
+            onChange={(g) => dispatch(setGender(g))}
+          />
           <View style={styles.inputGroup}>
             <Text style={styles.label}>FITNESS LEVEL</Text>
             <View style={styles.chipRow}>
@@ -246,49 +188,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginBottom: 15,
   },
-
-  /* NEW GENDER CARD STYLES */
-  genderContainer: {
-    flexDirection: "row",
-    gap: 15,
-  },
-  genderCard: {
-    flex: 1,
-    height: 200,
-    backgroundColor: "#141414",
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#222",
-    position: "relative",
-  },
-  activeGenderCard: {
-    borderColor: COLORS.mainBlue,
-    backgroundColor: "rgba(0, 150, 255, 0.05)",
-  },
-  genderLabel: {
-    marginTop: 10,
-    color: "#555",
-    fontWeight: "bold",
-    fontSize: 14,
-    letterSpacing: 1,
-  },
-  activeGenderLabel: {
-    color: "white",
-  },
-  checkCircle: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    backgroundColor: COLORS.mainBlue,
-    borderRadius: 10,
-    width: 20,
-    height: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   chip: {
     paddingHorizontal: 16,

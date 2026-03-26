@@ -22,6 +22,8 @@ import { selectUserInfo } from "../../redux/auth/slice";
 import { RootStackParamList } from "../types";
 import { useFocusEffect } from "@react-navigation/native";
 import { startCustomPlanning } from "../../redux/workout/create-plan";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GENDER } from "../../constants/vault";
 
 const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
   navigation,
@@ -148,6 +150,16 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
           {__DEV__ && (
             <TouchableOpacity style={styles.devBtn} onPress={clearWorkoutDbDev}>
               <Text style={styles.devText}>RESET LOCAL DB</Text>
+            </TouchableOpacity>
+          )}
+          {__DEV__ && (
+            <TouchableOpacity
+              style={styles.devBtn}
+              onPress={() => {
+                AsyncStorage.removeItem(GENDER);
+              }}
+            >
+              <Text style={styles.devText}>DELETE GENDER</Text>
             </TouchableOpacity>
           )}
         </View>

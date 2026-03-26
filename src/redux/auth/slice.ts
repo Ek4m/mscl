@@ -1,4 +1,4 @@
-import { createSlice, isAnyOf } from "@reduxjs/toolkit";
+import { createSlice, isAnyOf, PayloadAction } from "@reduxjs/toolkit";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import axiosBaseQuery from "../baseQuery";
@@ -11,15 +11,20 @@ import {
   RegisterCredentials,
 } from "../../modules/auth/types";
 import { RootState } from "../root";
+import { Gender } from "../../modules/prediction/enums";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GENDER } from "../../constants/vault";
 
 export interface AuthSliceState {
   userInfo?: AuthUser;
   isFetching: boolean;
+  gender: Gender | null;
 }
 
 const initialState: AuthSliceState = {
   userInfo: undefined,
   isFetching: true,
+  gender: null,
 };
 
 export const authApi = createApi({
@@ -85,6 +90,11 @@ export const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.userInfo = undefined;
+      state.gender = null;
+    },
+    setUserGender: (state, action: PayloadAction<Gender>) => {
+      AsyncStorage.setItem(GENDER, action.payload);
+      state.gender = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -123,5 +133,5 @@ export const {
   useFreezeAccountMutation,
   useChangePasswordMutation,
 } = authApi;
-export const { logout } = authSlice.actions;
+export const { logout, setUserGender } = authSlice.actions;
 export default authSlice.reducer;
