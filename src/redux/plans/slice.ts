@@ -7,6 +7,7 @@ import { WorkoutPlan } from "../../modules/prediction/types";
 import { CustomPlanDetails, PremadePlan } from "../../modules/workout/types";
 import { PlanStatus } from "../../modules/prediction/enums";
 import { WorkoutSession } from "../../db/types";
+import { urlFactory } from "../../helpers/urlFactory";
 
 export interface PlansState {
   plans: WorkoutPlan[];
@@ -68,8 +69,11 @@ export const planApi = createApi({
         data,
       }),
     }),
-    getPremadePlans: builder.query<PremadePlan[], void>({
-      query: () => ({ url: "workout/premade-plans", method: "get" }),
+    getPremadePlans: builder.query<PremadePlan[], { gender: string }>({
+      query: (params) => ({
+        url: urlFactory("workout/premade-plans", params),
+        method: "get",
+      }),
     }),
     getUserCustomPlanById: builder.query<CustomPlanDetails, any>({
       query: (id: string | number) => ({

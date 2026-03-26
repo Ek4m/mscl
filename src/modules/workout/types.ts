@@ -1,4 +1,4 @@
-import { GymLevel } from "../prediction/enums";
+import { Gender, GymLevel } from "../prediction/enums";
 import {
   Metric,
   WorkoutDay,
@@ -94,6 +94,7 @@ export interface PremadePlanWeek {
 export interface PremadePlan {
   id: number;
   title: string;
+  gender: Gender;
   thumbnail: string;
   level: GymLevel;
   description: string | null;

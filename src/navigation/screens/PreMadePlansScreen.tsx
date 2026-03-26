@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import {
   View,
   Text,
@@ -12,19 +12,52 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 
+import { useGetPremadePlansQuery } from "../../redux/plans/slice";
 import { COLORS } from "../../constants/colors";
 import { RootStackParamList } from "../types";
-import { useGetPremadePlansQuery } from "../../redux/plans/slice";
 import { PremadePlan } from "../../modules/workout/types";
+import { Gender } from "../../modules/prediction/enums";
+import NoData from "../../modules/prediction/components/noData";
+
+// Define the filter types
+type GenderFilter = "all" | Gender;
 
 const PreMadePlansScreen: FC<
   NativeStackScreenProps<RootStackParamList, "premadePlans">
 > = ({ navigation }) => {
-  const { data, isFetching, refetch } = useGetPremadePlansQuery();
-
+  const [selectedGender, setSelectedGender] = useState<GenderFilter>("all");
+  const { data, isFetching, refetch } = useGetPremadePlansQuery({
+    gender: selectedGender,
+  });
+console.log(selectedGender)
   const handlePlanSelect = (plan: PremadePlan) => {
     navigation.navigate("premadePlanDetails", { plan });
   };
+
+  const FilterChip = ({
+    type,
+    label,
+  }: {
+    type: GenderFilter;
+    label: string;
+  }) => (
+    <TouchableOpacity
+      style={[
+        styles.filterChip,
+        selectedGender === type && styles.filterChipActive,
+      ]}
+      onPress={() => setSelectedGender(type)}
+    >
+      <Text
+        style={[
+          styles.filterChipText,
+          selectedGender === type && styles.filterChipTextActive,
+        ]}
+      >
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -51,12 +84,22 @@ const PreMadePlansScreen: FC<
             CHOOSE YOUR{"\n"}
             <Text style={styles.highlight}>DESTINY</Text>
           </Text>
+
+          {/* Gender Filter Row */}
+          <View style={styles.filterRow}>
+            <FilterChip type="all" label="ALL" />
+            <FilterChip type={Gender.MALE} label="MALE" />
+            <FilterChip type={Gender.FEMALE} label="FEMALE" />
+          </View>
+
           <Text style={styles.description}>
             Scientifically backed programs designed by elite coaches to
             transform your physique and performance.
           </Text>
         </View>
-
+        {!isFetching && (!data || !data.length) && (
+          <NoData message="Check back later for new programs!" />
+        )}
         {data?.map((plan) => (
           <TouchableOpacity
             key={plan.id}
@@ -68,7 +111,7 @@ const PreMadePlansScreen: FC<
               <View style={styles.badgeRow}>
                 <View style={styles.intensityBadge}>
                   <Text style={styles.intensityText}>
-                    {plan.weeks[0].days.length} Days/Week
+                    {plan.weeks[0]?.days?.length} Days/Week
                   </Text>
                 </View>
               </View>
@@ -93,7 +136,7 @@ const PreMadePlansScreen: FC<
                       color={COLORS.mainBlue}
                     />
                     <Text style={styles.statText}>
-                      {plan.weeks[0].days.length} Days/Week
+                      {plan.weeks[0]?.days.length} Days/Week
                     </Text>
                   </View>
                 </View>
@@ -142,8 +185,33 @@ const styles = StyleSheet.create({
   description: {
     color: "#888",
     fontSize: 14,
-    marginTop: 10,
+    marginTop: 15,
     lineHeight: 20,
+  },
+  filterRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 20,
+  },
+  filterChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: COLORS.black1,
+    borderWidth: 1,
+    borderColor: "#333",
+  },
+  filterChipActive: {
+    backgroundColor: COLORS.mainBlue,
+    borderColor: COLORS.mainBlue,
+  },
+  filterChipText: {
+    color: "#888",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  filterChipTextActive: {
+    color: "white",
   },
   planCard: {
     width: "100%",
@@ -161,15 +229,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.3)",
   },
   badgeRow: { flexDirection: "row", gap: 8 },
-  categoryBadge: {
-    backgroundColor: "rgba(255,255,255,0.15)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-  },
-  categoryText: { color: "white", fontSize: 10, fontWeight: "800" },
   intensityBadge: {
     backgroundColor: COLORS.mainBlue,
     paddingHorizontal: 10,
@@ -178,10 +237,33 @@ const styles = StyleSheet.create({
   },
   intensityText: { color: "white", fontSize: 10, fontWeight: "800" },
   planName: { color: "white", fontSize: 24, fontWeight: "bold" },
-  planSub: { color: "#ccc", fontSize: 14, marginTop: 4 },
   statsRow: { flexDirection: "row", gap: 20, marginTop: 12 },
   statItem: { flexDirection: "row", alignItems: "center", gap: 6 },
   statText: { color: "white", fontSize: 12, fontWeight: "600" },
+  iconCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: COLORS.black1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.05)",
+  },
+  title: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "900",
+    letterSpacing: 2,
+    marginBottom: 8,
+  },
+  message: {
+    color: "#888",
+    fontSize: 14,
+    textAlign: "center",
+    lineHeight: 20,
+  },
 });
 
 export default PreMadePlansScreen;
