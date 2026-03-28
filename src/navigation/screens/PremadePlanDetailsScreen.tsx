@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   ImageBackground,
-  StatusBar,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import FeatherIcon from "react-native-vector-icons/Feather";
@@ -56,8 +55,6 @@ const PremadePlanDetailsScreen: FC<
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-
       <ImageBackground source={{ uri: plan.thumbnail }} style={styles.hero}>
         <View style={styles.heroOverlay}>
           <TouchableOpacity
@@ -154,7 +151,6 @@ const PremadePlanDetailsScreen: FC<
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: 100,
-            flex: 1,
           }}
         >
           {activeWeek.days.map((day, dIdx) => (
@@ -212,7 +208,6 @@ const styles = StyleSheet.create({
   },
 
   contentCard: {
-    flex: 1,
     backgroundColor: COLORS.black,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,

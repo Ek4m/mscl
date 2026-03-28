@@ -75,6 +75,9 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
       );
       setLoggingSetIndex(null);
     }
+    setDoneValue("");
+    setExtraWeight("");
+    setRepsInput("");
   };
 
   return (

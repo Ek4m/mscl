@@ -29,7 +29,7 @@ const PreMadePlansScreen: FC<
   const { data, isFetching, refetch } = useGetPremadePlansQuery({
     gender: selectedGender,
   });
-console.log(selectedGender)
+
   const handlePlanSelect = (plan: PremadePlan) => {
     navigation.navigate("premadePlanDetails", { plan });
   };
