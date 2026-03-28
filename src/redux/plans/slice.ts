@@ -21,9 +21,14 @@ export const planApi = createApi({
   reducerPath: "planApi",
   baseQuery: axiosBaseQuery(),
   endpoints: (builder) => ({
-    getPlans: builder.query<CustomPlanDetails[], void>({
-      query: () => ({ url: "workout/plans", method: "get" }),
-    }),
+    getPlans: builder.query<CustomPlanDetails[], { status: PlanStatus } | void>(
+      {
+        query: (params) => ({
+          url: urlFactory("workout/plans", params || {}),
+          method: "get",
+        }),
+      },
+    ),
     getExistingPlanRegistration: builder.query<{ id: number }, number>({
       query: (planId: number) => ({
         url: "workout/plan-registration/" + planId,

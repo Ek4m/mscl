@@ -31,6 +31,7 @@ import {
   useGetInitialInfoQuery,
 } from "../redux/workout/create-ai";
 import { selectCreatePlanState } from "../redux/workout/create-plan";
+import FinishedPlanListScreen from "./screens/FinishedPlanListScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -57,6 +58,10 @@ export default function RootNavigator() {
       {userInfo ? (
         <>
           <Stack.Screen name="home" component={HomeScreen} />
+          <Stack.Screen
+            name="archivedPlans"
+            component={FinishedPlanListScreen}
+          />
           <Stack.Screen
             name="workoutTracker"
             component={WorkoutTrackerScreen}

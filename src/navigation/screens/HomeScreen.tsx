@@ -78,12 +78,20 @@ const HomeScreen: FC<NativeStackScreenProps<RootStackParamList, "home">> = ({
               {userInfo?.username?.toUpperCase() || "OPERATOR"}
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("profile")}
-            style={styles.profileCircle}
-          >
-            <FeatherIcon name="user" size={20} color={COLORS.mainBlue} />
-          </TouchableOpacity>
+          <View style={styles.headerButtons}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("archivedPlans")}
+              style={styles.profileCircle}
+            >
+              <FeatherIcon name="clock" size={20} color={COLORS.mainBlue} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("profile")}
+              style={styles.profileCircle}
+            >
+              <FeatherIcon name="user" size={20} color={COLORS.mainBlue} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.content}>
@@ -201,6 +209,7 @@ const styles = StyleSheet.create({
   profileCircle: {
     width: 45,
     height: 45,
+    marginLeft: 10,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#222",
@@ -295,6 +304,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   devText: { color: "#444", fontSize: 10, fontWeight: "900" },
+  headerButtons: {
+    flexDirection: "row",
+  },
 });
 
 export default HomeScreen;

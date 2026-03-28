@@ -10,6 +10,7 @@ export type RootStackParamList = {
   auth: undefined;
   genderSelection: undefined;
   forgotPassword: undefined;
+  archivedPlans: undefined;
   resetPassword: undefined;
   register: undefined;
   workoutTracker: { id: number; plan: CustomPlanDetails; weekId: number };
