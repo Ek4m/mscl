@@ -1,15 +1,30 @@
-import { Gender, GymLevel } from "../prediction/enums";
-import {
-  Metric,
-  WorkoutDay,
-  WorkoutExercise,
-  WorkoutPlan,
-} from "../prediction/types";
+import { Gender, GymLevel, PlanStatus } from "../prediction/enums";
+import { Metric, WorkoutDay, WorkoutExercise } from "../prediction/types";
 import { MuscleGroup } from "./vault";
 
 export interface ExerciseType {
   id: number;
   title: string;
+}
+
+export interface WorkoutDaySessionExercise {
+  id: number;
+  reps: number;
+  orderIndex: number;
+  doneValue: number;
+  workoutExerciseId: number;
+  extraWeight: number;
+  variation: Exercise;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WorkoutDaySession {
+  id: number;
+  seconds: number;
+  startedAt: string;
+  finishedAt: string;
+  exercises: WorkoutDaySessionExercise[];
 }
 
 export interface Exercise {
@@ -42,6 +57,7 @@ export interface CustomDayPlan {
   orderIndex: number;
   id: number;
   exercises: WorkoutExercise[];
+  sessions?: WorkoutDaySession[];
 }
 
 export interface CustomPlanCredentials {
@@ -76,6 +92,7 @@ export interface CustomPlanDayExercise {
 
 export interface CustomPlanDetails {
   id: number;
+  status: PlanStatus;
   title: string;
   template?: PremadePlan;
   createdAt: string;

@@ -5,6 +5,7 @@ import {
   PremadePlan,
 } from "../modules/workout/types";
 import { CreateAiPlanParamList } from "./screens/create-ai/types";
+import { PlanStatus } from "../modules/prediction/enums";
 
 export type RootStackParamList = {
   auth: undefined;
@@ -24,7 +25,7 @@ export type RootStackParamList = {
   customPlan: undefined;
   inspectPlan: undefined;
   createAiPlan: NavigatorScreenParams<CreateAiPlanParamList>;
-  planDetails: { id: number; shouldRefetch?: boolean };
+  planDetails: { id: number; sessions?: 1 | 2; status?: PlanStatus };
   home: undefined;
   payment: undefined;
   profile: undefined;

@@ -16,18 +16,38 @@ import { getWorkoutSessionsByUser } from "../../../db/services";
 
 import { useAppSelector } from "../../../redux/root";
 import { selectUserInfo } from "../../../redux/auth/slice";
+import { PlanStatus } from "../enums";
 
 const PlanListItem: FC<{ program: CustomPlanDetails }> = ({ program }) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { userInfo } = useAppSelector(selectUserInfo);
   const sessions = getWorkoutSessionsByUser(userInfo?.id!, program.id);
+
+  const isArchived = program.status === PlanStatus.ARCHIVED;
+  const onPressHandler = () => {
+    if (!isArchived) {
+      navigation.navigate("planDetails", { id: program.id });
+    } else {
+      navigation.navigate("planDetails", {
+        id: program.id,
+        sessions: 1,
+        status: PlanStatus.ARCHIVED,
+      });
+    }
+  };
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
-      style={styles.card}
-      onPress={() => navigation.navigate("planDetails", { id: program.id })}
+      style={[styles.card, isArchived && styles.archivedCard]}
+      onPress={onPressHandler}
     >
+      {isArchived && (
+        <View style={styles.archivedBadge}>
+          <Icon name="check-decagram" color={COLORS.black} size={10} />
+          <Text style={styles.archivedBadgeText}>DONE</Text>
+        </View>
+      )}
+
       <View style={styles.topRow}>
         <View style={styles.iconContainer}>
           <Image
@@ -38,11 +58,17 @@ const PlanListItem: FC<{ program: CustomPlanDetails }> = ({ program }) => {
           />
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.title}>{program.title.toUpperCase()}</Text>
+          <Text style={[styles.title, isArchived && { color: "#888" }]}>
+            {program.title.toUpperCase()}
+          </Text>
           <Text style={styles.subtitle}>{program.weeks.length} WEEK PLAN</Text>
         </View>
         <View style={styles.playBtn}>
-          <Icon name="chevron-right" color={COLORS.mainBlue} size={24} />
+          <Icon
+            name={isArchived ? "history" : "chevron-right"}
+            color={COLORS.mainBlue}
+            size={24}
+          />
         </View>
       </View>
 
@@ -66,7 +92,6 @@ const PlanListItem: FC<{ program: CustomPlanDetails }> = ({ program }) => {
         </View>
       </View>
 
-      {/* Mini Progress Dots or Activity Tracker */}
       <View style={styles.activityBar}>
         {sessions.length > 0 ? (
           sessions
@@ -90,6 +115,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#222",
   },
+  archivedCard: {
+    borderColor: COLORS.mainBlue,
+    overflow: "hidden",
+    backgroundColor: "#0f0f0f",
+  },
+  archivedBadge: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    backgroundColor: COLORS.mainBlue,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderBottomLeftRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  archivedBadgeText: {
+    color: COLORS.black,
+    fontSize: 8,
+    fontWeight: "900",
+  },
   topRow: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
   iconContainer: {
     width: 50,
@@ -105,7 +152,6 @@ const styles = StyleSheet.create({
   muscleImage: {
     width: 30,
     height: 30,
-    opacity: 1,
     tintColor: COLORS.mainBlue,
   },
   title: {

@@ -80,9 +80,12 @@ export const planApi = createApi({
         method: "get",
       }),
     }),
-    getUserCustomPlanById: builder.query<CustomPlanDetails, any>({
-      query: (id: string | number) => ({
-        url: "workout/user-plan/" + id,
+    getUserCustomPlanById: builder.query<
+      CustomPlanDetails,
+      { id: number | string; status?: PlanStatus; sessions?: 1 | 2 }
+    >({
+      query: ({ id, sessions, status }) => ({
+        url: urlFactory("workout/user-plan/" + id, { sessions, status }),
         method: "get",
       }),
     }),
