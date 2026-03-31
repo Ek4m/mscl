@@ -101,7 +101,7 @@ const UnifiedPlanLog: React.FC<PlanHistoryProps> = ({ plan }) => {
                       <Text style={styles.columnLabel}>PROTOCOL</Text>
                       <View style={styles.protocolBox}>
                         <Text style={styles.protocolText}>
-                          {ex.protocol.reps} REPS @ {ex.protocol.value}
+                          {ex.protocol.reps} REPS @ {ex.doneValue}
                           {ex.protocol.metric?.unitSymbol}
                         </Text>
                       </View>
